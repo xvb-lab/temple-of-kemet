@@ -14,6 +14,7 @@ export default {
       return new Response(null, { headers: CORS });
     }
 
+    // GET /leaderboard — top 10
     if (request.method === "GET" && url.pathname === "/leaderboard") {
       const raw = await env.KEMET_SCORES.get("leaderboard");
       const scores = raw ? JSON.parse(raw) : [];
@@ -22,14 +23,16 @@ export default {
       });
     }
 
+    // POST /leaderboard — salva score
     if (request.method === "POST" && url.pathname === "/leaderboard") {
-      const { name, score, level } = await request.json();
+      const { name, score, level, socialClass } = await request.json();
       const raw = await env.KEMET_SCORES.get("leaderboard");
       let scores = raw ? JSON.parse(raw) : [];
       scores.push({
         name: (name || "Anonimo").substring(0, 20),
         score: Math.floor(score),
         level: Math.floor(level) || 1,
+        socialClass: socialClass || "Schiavo",
         date: new Date().toISOString().split("T")[0],
       });
       scores.sort((a, b) => b.score - a.score);
@@ -40,6 +43,7 @@ export default {
       });
     }
 
+    // DELETE /leaderboard — reset
     if (request.method === "DELETE" && url.pathname === "/leaderboard") {
       await env.KEMET_SCORES.put("leaderboard", JSON.stringify([]));
       return new Response(JSON.stringify({ ok: true }), {
