@@ -805,7 +805,7 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
     <span style="color:#9a7040;min-width:60px;">ALTRO</span>
     <button onclick="showGameOver();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">💀 Game Over</button>
     <button onclick="document.getElementById('winMessage').innerHTML='';logMessage('Console pulita','info');" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🗑 Clear console</button>
-    <button onclick="localStorage.removeItem('kemetscore');logMessage('Leaderboard resettata','info');" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏆 Reset leaderboard</button>
+    <button onclick="if(LEADERBOARD_API){fetch(LEADERBOARD_API+'/leaderboard',{method:'DELETE'}).then(()=>logMessage('Leaderboard CF resettata','info'));}else{localStorage.removeItem('kemetscore');logMessage('Leaderboard locale resettata','info');}" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏆 Reset leaderboard</button>
     <button onclick="generateReels();logMessage('Rulli rigenerati','info');" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🎰 Rigenera rulli</button>
   </div>
 </div>
@@ -847,6 +847,11 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
   <audio id="audioLose10" src="assets/audio/lose-10.mp3"></audio>
 
 <script>
+// ── LEADERBOARD API ──────────────────────────────────────
+const LEADERBOARD_API = "https://temple-of-kemet.jonalinux-uk.workers.dev";
+// ─────────────────────────────────────────────────────────
+
+
 
 
 
@@ -3123,33 +3128,65 @@ function showGameOver() {
   const quoteIndex = Math.floor(Math.random() * quotes.length);
   document.getElementById("go-quote").textContent = quotes[quoteIndex];
 
-  // Salva e mostra leaderboard locale
-  const scores = JSON.parse(localStorage.getItem("kemetscore") || "[]");
-  scores.push({
-    name: playerName || "Anonimo",
-    score: totalScore,
-    level: currentLevel,
-    date: new Date().toLocaleDateString("it-IT")
-  });
-  scores.sort((a, b) => b.score - a.score);
-  const top10 = scores.slice(0, 10);
-  localStorage.setItem("kemetscore", JSON.stringify(top10));
+  // Salva e mostra leaderboard
+  async function saveAndShowLeaderboard() {
+    const list = document.getElementById("go-lb-list");
+    list.innerHTML = "<div style='color:#9a7040;font-size:13px;text-align:center;padding:10px;'>Caricamento...</div>";
 
-  const list = document.getElementById("go-lb-list");
-  list.innerHTML = "";
-  const medals = ["gold","silver","bronze"];
-  top10.forEach((entry, i) => {
-    const row = document.createElement("div");
-    row.className = "go-lb-row";
-    const rankClass = medals[i] || "";
-    row.innerHTML = `
-      <span class="go-lb-rank ${rankClass}">${i === 0 ? "👑" : i + 1}</span>
-      <span class="go-lb-name">${entry.name}</span>
-      <span class="go-lb-score">${entry.score.toLocaleString()}</span>
-      <span class="go-lb-level">Lv${entry.level}</span>
-    `;
-    list.appendChild(row);
-  });
+    const entry = {
+      name: playerName || "Anonimo",
+      score: totalScore,
+      level: currentLevel,
+    };
+
+    // Se API configurata, usa Worker CF — altrimenti localStorage
+    if (LEADERBOARD_API) {
+      try {
+        await fetch(LEADERBOARD_API + "/leaderboard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(entry),
+        });
+        const res = await fetch(LEADERBOARD_API + "/leaderboard");
+        const scores = await res.json();
+        renderLeaderboard(scores.slice(0, 10));
+      } catch(e) {
+        // Fallback localStorage
+        saveLocalLeaderboard(entry);
+      }
+    } else {
+      saveLocalLeaderboard(entry);
+    }
+  }
+
+  function saveLocalLeaderboard(entry) {
+    const scores = JSON.parse(localStorage.getItem("kemetscore") || "[]");
+    scores.push({ ...entry, date: new Date().toLocaleDateString("it-IT") });
+    scores.sort((a, b) => b.score - a.score);
+    const top10 = scores.slice(0, 10);
+    localStorage.setItem("kemetscore", JSON.stringify(top10));
+    renderLeaderboard(top10);
+  }
+
+  function renderLeaderboard(top10) {
+    const list = document.getElementById("go-lb-list");
+    list.innerHTML = "";
+    const medals = ["gold","silver","bronze"];
+    top10.forEach((entry, i) => {
+      const row = document.createElement("div");
+      row.className = "go-lb-row";
+      const rankClass = medals[i] || "";
+      row.innerHTML = `
+        <span class="go-lb-rank ${rankClass}">${i === 0 ? "👑" : i + 1}</span>
+        <span class="go-lb-name">${entry.name}</span>
+        <span class="go-lb-score">${entry.score.toLocaleString()}</span>
+        <span class="go-lb-level">Lv${entry.level}</span>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  saveAndShowLeaderboard();
 }
 
 function restartGame() {
