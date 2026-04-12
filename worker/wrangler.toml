@@ -1,0 +1,7 @@
+name = "temple-of-kemet-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "XVB_STATS"
+id = "88f18c4a15ff4b2f810902b430b3bc47"
