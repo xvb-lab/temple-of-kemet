@@ -3137,35 +3137,21 @@ function showGameOver() {
       name: playerName || "Anonimo",
       score: totalScore,
       level: currentLevel,
+      socialClass: getSocialStatus(currentLevel),
     };
 
-    // Se API configurata, usa Worker CF — altrimenti localStorage
-    if (LEADERBOARD_API) {
-      try {
-        await fetch(LEADERBOARD_API + "/leaderboard", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(entry),
-        });
-        const res = await fetch(LEADERBOARD_API + "/leaderboard");
-        const scores = await res.json();
-        renderLeaderboard(scores.slice(0, 10));
-      } catch(e) {
-        // Fallback localStorage
-        saveLocalLeaderboard(entry);
-      }
-    } else {
-      saveLocalLeaderboard(entry);
+    try {
+      await fetch(LEADERBOARD_API + "/leaderboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(entry),
+      });
+      const res = await fetch(LEADERBOARD_API + "/leaderboard");
+      const scores = await res.json();
+      renderLeaderboard(scores.slice(0, 10));
+    } catch(e) {
+      list.innerHTML = "<div style='color:#9a7040;font-size:13px;text-align:center;padding:10px;'>Leaderboard non disponibile.</div>";
     }
-  }
-
-  function saveLocalLeaderboard(entry) {
-    const scores = JSON.parse(localStorage.getItem("kemetscore") || "[]");
-    scores.push({ ...entry, date: new Date().toLocaleDateString("it-IT") });
-    scores.sort((a, b) => b.score - a.score);
-    const top10 = scores.slice(0, 10);
-    localStorage.setItem("kemetscore", JSON.stringify(top10));
-    renderLeaderboard(top10);
   }
 
   function renderLeaderboard(top10) {
@@ -3179,8 +3165,8 @@ function showGameOver() {
       row.innerHTML = `
         <span class="go-lb-rank ${rankClass}">${i === 0 ? "👑" : i + 1}</span>
         <span class="go-lb-name">${entry.name}</span>
-        <span class="go-lb-score">${entry.score.toLocaleString()}</span>
-        <span class="go-lb-level">Lv${entry.level}</span>
+        <span class="go-lb-score">${entry.score.toLocaleString()} 🌾</span>
+        <span class="go-lb-level">Lv${entry.level} · ${entry.socialClass || ""}</span>
       `;
       list.appendChild(row);
     });
@@ -3310,7 +3296,22 @@ function restartGame() {
     container.appendChild(makeGrid(symbols));
   }
 
-  makeSection("Simboli", normali);
+  // Nota introduttiva come si gioca
+  const intro = document.createElement("div");
+  intro.style.cssText = "background:#fdfdfd8f;border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:16px;color:#5a3010;line-height:1.8;";
+  intro.innerHTML = `
+    <div style="font-family:'Cinzel',serif;font-size:18px;color:#3d1a00;font-weight:bold;margin-bottom:12px;">☥ Come si gioca</div>
+    <p style="margin-bottom:10px;">Premi <strong>SPIN</strong> per far girare i 6 rulli. Le combinazioni vincenti si formano da <strong>sinistra a destra</strong> su una delle 50 linee attive.</p>
+    <p style="margin-bottom:10px;">Usa <strong>BET</strong> per selezionare quante linee giocare (1–50). Più linee attivi, più possibilità di vincita.</p>
+    <p style="margin-bottom:16px;">Accumula <strong>Grano</strong> vincendo partite, <strong>Deben</strong> per le vincite in crediti e <strong>Pietre Preziose</strong> con le gemme. Ogni 100 Pietre → <strong>+500 Deben</strong> bonus!</p>
+    <div style="font-family:'Cinzel',serif;font-size:15px;color:#3d1a00;font-weight:bold;margin-bottom:10px;">⚖ L'economia dell'antico Egitto</div>
+    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Deben ⚖</strong> — Era un peso in rame di circa 91 grammi, usato come misura di valore. Non era una moneta fisica ma un'unità di conto. L'argento e l'oro erano deben più preziosi, riservati allo Stato e ai templi.</p>
+    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Grano 🌾</strong> — La vera valuta del popolo. I lavoratori delle piramidi venivano pagati in pane, birra e grano. Il grano si conservava nei granai del faraone e veniva ridistribuito come stipendio.</p>
+    <p><strong style="color:#8b4510;">Pietre Preziose 💎</strong> — Custodite nei templi come tesoro divino. Non circolavano tra il popolo ma erano offerte agli dei o sepolte con i faraoni per l'eternità.</p>
+  `;
+  container.appendChild(intro);
+
+    makeSection("Simboli", normali);
   makeSection("Pietre Preziose", gemme);
   makeSection("Divinita", divini);
 
