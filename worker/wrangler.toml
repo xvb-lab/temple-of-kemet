@@ -3,5 +3,5 @@ main = "index.js"
 compatibility_date = "2024-01-01"
 
 [[kv_namespaces]]
-binding = "XVB_STATS"
-id = "88f18c4a15ff4b2f810902b430b3bc47"
+binding = "KEMET_SCORES"
+id = "c479f227f7d949cbb3626534c054cc6f"
