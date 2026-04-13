@@ -92,12 +92,20 @@
           <div id="xpBarTrack" style="flex:1;min-width:80px;height:5px;background:rgba(90,40,0,0.12);border-radius:3px;overflow:hidden;">
             <div id="levelProgressFill" style="width:0%;height:100%;background:linear-gradient(90deg,#c4881a,#e8c050);border-radius:3px;transition:width 0.5s ease;"></div>
           </div>
-          <span style="font-family:'Syne Mono',monospace;font-size:11px;color:#9a7040;"><span id="currentLevel">1</span> · <span id="levelPoints">0</span> XP</span>
+          <span style="font-family:'Syne Mono',monospace;font-size:14px;color:#9a7040;"><span id="levelPoints">0</span> XP</span>
         </div>
+        <div id="headerTicker">
+          <span id="headerTickerText">Simboli: 0 / 99</span>
+        </div>
+        <span id="ft-symbols" style="display:none">Simboli: 0 / 99</span>
+        <span id="ft-frasi" style="display:none">Storie: 0 / 1030</span>
+        <span id="ft-xp" style="display:none">XP: 0 / 2000 al Lv2</span>
+        <span id="ft-record" style="display:none">Record: — — 0 Grano</span>
       </div>
       <h1 id="gameTitle">Temple of Kemet</h1>
       <div id="headerActions">
         <button id="paytableBtn" onclick="buildPaytable();document.getElementById('paytableModal').classList.remove('hidden')">☥ Regole</button>
+        <button id="classificaBtn" onclick="openClassifica()">☩ Classifica</button>
       </div>
     </div>
     <div id="scoreInfo">
@@ -108,15 +116,9 @@
       </div>
       <div class="score-item"><span class="score-label">Costo Spin</span><span id="activeLines" class="score-value">10</span>
       </div>
-      <div class="score-item"><span class="score-label">Moltiplicatore</span><span id="betMultiplier" class="score-value" style="color:#8b4510!important">×1</span></div>
+
     </div>
-    <div id="footerStats">
-      <span id="ft-symbols">Simboli: 0 / 46</span>
-      <span class="ft-sep">·</span>
-      <span id="ft-frasi">Storie: 0 / 262</span>
-      <span class="ft-sep">·</span>
-      <span id="ft-xp">XP: 0 / 2000 al Lv2</span>
-    </div>
+
   </div>
 
   <div id="gameBody">
@@ -132,6 +134,7 @@
       <div id="slotWrapper">
         <div class="line-numbers-left" id="lineNumbersLeft"></div>
         <div id="slotContainer"></div>
+        <svg id="paylineOverlay" preserveAspectRatio="none"></svg>
         <div class="line-numbers-right" id="lineNumbersRight"></div>
       </div>
 
@@ -148,7 +151,7 @@
         <label for="currentBet">Bet</label>
         <div style="display:flex;align-items:center;gap:8px;">
           <button id="betMinus" class="bet-button">−</button>
-          <span id="currentBet">10</span>
+          <span id="currentBet">×1</span>
           <button id="betPlus" class="bet-button">+</button>
         </div>
       </div>
@@ -306,6 +309,7 @@
   <audio id="wild" src="assets/audio/wild.mp3"></audio>
   <audio id="bonus" src="assets/audio/bonus.mp3"></audio>
   <audio id="scrapper" src="assets/audio/scrapper.mp3"></audio>
+  <audio id="ghost" src="assets/audio/ghost.mp3"></audio>
   <audio id="gameover" src="assets/audio/gameover.mp3"></audio>
   <audio id="level" src="assets/audio/level.mp3"></audio>
   <audio id="jar" src="assets/audio/jar.mp3"></audio>

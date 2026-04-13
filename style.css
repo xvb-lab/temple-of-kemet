@@ -70,6 +70,7 @@ body {
   min-width:160px;
   display:flex;
   justify-content:flex-end;
+  gap:8px;
 }
 
 /* ════ RIGA 2: score ════ */
@@ -87,14 +88,14 @@ body {
 }
 .score-label {
   font-family:"Cinzel",serif;
-  font-size:12px;
+  font-size:14px;
   color:#9a7040;
   letter-spacing:0.15em;
   text-transform:uppercase;
 }
 .score-value {
   font-family:"Cinzel",serif;
-  font-size:16px;
+  font-size:20px;
   font-weight:700;
   line-height:1;
 }
@@ -154,7 +155,7 @@ body {
   flex-direction:column;
   border-radius:12px;
   overflow:hidden;
-  background:#fbf9f1;
+  background:#302719;
   box-shadow:0 2px 16px rgba(90,40,0,0.36);
 }
 
@@ -162,10 +163,16 @@ body {
   display:flex;
   align-items:stretch;
   width:100%;
-  background:#fbf8f1e8;
+  background:#302719;
   margin-bottom:10px;
-  padding:20px;
   padding:4px 4px 0;
+  position:relative;
+}
+
+#paylineOverlay {
+  position:absolute;
+  pointer-events:none;
+  z-index:1;
 }
 
 /* Numeri linea */
@@ -186,31 +193,35 @@ body {
   font-family:"Syne Mono",monospace;
   font-size:17px;
   font-weight:normal;
-  color:#c4a870;
+  color:#3a2a1a;
   text-align:center;
   line-height:calc(420px/25);
   height:calc(420px/25);
-  transition:all 0.2s;
+  transition:color 0.2s;
 }
-.line-number.active {
-  color:#8b4510;
+.line-number.selected {
+  color:#cb9668;
+}
+.line-number.active,
+.line-number.selected.active {
   font-weight:bold;
-  opacity:1;
   animation:lineFade 1.2s ease-in-out infinite;
 }
 @keyframes lineFade {
   0%,100%{ opacity:1; }
-  50%{ opacity:0.3; }
+  50%{ opacity:0.2; }
 }
 
 /* Slot */
 #slotContainer {
   flex:1;
   height:420px;
-  background:#e8d090;
+  background: #4f4025;
+  background: radial-gradient(circle, rgba(79,64,37,1) 0%, rgba(48,39,25,1) 50%);
   border-radius:8px;
   display:flex;
   overflow:hidden;
+  position:relative;
 }
 
 .reel {
@@ -220,8 +231,10 @@ body {
   flex-direction:column;
   justify-content:space-around;
   align-items:center;
-  background:#fbf9f1;
+  background:transparent;
   border-right:1px solid rgba(196,165,90,0.25);
+  position:relative;
+  z-index:2;
 }
 .reel:last-child { border-right:none }
 
@@ -233,14 +246,33 @@ body {
   align-items:center;
   border-bottom:none;
   position:relative;
+  z-index:2;
 }
 .symbol:last-child { border-bottom:none }
 .symbol img { max-height:82%; max-width:82%; pointer-events:none }
 
-.symbol.pulse { animation:symPulse 1.5s ease-in-out infinite; z-index:2 }
-@keyframes symPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
+.symbol.pulse {
+  animation:symShake 0.4s ease-in-out infinite;
+  z-index:2;
+}
+
+@keyframes symShake {
+  0%,100% { transform: rotate(0deg); }
+  20%     { transform: rotate(-6deg); }
+  40%     { transform: rotate(6deg); }
+  60%     { transform: rotate(-4deg); }
+  80%     { transform: rotate(4deg); }
+}
 
 .symbol.pulse::before { display:none }
+
+/* Simboli penalità: tremore rosso */
+.symbol.symbol-penalty {
+  filter: drop-shadow(0 0 6px rgba(180,30,30,0.9));
+}
+#slotContainer.has-winners .symbol.symbol-penalty {
+  opacity: 1 !important;
+}
 
 .symbol-multiplier::after {
   content:attr(data-mult);
@@ -322,21 +354,18 @@ body {
 #xpBarWrap { display:flex;flex-direction:column;align-items:center;gap:6px;width:100% }
 
 /* ════ FOOTER STATS — info di gioco ════ */
-#footerStats {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-  flex-wrap:wrap;
-  font-family:"Syne Mono",monospace;
-  font-size:14px;
-  color:#7a5030;
-  padding:6px 0;
-  background:transparent;
-  width:100%;
-  padding:4px 0 6px;
+#headerTicker {
+  margin-top: 3px;
 }
-.ft-sep { color:#c4a55a }
+#headerTickerText {
+  font-family: "Syne Mono", monospace;
+  font-size: 14px;
+  color: #9a7040;
+  transition: opacity 0.4s ease;
+}
+#headerTickerText.fading {
+  opacity: 0;
+}
 .footer-copy {
   width:100%;
   font-size:13px;
@@ -362,8 +391,8 @@ body {
   overflow-y:hidden;
   padding:12px 18px;
   font-family:"Syne Mono",monospace;
-  font-size:15px;
-  line-height:1.7;
+  font-size:17px;
+  line-height:1.4;
   color:#5a2800;
   transition:opacity 0.35s ease;
 }
@@ -373,19 +402,19 @@ body {
 
 .log-entry {
   display:flex;align-items:flex-start;
-  gap:10px;padding:4px 0;
-  border-bottom:1px solid rgba(255,200,80,0.07);
+  gap:6px;padding:1px 0;
+  border-bottom:none;
   animation:fadeSlide 0.4s ease;
-  font-size:15px;line-height:1.6;
+  font-size:17px;line-height:1.3;
 }
 .log-entry:last-child { border-bottom:none }
 .log-entry img.message-icon { width:42px;height:auto;flex-shrink:0 }
 #frasiGiocoInizialeSpan img.message-icon { width:42px;height:auto;vertical-align:middle;margin-right:8px }
-.log-entry.win     { color:#f0c040;font-weight:bold }
-.log-entry.bonus   { color:#40c880 }
+.log-entry.win     { color:#f0c040 }
+.log-entry.bonus   { color:#067dfb }
 .log-entry.curse   { color:#e04030 }
-.log-entry.level   { color:#4090e0 }
-.log-entry.mystic  { color:#5a2800;font-style:italic }
+.log-entry.level   { color:#067dfb }
+.log-entry.mystic  { color:#5a2800; }
 .log-entry.lose    { color:#e08070 }
 .log-entry.gameover{ color:#e02010;font-weight:bold }
 .log-entry.info    { color:#5a2800 }
@@ -395,22 +424,73 @@ body {
   to{opacity:1;transform:translateY(0)}
 }
 
+/* Frase narrativa: fade out dopo 2s */
+.log-hint { transition: opacity 0.5s ease; }
+.log-hint.hint-fadeout { opacity: 0 !important; }
+
+/* Riga info spin */
+.log-entry.spininfo { color:#9a7040; font-size:12px; opacity:0.75; padding:2px 0; border-bottom:1px solid rgba(255,200,80,0.12); }
+.log-spininfo { font-family:"Syne Mono",monospace; letter-spacing:0.04em; }
+
+/* Vincite */
+.log-entry.win-small { color:#ffa700; }
+.log-entry.win-big   { color:#ffa700; font-size:16px; }
+.log-entry.win-mega  { color:#ffa700; font-size:17px; animation:fadeSlide 0.3s ease; }
+.log-entry.win-huge  { color:#ffa700; font-size:18px; animation:fadeSlide 0.3s ease; }
+
+/* Dettaglio linea */
+.log-line-num { display:inline-block; min-width:28px; color:#9a7040; font-size:11px; }
+.log-count    { color:#c4a55a; }
+.log-mult     { color:#4095f0; }
+.log-payout   { color:#1fbe6a; }
+.log-wild     { color:#00ccff; }
+.log-penalty  { color:#e04030; }
+
+/* Banner livello */
+.log-entry.levelup {
+  display:flex; flex-direction:column; align-items:center;
+  gap:2px; padding:10px 0; margin:4px 0;
+  background: linear-gradient(90deg, transparent, rgba(196,165,90,0.15), transparent);
+  border-top:1px solid rgba(196,165,90,0.4);
+  border-bottom:1px solid rgba(196,165,90,0.4);
+  animation: levelFlash 0.6s ease;
+}
+.log-levelup {
+  font-family:"Cinzel",serif; font-size:18px; font-weight:bold;
+  color:#f0c040; letter-spacing:0.15em;
+  text-shadow: 0 0 12px rgba(240,192,64,0.6);
+}
+.log-levelup-class {
+  font-family:"Cinzel",serif; font-size:12px;
+  color:#c4a55a; letter-spacing:0.2em; text-transform:uppercase;
+}
+@keyframes levelFlash {
+  0%   { opacity:0; transform:scale(0.95); }
+  50%  { opacity:1; transform:scale(1.02); }
+  100% { transform:scale(1); }
+}
+
+/* Storia sbloccata */
+.log-entry.story-unlock {
+  background: linear-gradient(90deg, transparent, rgba(196,136,26,0.12), transparent);
+  border-top: 1px solid rgba(196,136,26,0.3);
+  padding: 4px 0 2px;
+  animation: levelFlash 0.5s ease;
+}
+.log-story-unlock {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: #c4881a;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 /* ════ GLOW VARS ════ */
 :root {
-  --glow-line-1:#ff4d4d;--glow-line-2:#ff9933;--glow-line-3:#ffff33;--glow-line-4:#99ff33;--glow-line-5:#33ff99;
-  --glow-line-6:#33ffff;--glow-line-7:#3399ff;--glow-line-8:#9966ff;--glow-line-9:#cc33ff;--glow-line-10:#ff33cc;
-  --glow-line-11:#ff6666;--glow-line-12:#ff9966;--glow-line-13:#ffcc66;--glow-line-14:#ccff66;--glow-line-15:#66ff99;
-  --glow-line-16:#66ffff;--glow-line-17:#6699ff;--glow-line-18:#9966cc;--glow-line-19:#cc66ff;--glow-line-20:#ff66cc;
-  --glow-line-21:#ff3333;--glow-line-22:#ff7733;--glow-line-23:#ffb733;--glow-line-24:#cfff33;--glow-line-25:#66ff66;
-  --glow-line-26:#66ffcc;--glow-line-27:#66ccff;--glow-line-28:#9966ff;--glow-line-29:#cc66cc;--glow-line-30:#ff66b2;
-  --glow-line-31:#ff3366;--glow-line-32:#ff6600;--glow-line-33:#ff9900;--glow-line-34:#ccff00;--glow-line-35:#66ff00;
-  --glow-line-36:#00ffcc;--glow-line-37:#00ccff;--glow-line-38:#3366ff;--glow-line-39:#9933ff;--glow-line-40:#cc33cc;
-  --glow-line-41:#ff3399;--glow-line-42:#ff0033;--glow-line-43:#ff5500;--glow-line-44:#ffaa00;--glow-line-45:#aaff00;
-  --glow-line-46:#55ff00;--glow-line-47:#00ffaa;--glow-line-48:#00aaff;--glow-line-49:#3333ff;--glow-line-50:#9933cc;
 }
 
 /* ════ PAYTABLE BTN ════ */
-#paytableBtn {
+#paytableBtn, #classificaBtn {
   background:transparent;
   border:1px solid #c4a55a;
   border-radius:6px;
@@ -420,7 +500,7 @@ body {
   padding:7px 16px;cursor:pointer;
   transition:all 0.15s;margin:0;
 }
-#paytableBtn:hover { background:#eedbb0;color:#3d1a00 }
+#paytableBtn:hover, #classificaBtn:hover { background:#eedbb0;color:#3d1a00 }
 
 /* ════ INTRO ════ */
 #introScreen {
@@ -593,7 +673,7 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Cinzel",monospace;
 
 /* ── SYMBOL LIST SINISTRA ── */
 #symbolList {
-  width: 180px;
+  width: 210px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -603,19 +683,17 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Cinzel",monospace;
   padding: 8px 4px;
   scrollbar-width: none;
 }
-#symbolList::-webkit-scrollbar { display: none; 
-}
-
+#symbolList::-webkit-scrollbar { display: none; }
 
 .sym-list-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border-radius: 8px;
   background: #eedbb0;
   font-family: "Syne Mono", monospace;
-  font-size: 15px;
+  font-size: 13px;
   color: #3d1a00;
 }
 .sym-list-item.sym-new {
@@ -623,10 +701,48 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Cinzel",monospace;
   color: #5a2800;
 }
 .sym-list-item img {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   flex-shrink: 0;
+}
+.sym-list-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.sym-list-name {
+  font-size: 13px;
+  color: #3d1a00;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sym-story-progress {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sym-story-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: rgba(90,40,0,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.sym-story-bar-fill {
+  height: 100%;
+  background: #c4881a;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.sym-story-pct {
+  font-size: 10px;
+  color: #9a7040;
+  min-width: 26px;
+  text-align: right;
 }
 #symbolListTitle {
   font-family: "Cinzel", serif;

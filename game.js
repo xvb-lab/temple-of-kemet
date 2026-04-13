@@ -18,6 +18,38 @@ function setActiveLines(n) {
 }
 // ── LEADERBOARD API ──────────────────────────────────────
 const LEADERBOARD_API = "https://temple-of-kemet.jonalinux-uk.workers.dev";
+
+// Record mondiale — aggiornato al caricamento e dopo ogni game over
+let worldRecord = { name: "—", score: 0 };
+let _recordBeaten = false; // true se il giocatore ha già battuto il record in questa partita
+
+async function fetchWorldRecord() {
+  try {
+    const res = await fetch(LEADERBOARD_API + "/leaderboard");
+    const scores = await res.json();
+    if (scores && scores.length > 0) {
+      worldRecord = { name: scores[0].name, score: scores[0].score };
+      updateTickerRecord();
+    }
+  } catch(e) {}
+}
+
+function updateTickerRecord() {
+  const el = document.getElementById("ft-record");
+  if (el) el.textContent = `Record: ${worldRecord.name} — ${worldRecord.score.toLocaleString()} Grano`;
+}
+
+function checkWorldRecord() {
+  if (_recordBeaten) return;
+  if (totalScore > worldRecord.score && worldRecord.score > 0) {
+    _recordBeaten = true;
+    logMessage(`Hai battuto il record mondiale di ${worldRecord.name}!`, "story-unlock");
+    playSound("level");
+    // Aggiungi stellina al nome
+    const nd = document.getElementById("playerNameDisplay");
+    if (nd && !nd.textContent.includes("★")) nd.textContent = "★ " + playerName;
+  }
+}
 // ─────────────────────────────────────────────────────────
 
 
@@ -331,6 +363,124 @@ const payoutTable = {
 
 
 
+
+// ═══════════════════════════════════════════════════════════════
+// SISTEMA SBLOCCO STORIE
+// Ogni simbolo ha una soglia punti per sbloccare ogni storia.
+// I punti si accumulano dalle vincite con quel simbolo (payout + bonus combo).
+// I progressi non si resettano al cambio livello.
+// ═══════════════════════════════════════════════════════════════
+
+// Soglia base per sbloccare UNA storia — varia per classe sociale del simbolo
+const STORY_THRESHOLDS = {
+  // Schiavo (simboli umilissimi, soglia bassa)
+  wheat:200, bread:200, onion:200, oillamp:210, bowl_wood:205, cloth_rough:205,
+  // Servo del Tempio
+  reed:240, fish:250, dates:260, basket:245, sandal_papyrus:235, drink_water:225,
+  // Bracciante
+  sickle:280, rope:270, fig:285, goose:300, sandal_leather:290, bowl_ceramic:290,
+  // Pescatore
+  boat:320, dromedary:335,
+  // Contadino
+  cat:360, drink_beer:350,
+  // Pastore
+  cloth_linen:390,
+  // Artigiano
+  chisel:420, brick:410, amulet:430,
+  // Vasaio
+  canopic_jar:460,
+  // Carpentiere
+  fan:490, sandal_fine:480,
+  // Commerciante
+  grape:520, pistachio:530, necklace:550, drink_wine:535, cloth_fine:525,
+  // Soldato
+  dagger:560, scorpion:570, cobra:590, ankh:600, beetle:555,
+  // Scriba Minore
+  ibis:630,
+  // Scriba Reale
+  sarcophagus:660, bird:650, tool_scribe:645,
+  // Sacerdote
+  djed:700, bowl_alabaster:690, cloth_royal:695,
+  // Gran Sacerdote
+  bread_ritual:730, sandal_gold:740,
+  // Nobile
+  pyramid:770, scepter:760, drink_nectar:755,
+  // Visir
+  obelisk:800, bowl_gold:810,
+  // Dio
+  jewelry_gold:900,
+  // Personaggi (soglia crescente per rarità)
+  bes:300, taweret:320, khnum:340, sobek:360, neith:380,
+  sekhmet:400, ptah:420, nut:440, amon:460, khonsu:480,
+  cleopatra:500, ra:470, osiris:510, isis:530, horus:550,
+  anubis:580, thoth:560, hathor:570, seth:565, bastet:600,
+  udjat:650, pharaoh:680, nefertiti:720,
+  // Gemme (soglia media — non hanno payout diretto)
+  copper:250, onyx:300, ruby:370, sapphire:440, amethyst:500,
+  emerald:560, topaz:620, diamond:700, gold:780, meteorite:900,
+  // Speciali — soglia basata su attivazioni/presenza (non payout)
+  // Wild e Jackpot: appaiono spesso, soglia media
+  ouroboros:350, pschent:800,
+  // Penalità: si attivano per combo, soglia bassa (punti contati da effectPoints)
+  skull:300, curse:300, spirit:320, mummy:380,
+  // Minigiochi: attivano premi, soglia media
+  market:280, scale:400, sphinx:500, papyrus:420,
+  // Moltiplicatori: appaiono sulla linea, soglia bassa
+  scarab:250, coin:350,
+  // jar e hieroglyphs (usati nel JSON come "bowl" e "hieroglyphs")
+  jar:300, hieroglyphs:400,
+};
+
+// Stato persistente: punti accumulati e storie sbloccate per simbolo
+const symbolStoryPoints   = {}; // { symbolName: puntiAccumulati }
+const symbolStoriesUnlocked = {}; // { symbolName: numeroStoriesSbloccate }
+
+function getStoryThreshold(symbolName) {
+  return STORY_THRESHOLDS[symbolName] || 500;
+}
+
+function getStoryProgress(symbolName) {
+  const unlocked = symbolStoriesUnlocked[symbolName] || 0;
+  const points   = symbolStoryPoints[symbolName] || 0;
+  const threshold = getStoryThreshold(symbolName);
+  // Punti nella finestra corrente (dopo l'ultimo sblocco)
+  const pointsInWindow = points % threshold;
+  return { unlocked, points, threshold, pointsInWindow, pct: Math.min(100, Math.floor(pointsInWindow / threshold * 100)) };
+}
+
+// Frasi disponibili per un simbolo dal JSON
+function getHintsForSymbol(symbolName) {
+  return (mysteriousHints || []).filter(h => h.symbol === symbolName);
+}
+
+// Aggiunge punti a un simbolo e controlla se sblocca una nuova storia
+function addSymbolStoryPoints(symbolName, pts) {
+  if (!pts || pts <= 0) return null;
+  const frasi = getHintsForSymbol(symbolName);
+  if (!frasi.length) return null;
+  const threshold = getStoryThreshold(symbolName);
+  if (threshold >= 9999) return null;
+
+  const prevPoints  = symbolStoryPoints[symbolName] || 0;
+  const prevUnlocked = symbolStoriesUnlocked[symbolName] || 0;
+
+  symbolStoryPoints[symbolName] = prevPoints + pts;
+  const newUnlocked = Math.min(Math.floor(symbolStoryPoints[symbolName] / threshold), frasi.length);
+  symbolStoriesUnlocked[symbolName] = newUnlocked;
+
+  // Ritorna la storia appena sbloccata (se c'è)
+  if (newUnlocked > prevUnlocked) {
+    return frasi[newUnlocked - 1] || null;
+  }
+  return null;
+}
+
+// Calcola punti story da una vincita: payout + bonus combo
+function calcStoryPoints(payout, matchCount) {
+  const bonus = matchCount >= 6 ? 40 : matchCount >= 5 ? 25 : matchCount >= 4 ? 12 : 0;
+  return payout + bonus;
+}
+
 const allAvailablePaylines = [
   // --- GRUPPO 1: LINEE ORIZZONTALI BASE (4 payline) ---
   // Queste sono le linee più semplici e dirette, fondamentali per ogni slot.
@@ -429,6 +579,9 @@ let mysteriousHints = [];
 // Stato sequenza frasi — 1 frase per simbolo, ruota sui simboli attivi
 // Struttura: _hintSymIdx = quale simbolo attivo stiamo mostrando
 //            _hintFraseIdx[sym] = quale frase di quel simbolo mostrare dopo
+// Mappa colori neon linee vincenti — aggiornata da drawPaylinesSVG
+const winningLineColors = new Map();
+
 const NO_HINTS_SYMS = new Set(['ouroboros','pschent','scarab','coin','skull','curse',
                                 'spirit','mummy','market','scale','sphinx','papyrus','jar']);
 let _hintSymIdx = 0;          // indice sul simbolo corrente
@@ -484,25 +637,8 @@ async function loadHints(lang = "it") {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Carica il JSON subito, poi aggiorna la frase nell'intro
-  loadHints("it").then(() => {
-    _buildHintQueue(); // costruisci la coda iniziale
-    const fraseSpan = document.getElementById('frasiGiocoInizialeSpan');
-    if (fraseSpan) {
-      const hint = _getNextHint();
-      if (hint) {
-        const FILE_MAP = { oillamp:"oil-lamp", canopic_jar:"canopic-jar",
-      cloth_fine:"cloth_fine", cloth_linen:"cloth_linen", cloth_rough:"cloth-rough", cloth_royal:"cloth-royal",
-      sandal_fine:"sandal_fine", sandal_gold:"sandal_gold", sandal_leather:"sandal_leather", sandal_papyrus:"sandal_papyrus",
-      bowl_wood:"bowl-wood", bowl_ceramic:"bowl-ceramic", bowl_alabaster:"bowl-alabaster", bowl_gold:"bowl-gold",
-      drink_water:"drink-water", drink_beer:"drink-beer", drink_wine:"drink-wine", drink_nectar:"drink-nectar",
-      bread_ritual:"bread-ritual", tool_scribe:"tool-scribe", jewelry_gold:"jewelry-gold" };
-        const iconFile = FILE_MAP[hint.symbol] || hint.symbol;
-        const iconPath = `assets/img/symbols/${iconFile}.png`;
-        fraseSpan.innerHTML = `<img src="${iconPath}" class="message-icon" alt="${hint.symbol}"> ${hint.text}`;
-      }
-    }
-  });
+  // Carica il JSON delle storie
+  loadHints("it");
 });
 
 
@@ -585,7 +721,7 @@ const reelsCount = 6;
 const rowsCount = 4;
 const linesCount = 50;
 const minBet = 1;
-const initialCredits = 500;
+const initialCredits = 250;
 const pointsPerLevel = 2000;
 const GEM_BONUS_THRESHOLD = 100;
 const GEM_BONUS_AMOUNT = 500;
@@ -653,8 +789,7 @@ function updateUI() {
   if (linesEl) linesEl.textContent = activeLines;
   const multEl = document.getElementById("betMultiplier");
   if (multEl) multEl.textContent = `×${currentBet}`;
-
-  betDisplay.textContent = currentBet;
+  betDisplay.textContent = `×${currentBet}`;
   if (levelDisplay) levelDisplay.textContent = currentLevel;
   levelBar.style.width = `${(levelXP / pointsPerLevel) * 100}%`;
   if (levelText) levelText.textContent = `${levelXP}`;
@@ -681,7 +816,8 @@ function updateUI() {
 
   // Totale simboli possibili nel gioco (unici)
   const symTotal = new Set(masterAllSymbols.map(s => s.name)).size;
-  const fraseLearned = mysteriousHints.filter(h => getSymbolsForCurrentLevel().map(s => s.name).includes(h.symbol)).length;
+  const activeSymNames = getSymbolsForCurrentLevel().map(s => s.name);
+  const fraseLearned = activeSymNames.reduce((tot, sym) => tot + (symbolStoriesUnlocked[sym] || 0), 0);
   const frasiTotal   = mysteriousHints.length;
 
   if (ftSym) ftSym.textContent = `Simboli: ${seenSymbols.size} / ${symTotal}`;
@@ -700,14 +836,24 @@ function updateUI() {
   updateSymbolList();
   // Aggiorna numeri linee visibili
   updateLineNumbers();
+
+  // Disabilita spin se crediti insufficienti anche al minimo assoluto
+  if (!isSpinning && freeSpinsRemaining === 0) {
+    const minCost = (BET_COSTS_MAP[5] || BET_COSTS_MAP[50])[1] || 1;
+    if (currentCredits < minCost) {
+      spinButton.disabled = true;
+      spinButton.title = "Deben insufficienti";
+    } else if (currentCredits < getBetCost()) {
+      // Ha crediti ma non abbastanza per la combo corrente — auto-adjust silenzioso
+      adjustBet();
+    }
+  }
 }
 
 function updateSymbolList() {
   const list = document.getElementById("symbolList");
   if (!list) return;
   list.innerHTML = "";
-
-  
 
   const symbols = getSymbolsForCurrentLevel();
   const newSyms = symbols.filter(s => s.minLevel === currentLevel);
@@ -716,9 +862,24 @@ function updateSymbolList() {
     const isNew = s.minLevel === currentLevel && currentLevel > 1;
     const item = document.createElement("div");
     item.className = "sym-list-item" + (isNew ? " sym-new" : "");
+
+    const prog = getStoryProgress(s.name);
+    const hasStories = getHintsForSymbol(s.name).length > 0 && getStoryThreshold(s.name) < 9999;
+    const allUnlocked = hasStories && prog.unlocked >= getHintsForSymbol(s.name).length;
+
+    const progressBar = hasStories ? `
+      <div class="sym-story-bar-wrap">
+        <div class="sym-story-bar-fill" style="width:${allUnlocked ? 100 : prog.pct}%"></div>
+      </div>
+      <span class="sym-story-pct">${allUnlocked ? '<span style="color:#ffa700">✓</span>' : prog.pct + '%'}</span>
+    ` : '';
+
     item.innerHTML = `
       <img src="assets/img/symbols/${s.file}" alt="${s.name}">
-      <span>${symName(s.name)}</span>
+      <div class="sym-list-info">
+        <span class="sym-list-name">${symName(s.name)}</span>
+        ${hasStories ? `<div class="sym-story-progress">${progressBar}</div>` : ''}
+      </div>
       ${isNew ? '<span class="sym-new-badge">NEW</span>' : ""}
     `;
     list.appendChild(item);
@@ -727,8 +888,29 @@ function updateSymbolList() {
 
 
 function adjustBet() {
+  // Prima abbassa il bet mantenendo le linee
   while (currentBet > 1 && getBetCost() > currentCredits) currentBet--;
-  updateUI();
+
+  // Se ancora non basta, scala anche le linee alla configurazione più economica
+  if (getBetCost() > currentCredits) {
+    const lineOptions = [5, 10, 25, 50];
+    for (const lines of lineOptions) {
+      activeLines = lines;
+      currentBet = 1;
+      if (getBetCost() <= currentCredits) break;
+    }
+  }
+
+  // Se nemmeno 5 linee ×1 basta → disabilita spin
+  if (getBetCost() > currentCredits && freeSpinsRemaining === 0) {
+    spinButton.disabled = true;
+    spinButton.title = "Deben insufficienti";
+  } else {
+    spinButton.disabled = false;
+    spinButton.title = "";
+  }
+
+  updateLineNumbers();
   updateUI();
 }
 
@@ -873,7 +1055,16 @@ function calculateWinnings(grid) {
   let winningLines = [];
   let totalGemPointsThisSpin = 0;
 
-  const SPECIALS = ["jar", "hieroglyphs", "sphinx", "pschent", "papyrus", "mummy", "market", "scale"];
+  // Penalità accumulate per tipo — applicate una sola volta a fine spin
+  let skullPenaltyLines  = [];   // linee dove skull dimezza (solo se c'è vincita)
+  let mummyMaxRate       = 0;    // percentuale più alta trovata tra tutte le linee mummy
+  let mummyTriggered     = false;
+  let curseTriggered     = false;
+  let spiritTriggered    = false;
+
+  const PENALTY_SYMS = ["skull", "curse", "spirit", "mummy"];
+  // Simboli speciali che attivano mini-giochi o effetti (NON penalità)
+  const SPECIALS = ["jar", "hieroglyphs", "sphinx", "pschent", "papyrus", "market", "scale"];
   const GEM_SYMBOLS = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
   const WILD_PAYOUT = { 3: 50, 4: 120, 5: 250, 6: 500 };
 
@@ -898,33 +1089,72 @@ function calculateWinnings(grid) {
       const baseSymbol = isAllWild ? "ouroboros" : symbolsOnLine[i];
 
       if (!isAllWild) {
-        // Salta se simbolo base non valido
-        if (baseSymbol !== "ouroboros" && !payoutTable[baseSymbol] && !SPECIALS.includes(baseSymbol)) continue;
+        // Salta se simbolo non valido (né payout, né speciale, né penalità)
+        const isKnown = payoutTable[baseSymbol] || SPECIALS.includes(baseSymbol) || PENALTY_SYMS.includes(baseSymbol);
+        if (!isKnown) continue;
         matchedPositions.push({ col: i, row: line[i] });
         i++;
       }
 
-      // ── Fase 3: estendi con simboli identici (no wild dopo il base) ──
+      // ── Fase 3: estendi con simboli identici ──
       while (i < symbolsOnLine.length && symbolsOnLine[i] === baseSymbol && !isAllWild) {
         matchedPositions.push({ col: i, row: line[i] });
         i++;
       }
 
       const currentCount = matchedPositions.length;
-      const realMatches = currentCount - wildCount;
-      const hasWild = wildCount > 0;
+      const realMatches  = currentCount - wildCount;
+      const hasWild      = wildCount > 0;
 
-      // ── Validazione ──
+      // ── Validazione minima ──
       if (currentCount < 3) continue;
       if (!isAllWild && realMatches < 1) continue;
 
+      // ── Penalità come simbolo BASE (3+ simboli identici di penalità) ──
+      if (PENALTY_SYMS.includes(baseSymbol) && !hasWild) {
+        matchedPositions.forEach(p => winningSymbols.push(p));
+        winningLines.push({
+          lineIndex,
+          positions: matchedPositions.map(p => [p.row, p.col]),
+          isGemWin: false, isSpecialEffect: false,
+          isPenalty: true,
+          hasWild: false,
+          hasScarabMultiplier: false, hasCoinMultiplier: false,
+          symbol: baseSymbol,
+          matchCount: currentCount
+        });
+
+        switch (baseSymbol) {
+          case "skull":
+            // 3× skull = dimezza i crediti attuali (non una linea, ma lo stack)
+            skullPenaltyLines.push({ lineIndex, isBase: true, count: currentCount });
+            break;
+          case "curse":
+            // 3× curse = sottrae deben fissi scalati per count e bet
+            curseTriggered = true;
+            effects.push({ type: "curse_penalty", count: currentCount });
+            break;
+          case "spirit":
+            // 3× spirit = azzera i free spin
+            spiritTriggered = true;
+            effects.push({ type: "spirit_penalty" });
+            break;
+          case "mummy":
+            // Prende la percentuale più alta tra tutte le combo mummy dello spin
+            const rate = [0,0,0,0.10,0.20,0.30,0.50][Math.min(currentCount,6)] || 0.50;
+            if (rate > mummyMaxRate) { mummyMaxRate = rate; mummyTriggered = true; }
+            break;
+        }
+        break;
+      }
+
+      // ── Blocca wild+moltiplicatore (combo non valida) ──
       const lineHasScarab = line.some((r, c) => grid[c][r] === "scarab");
       const lineHasCoin   = line.some((r, c) => grid[c][r] === "coin");
-
       if (hasWild && (lineHasScarab || lineHasCoin)) continue;
       if (baseSymbol === "papyrus" && (hasWild || lineHasScarab || lineHasCoin)) continue;
 
-      // ── Calcola payout usando currentCount (includi wild nel conteggio) ──
+      // ── Calcola payout ──
       const isGem = GEM_SYMBOLS.includes(baseSymbol);
       let linePayoutAmount = 0;
 
@@ -934,16 +1164,15 @@ function calculateWinnings(grid) {
         linePayoutAmount = payoutTable[baseSymbol][Math.min(currentCount, 6)] || 0;
       }
 
-      // Skull: dimezza solo crediti
-      const hasSkull = line.some((r, c) => grid[c][r] === "skull");
-      if (hasSkull && !isGem && linePayoutAmount > 0) {
+      // ── Skull come PRESENZA sulla linea (dimezza la vincita della linea) ──
+      // Solo sui simboli matchati (non sull'intera linea) e solo se c'è vincita
+      const skullInMatch = matchedPositions.some(p => grid[p.col][p.row] === "skull");
+      if (skullInMatch && !isGem && linePayoutAmount > 0) {
         linePayoutAmount = Math.floor(linePayoutAmount / 2);
-        if (!effects.some(e => typeof e === "object" && e.type === "skull_penalty" && e.lineIndex === lineIndex)) {
-          effects.push({ type: "skull_penalty", lineIndex });
-        }
+        skullPenaltyLines.push({ lineIndex, isBase: false });
       }
 
-      // Moltiplicatori
+      // ── Moltiplicatori ──
       let lineMultiplier = 1;
       let coinApplied = false;
       line.forEach((r, c) => {
@@ -953,26 +1182,22 @@ function calculateWinnings(grid) {
       });
       linePayoutAmount *= lineMultiplier;
 
-      // Gemme
+      // ── Gemme: accumula solo nel risultato, non su gemPoints direttamente ──
       if (isGem) {
-        gemPoints += linePayoutAmount * currentBet;
-        totalGemPointsThisSpin += linePayoutAmount * currentBet;
+        const gemEarned = linePayoutAmount * currentBet;
+        totalGemPointsThisSpin += gemEarned;
       }
 
-      // Effetti speciali
-      if (baseSymbol === "jar" && !effects.includes("jar")) effects.push("jar");
+      // ── Effetti speciali mini-giochi ──
+      if (baseSymbol === "jar"        && !effects.includes("jar"))    effects.push("jar");
+      if (baseSymbol === "sphinx"     && !effects.includes("sphinx")) effects.push("sphinx");
+      if (baseSymbol === "market"     && !effects.includes("market")) effects.push("market");
+      if (baseSymbol === "scale"      && !effects.includes("scale"))  effects.push("scale");
+      if (baseSymbol === "papyrus")   effects.push({ type: "papyrus_bonus" });
       if (baseSymbol === "hieroglyphs") {
         const hPos = matchedPositions.filter(p => grid[p.col][p.row] === "hieroglyphs");
         if (hPos.length > 0) effects.push({ type: "transform", positions: hPos });
       }
-      if (baseSymbol === "sphinx" && !effects.includes("sphinx")) effects.push("sphinx");
-      if (baseSymbol === "mummy") {
-        const penaltyRate = [0,0,0,0.10,0.20,0.30,0.50][currentCount] || 0.5;
-        effects.push({ type: "mummy_penalty", amount: Math.floor(currentCredits * penaltyRate) });
-      }
-      if (baseSymbol === "papyrus") effects.push({ type: "papyrus_bonus" });
-      if (baseSymbol === "market" && !effects.includes("market")) effects.push("market");
-      if (baseSymbol === "scale" && !effects.includes("scale")) effects.push("scale");
 
       const isSpecial = SPECIALS.includes(baseSymbol);
       const isLineEligible = linePayoutAmount > 0 || isGem || isSpecial;
@@ -986,6 +1211,7 @@ function calculateWinnings(grid) {
           positions: matchedPositions.map(p => [p.row, p.col]),
           isGemWin: isGem,
           isSpecialEffect: isSpecial,
+          isPenalty: false,
           hasWild,
           hasScarabMultiplier: lineHasScarab,
           hasCoinMultiplier: lineHasCoin,
@@ -996,6 +1222,23 @@ function calculateWinnings(grid) {
 
       break;
     }
+  });
+
+  // ── Consolida penalità mummy (una sola, la più grave) ──
+  if (mummyTriggered) {
+    effects.push({ type: "mummy_penalty", rate: mummyMaxRate });
+  }
+
+  // ── Skull base (combo 3×skull): dimezza crediti correnti ──
+  const skullBasePenalties = skullPenaltyLines.filter(s => s.isBase);
+  if (skullBasePenalties.length > 0) {
+    effects.push({ type: "skull_base_penalty", count: skullBasePenalties[0].count });
+  }
+
+  // ── Skull presenza: già dimezzato nel payout, logga solo le linee ──
+  const skullPresencePenalties = skullPenaltyLines.filter(s => !s.isBase);
+  skullPresencePenalties.forEach(s => {
+    effects.push({ type: "skull_penalty", lineIndex: s.lineIndex });
   });
 
   return { totalWin, linesWon, effects, winningSymbols, winningLines, totalGemPointsThisSpin };
@@ -1013,6 +1256,12 @@ function createLineNumbers() {
 function updateLineNumbers() {
   const left = document.getElementById("lineNumbersLeft");
   const right = document.getElementById("lineNumbersRight");
+
+  // Preserva i numeri vincenti già accesi prima di ricostruire
+  const activeNums = new Set();
+  left.querySelectorAll(".line-number.active").forEach(el => activeNums.add(parseInt(el.textContent)));
+  right.querySelectorAll(".line-number.active").forEach(el => activeNums.add(parseInt(el.textContent)));
+
   left.innerHTML = "";
   right.innerHTML = "";
 
@@ -1020,8 +1269,17 @@ function updateLineNumbers() {
     const num = document.createElement("div");
     num.className = "line-number";
     num.textContent = i;
-    num.style.setProperty("--glow", `var(--glow-line-${i})`);
-    num.style.opacity = i <= activeLines ? "1" : "0.12";
+    if (i <= activeLines) { num.classList.add("selected"); num.style.opacity = "1"; }
+    else { num.style.opacity = "0.15"; }
+    if (activeNums.has(i)) {
+      num.classList.add("active");
+      num.style.opacity = "1";
+      const neonColor = winningLineColors.get(i);
+      if (neonColor) {
+        num.style.color = neonColor;
+        num.style.textShadow = `0 0 4px ${neonColor}`;
+      }
+    }
     num.style.pointerEvents = i <= activeLines ? "auto" : "none";
     left.appendChild(num);
   }
@@ -1030,11 +1288,101 @@ function updateLineNumbers() {
     const num = document.createElement("div");
     num.className = "line-number";
     num.textContent = i;
-    num.style.setProperty("--glow", `var(--glow-line-${i})`);
-    num.style.opacity = i <= activeLines ? "1" : "0.12";
+    if (i <= activeLines) { num.classList.add("selected"); num.style.opacity = "1"; }
+    else { num.style.opacity = "0.15"; }
+    if (activeNums.has(i)) {
+      num.classList.add("active");
+      num.style.opacity = "1";
+      const neonColor = winningLineColors.get(i);
+      if (neonColor) {
+        num.style.color = neonColor;
+        num.style.textShadow = `0 0 4px ${neonColor}`;
+      }
+    }
     num.style.pointerEvents = i <= activeLines ? "auto" : "none";
     right.appendChild(num);
   }
+}
+
+// === NEON PAYLINE COLORS ===
+const PAYLINE_COLORS = [
+  "#ff003c","#ff6600","#ffcc00","#00ff88","#00ccff",
+  "#aa44ff","#ff44cc","#00ffff","#ff4444","#44ff44",
+  "#ff9900","#00ff44","#4488ff","#ff00aa","#88ff00",
+  "#ff5500","#00ffcc","#ff0088","#66ff00","#0088ff",
+  "#ffaa00","#00ff66","#ff2244","#44ffaa","#aa00ff",
+  "#ff6644","#00ccff","#ffee00","#ff00ff","#00ff00",
+  "#ff3300","#0044ff","#ffcc44","#44ff88","#cc00ff",
+  "#ff8800","#00ff55","#ff1166","#55ffcc","#8800ff",
+  "#ffbb00","#00ffaa","#ff3388","#aaff00","#0055ff",
+  "#ff4400","#44ccff","#ff99cc","#ccff44","#4400ff",
+];
+
+function drawPaylinesSVG(winningLines) {
+  const svg = document.getElementById("paylineOverlay");
+  if (!svg) return;
+  svg.innerHTML = "";
+
+  const container = document.getElementById("slotContainer");
+  if (!container) return;
+
+  // Allinea SVG esattamente sopra slotContainer usando le posizioni reali
+  const containerRect = container.getBoundingClientRect();
+  const wrapperRect = container.parentElement.getBoundingClientRect();
+  const W = containerRect.width;
+  const H = containerRect.height;
+  const offsetLeft = containerRect.left - wrapperRect.left;
+  const offsetTop  = containerRect.top  - wrapperRect.top;
+  svg.style.left   = offsetLeft + "px";
+  svg.style.top    = offsetTop  + "px";
+  svg.style.width  = W + "px";
+  svg.style.height = H + "px";
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+  const COLS = 6;
+  const ROWS = 4;
+  const cellW = W / COLS;
+  const cellH = H / ROWS;
+
+  const cx = (col) => col * cellW + cellW / 2;
+  const cy = (row) => row * cellH + cellH / 2;
+
+  winningLines.forEach((lineObj) => {
+    const color = PAYLINE_COLORS[lineObj.lineIndex % PAYLINE_COLORS.length];
+    const linePath = allAvailablePaylines[lineObj.lineIndex];
+    const points = linePath.map((row, col) => `${cx(col).toFixed(1)},${cy(row).toFixed(1)}`).join(" ");
+
+    // Glow esterno
+    const glowLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    glowLine.setAttribute("points", points);
+    glowLine.setAttribute("fill", "none");
+    glowLine.setAttribute("stroke", color);
+    glowLine.setAttribute("stroke-width", "5");
+    glowLine.setAttribute("stroke-opacity", "0.22");
+    glowLine.setAttribute("stroke-linecap", "round");
+    glowLine.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(glowLine);
+
+    // Linea neon principale
+    const mainLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    mainLine.setAttribute("points", points);
+    mainLine.setAttribute("fill", "none");
+    mainLine.setAttribute("stroke", color);
+    mainLine.setAttribute("stroke-width", "1.5");
+    mainLine.setAttribute("stroke-opacity", "1");
+    mainLine.setAttribute("stroke-linecap", "round");
+    mainLine.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(mainLine);
+
+    // Salva colore nella Map — verrà applicato da updateLineNumbers
+    winningLineColors.set(lineObj.lineIndex + 1, color);
+  });
+}
+
+function clearPaylinesSVG() {
+  const svg = document.getElementById("paylineOverlay");
+  if (svg) svg.innerHTML = "";
+  winningLineColors.clear();
 }
 
 // === HIGHLIGHT WINNING LINES ===
@@ -1049,73 +1397,74 @@ function highlightWinningLines(winningLines) {
 
   winningLines.forEach(lineObj => {
     const lineIndex = lineObj.lineIndex + 1;
-    const positions = lineObj.positions;
+    const positions = lineObj.positions; // [row, col][]
     const linePath = allAvailablePaylines[lineObj.lineIndex];
 
-    // Conta scarab e coin su tutta la linea (non solo matched)
     let scarabCount = 0;
     let coinCount = 0;
     linePath.forEach((row, col) => {
       const sym = grid[col][row];
       if (sym === "scarab") scarabCount++;
-      if (sym === "coin") coinCount++;
+      if (sym === "coin")   coinCount++;
     });
 
-    // Highlight all symbols on the full line (not just matched positions)
-linePath.forEach((row, col) => {
-  const reel = document.querySelectorAll(".reel")[col];
-  const cell = reel.children[row];
-  const symbol = cell.dataset.symbol;
+    linePath.forEach((row, col) => {
+      const reel = document.querySelectorAll(".reel")[col];
+      const cell = reel.children[row];
+      const symbol = cell.dataset.symbol;
+      const isMatched = positions.some(([r, c]) => r === row && c === col);
 
-  if (positions.some(([r, c]) => r === row && c === col)) {
-    cell.classList.add("pulse"); // only matched symbols pulse
-  }
+      if (isMatched) {
+        cell.classList.add("pulse");
+        // Penalità: classe visiva dedicata (colore rosso dal CSS)
+        if (lineObj.isPenalty) {
+          cell.classList.add("symbol-penalty");
+        }
+      }
 
-  cell.style.setProperty("--glow", `var(--glow-line-${lineIndex})`);
+      // Badge moltiplicatori
+      if (symbol === "scarab" && scarabCount > 0) {
+        cell.classList.add("symbol-multiplier", "pulse");
+        cell.setAttribute("data-mult", `x${scarabCount * 2}`);
+      }
+      if (symbol === "coin" && !cell.classList.contains("symbol-multiplier")) {
+        cell.classList.add("symbol-multiplier", "pulse");
+        cell.setAttribute("data-mult", `x10`);
+        coinCount = 0;
+      }
+      if (symbol === "papyrus" && isMatched) {
+        cell.classList.add("symbol-multiplier");
+        cell.setAttribute("data-mult", `?`);
+      }
+    });
 
-  // Badge + pulse su scarab e coin
-  if (symbol === "scarab" && scarabCount > 0) {
-    cell.classList.add("symbol-multiplier");
-    cell.classList.add("pulse");
-    cell.setAttribute("data-mult", `x${scarabCount * 2}`);
-  }
-  if (symbol === "coin") {
-    if (!cell.classList.contains("symbol-multiplier")) {
-      cell.classList.add("symbol-multiplier");
-      cell.classList.add("pulse");
-      cell.setAttribute("data-mult", `x10`);
-      coinCount = 0;
-    }
-  }
-
-if (symbol === "papyrus" && positions.some(([r, c]) => r === row && c === col)) {
-  cell.classList.add("symbol-multiplier");
-  cell.setAttribute("data-mult", `?`);
-}
-
-
-
-});
-
-
-    // Highlight line number
+    // Highlight numero linea
     const lineNumberEl = lineIndex <= 25
       ? document.querySelector(`#lineNumbersLeft .line-number:nth-child(${lineIndex})`)
       : document.querySelector(`#lineNumbersRight .line-number:nth-child(${lineIndex - 25})`);
 
     if (lineNumberEl) {
       lineNumberEl.classList.add("active");
-      lineNumberEl.style.setProperty("--glow", `var(--glow-line-${lineIndex})`);
+      lineNumberEl.style.opacity = "1";
     }
   });
+
+  // Disegna linee neon SVG
+  drawPaylinesSVG(winningLines);
 }
 
 
 // === CLEAR LINE HIGHLIGHTS ===
 function clearLineHighlights() {
+  clearPaylinesSVG();
   document.querySelectorAll(".symbol.pulse").forEach(el => el.classList.remove("pulse"));
+  document.querySelectorAll(".symbol.symbol-penalty").forEach(el => el.classList.remove("symbol-penalty"));
   document.getElementById("slotContainer").classList.remove("has-winners");
-  document.querySelectorAll(".line-number.active").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".line-number.active").forEach(el => {
+    el.classList.remove("active");
+    el.style.color = "";
+    el.style.textShadow = "";
+  });
   document.querySelectorAll(".symbol-multiplier").forEach(el => {
     el.classList.remove("symbol-multiplier");
     el.removeAttribute("data-mult");
@@ -1190,7 +1539,7 @@ function playSphinxGame(initialPrize = 100) {
       levelXP += prize;
       modal.classList.add("hidden");
       modal.style.display = "none"; // Imposta display a 'none'
-      logMessage(`✨ Hai accettato: +${prize} Deben di rame`, "bonus");
+      logMessage(`Sfinge: +${prize} Deben accettati`, "bonus");
       playSound("sphinxwin");
       updateUI();
       spinButton.disabled = false;
@@ -1251,7 +1600,7 @@ function playSphinxGame(initialPrize = 100) {
             levelXP += prize;
             modal.classList.add("hidden");
             modal.style.display = "none";
-            logMessage(`✨ Vincita finale: +${prize} Deben di rame`, "bonus");
+            logMessage(`Sfinge: +${prize} Deben vinti`, "bonus");
             playSound("sphinxwin");
             updateUI();
             spinButton.disabled = false;
@@ -1276,7 +1625,7 @@ function playSphinxGame(initialPrize = 100) {
           document.getElementById("closeSphinx").onclick = () => {
             modal.classList.add("hidden");
             modal.style.display = "none";
-            logMessage(`❌ La Sfinge ti ha sconfitto. Hai perso l'occasione di bonus.`, "curse");
+            logMessage(`Sfinge: Sconfitta. Nessun premio.`, "curse");
             playSound("sphinxlose");
             updateUI();
             spinButton.disabled = false;
@@ -1309,10 +1658,10 @@ function animateWinningSymbols(symbols) {
 
 
 // === SPIN ===
-function calculateWinningsAndEffects() {
+function calculateWinningsAndEffects(spinBet, spinLines, spinCost) {
   const grid = getGridSymbols();
   const result = calculateWinnings(grid);
-  applyResult(result);
+  applyResult(result, spinBet, spinLines, spinCost);
 }
 
 
@@ -1327,21 +1676,26 @@ function handleSpin() {
 
   // Verifica se puoi scommettere (escluse free spin)
   if (freeSpinsRemaining === 0 && currentCredits < getBetCost()) {
-    logMessage(ui("insufficientFunds"), "error");
-    return;
+    // Prova auto-adjust prima di arrendersi
+    adjustBet();
+    if (currentCredits < getBetCost()) {
+      logMessage(ui("insufficientFunds"), "error");
+      return;
+    }
   }
+
+  // Salva i valori della puntata PRIMA di scalare i crediti — immutabili per questo spin
+  const spinBet       = currentBet;
+  const spinLines     = activeLines;
+  const spinCostSnap  = getBetCost();
 
   // Scala credito o free spin
   if (freeSpinsRemaining > 0) {
     freeSpinsRemaining--;
-    logMessage("🌀 Giro gratuito! Rimasti: " + freeSpinsRemaining, "info");
+    logMessage(`Giro gratuito — rimasti: <span class="log-count">${freeSpinsRemaining}</span>`, "info");
   } else {
-    const spinCost = getBetCost();
-    currentCredits -= spinCost;
-    if (getBetCost() > currentCredits) {
-      while (currentBet > 1 && getBetCost() > currentCredits) currentBet--;
-  updateUI();
-    }
+    currentCredits -= spinCostSnap;
+    // Auto-adjust DOPO lo spin, non ora — viene fatto in applyResult
   }
 
   updateUI();
@@ -1381,13 +1735,10 @@ function handleSpin() {
 
       if (i === reelsCount - 1) {
         setTimeout(() => {
-          calculateWinningsAndEffects();
-
-            // Ripristina il bottone spin
-
+          calculateWinningsAndEffects(spinBet, spinLines, spinCostSnap);
 
           spinButton.disabled = false;
-          betPlus.disabled = false; // Riabilita i pulsanti di puntata
+          betPlus.disabled = false;
           betMinus.disabled = false;
           isSpinning = false;
         }, 300);
@@ -1471,6 +1822,31 @@ window.addEventListener("load", () => {
   generateReels();
   createLineNumbers();
 
+  // Ticker rotante sotto la barra XP
+  let tickerIdx = 0;
+  function rotateTicker() {
+    const el = document.getElementById("headerTickerText");
+    if (!el) return;
+    const syms   = document.getElementById("ft-symbols")?.textContent || "";
+    const frasi  = document.getElementById("ft-frasi")?.textContent || "";
+    const xp     = document.getElementById("ft-xp")?.textContent || "";
+    const record = document.getElementById("ft-record")?.textContent || "";
+    const items  = [syms, frasi, xp, record].filter(Boolean);
+    if (!items.length) return;
+
+    el.classList.add("fading");
+    setTimeout(() => {
+      el.textContent = items[tickerIdx % items.length];
+      tickerIdx++;
+      el.classList.remove("fading");
+    }, 400);
+  }
+  rotateTicker();
+  setInterval(rotateTicker, 3000);
+
+  // Fetch record mondiale
+  fetchWorldRecord();
+
   // Bottone clear console
   const clearBtn = document.getElementById("consoleClear");
   if (clearBtn) {
@@ -1490,18 +1866,18 @@ window.addEventListener("load", () => {
 });
 
 
-function applyResult(result) {
-  // Fade out testo vecchio, poi svuota e scrivi nuovo
+function applyResult(result, spinBet, spinLines, spinCost) {
+  // Fade out contenuto vecchio, poi scrivi tutto insieme
   messageArea.classList.add("fading");
   setTimeout(() => {
     messageArea.innerHTML = "";
     void messageArea.offsetHeight;
     messageArea.classList.remove("fading");
-    _applyResultContent(result);
+    _applyResultContent(result, spinBet, spinLines, spinCost);
   }, 400);
 }
 
-function _applyResultContent(result) {
+function _applyResultContent(result, spinBet = currentBet, spinLines = activeLines, spinCost = getBetCost()) {
   const messageArea = document.getElementById("winMessage");
 
   const gemSymbols = ["diamond", "ruby", "topaz", "emerald", "sapphire", "amethyst"];
@@ -1520,77 +1896,112 @@ function _applyResultContent(result) {
   const hasSphinx = result.effects.includes("sphinx");
   const hasTransform = result.effects.some(e => typeof e === "object" && e.type === "transform");
 
+
+
   if (hasCoinWin || hasGemWin || hasPapyrus || hasJar || hasSphinx || hasTransform) {
     if (hasCoinWin) {
-      playSound(result.linesWon === 1 ? "win" : result.linesWon === 2 ? "win2" : "win3");
+      if (totalCoinsThisSpin >= 1000)     playSound("win3");
+      else if (totalCoinsThisSpin >= 300) playSound("win2");
+      else                                playSound("win");
     } else {
       playSound("win");
     }
 
+    // ── Riga riepilogo spin (valori snapshot al momento della puntata) ──
+    const spinInfo = `<span class="log-spininfo">${spinLines} linee  ×${spinBet}  Puntata: ${spinCost} Deben</span>`;
+    logMessage(spinInfo, "spininfo");
+
     if (hasCoinWin) {
-      let title = "🏆 Vincita";
-      let color = "#3d1a00";
-      if (totalCoinsThisSpin >= 1500) { title = "💥 Enorme Vincita"; color = "#5a0000"; }
-      else if (totalCoinsThisSpin >= 1000) { title = "🔥 MEGA Vincita"; color = "#7a2000"; }
-      else if (totalCoinsThisSpin >= 300) { title = "🎉 Grande Vincita"; color = "#8b4010"; }
+      let winClass = "win-small";
+      let title = "Vincita";
+      if (totalCoinsThisSpin >= 1500) { title = "Enorme Vincita"; winClass = "win-huge"; }
+      else if (totalCoinsThisSpin >= 1000) { title = "MEGA Vincita"; winClass = "win-mega"; }
+      else if (totalCoinsThisSpin >= 300)  { title = "Grande Vincita"; winClass = "win-big"; }
 
-      logMessage(
-        `<span style="color: ${color}; font-size: 1.1em; font-weight: bold;">${title}: +${totalCoinsThisSpin} Deben di rame</span>`,
-        "bigwin"
-      );
+      logMessage(`${title} &nbsp;+${totalCoinsThisSpin} Deben`, winClass);
 
-      // Dettaglio linee vincenti
+      // Dettaglio linee — compatto su una riga ciascuna
+      const unlockedThisSpin = []; // storie sbloccate in questo spin
       result.winningLines.forEach(line => {
-        if (line.isGemWin || line.isSpecialEffect) return;
+        if (line.isGemWin || line.isSpecialEffect || line.isPenalty) return;
         const nome = symName(line.symbol);
-        const wild = line.hasWild ? " (Wild)" : "";
-        const mult = line.hasCoinMultiplier ? " ×10" : line.hasScarabMultiplier ? " ×2" : "";
-        const payout = payoutTable[line.symbol] ? payoutTable[line.symbol][Math.min(line.matchCount,6)] : 0;
+        const prefix = line.hasWild ? `<span class='log-wild'>Wild</span> + ` : "";
+        const mult = line.hasCoinMultiplier
+          ? ` moltiplicato <span class='log-mult'>×10</span>`
+          : line.hasScarabMultiplier
+          ? ` moltiplicato <span class='log-mult'>×2</span>`
+          : "";
+        const payout = payoutTable[line.symbol] ? payoutTable[line.symbol][Math.min(line.matchCount,6)] * spinBet : 0;
         if (payout > 0) {
-          logMessage(`↳ Linea ${line.lineIndex+1}: ${nome}${wild} ×${line.matchCount}${mult} → +${payout} Deben`, "info");
+          logMessage(`<span class='log-line-num'>#${line.lineIndex+1}</span> ${prefix}${nome} <span class='log-count'>×${line.matchCount}</span>${mult} — vinci <span class='log-payout'>+${payout}</span>`, "info");
+          // Accumula punti story per questo simbolo
+          const storyPts = calcStoryPoints(payout, line.matchCount);
+          const newStory = addSymbolStoryPoints(line.symbol, storyPts);
+          if (newStory && !unlockedThisSpin.find(u => u.symbol === line.symbol && u.text === newStory.text)) {
+            unlockedThisSpin.push({ symbol: line.symbol, hint: newStory });
+          }
+        }
+      });
+      // Mostra storie sbloccate sopra il log
+      unlockedThisSpin.forEach(u => {
+        const FILE_MAP = { oillamp:"oil-lamp", canopic_jar:"canopic-jar",
+          cloth_fine:"cloth_fine", cloth_linen:"cloth_linen", cloth_rough:"cloth-rough", cloth_royal:"cloth-royal",
+          sandal_fine:"sandal_fine", sandal_gold:"sandal_gold", sandal_leather:"sandal_leather", sandal_papyrus:"sandal_papyrus",
+          bowl_wood:"bowl-wood", bowl_ceramic:"bowl-ceramic", bowl_alabaster:"bowl-alabaster", bowl_gold:"bowl-gold",
+          drink_water:"drink-water", drink_beer:"drink-beer", drink_wine:"drink-wine", drink_nectar:"drink-nectar",
+          bread_ritual:"bread-ritual", tool_scribe:"tool-scribe", jewelry_gold:"jewelry-gold" };
+        const iconFile = FILE_MAP[u.hint.symbol] || u.hint.symbol;
+        const unlockNum = symbolStoriesUnlocked[u.symbol] || 1;
+        const total = getHintsForSymbol(u.symbol).length;
+        logMessage(`<span class='log-story-unlock'>Storia sbloccata — ${symName(u.symbol)} (${unlockNum}/${total})</span>`, "story-unlock");
+        
+        playSound("level");
+      });
+      // Aggiorna la colonna simboli dopo aver modificato i contatori
+      if (unlockedThisSpin.length > 0) updateSymbolList();
+
+      // Punti story per scarab e ouroboros presenti sulle linee vincenti
+      const specialPresence = new Set();
+      result.winningLines.forEach(line => {
+        if (line.hasWild) specialPresence.add("ouroboros");
+        if (line.hasScarabMultiplier) specialPresence.add("scarab");
+        if (line.hasCoinMultiplier) specialPresence.add("coin");
+        if (line.symbol === "pschent") specialPresence.add("pschent");
+      });
+      specialPresence.forEach(sym => {
+        const pts = sym === "pschent" ? 200 : sym === "coin" ? 60 : 40;
+        const ns = addSymbolStoryPoints(sym, pts);
+        if (ns) {
+          logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName(sym)} (${symbolStoriesUnlocked[sym]}/${getHintsForSymbol(sym).length})</span>`, "story-unlock");
+          playSound("level");
+          updateSymbolList();
         }
       });
     } else if (hasGemWin) {
-      logMessage(ui("gemsCollected"), "bonus");
+      logMessage(`Pietre preziose raccolte`, "bonus");
     }
   } else {
     playRandomLoseSound();
-    logMessage(`<span style="color:#fd8a74;font-weight:bold;">${ui("noWin")}</span>`, "info");
-  }
-
-  // Frase con icona simbolo — appare SOLO quando si perde, in sequenza ordinata
-  if (!hasCoinWin && !hasGemWin && !hasPapyrus && !hasJar && !hasSphinx && !hasTransform) {
-    if (mysteriousHints && mysteriousHints.length > 0) {
-      const hint = _getNextHint();
-      if (hint) {
-        const FILE_MAP = { oillamp:"oil-lamp", canopic_jar:"canopic-jar",
-      cloth_fine:"cloth_fine", cloth_linen:"cloth_linen", cloth_rough:"cloth-rough", cloth_royal:"cloth-royal",
-      sandal_fine:"sandal_fine", sandal_gold:"sandal_gold", sandal_leather:"sandal_leather", sandal_papyrus:"sandal_papyrus",
-      bowl_wood:"bowl-wood", bowl_ceramic:"bowl-ceramic", bowl_alabaster:"bowl-alabaster", bowl_gold:"bowl-gold",
-      drink_water:"drink-water", drink_beer:"drink-beer", drink_wine:"drink-wine", drink_nectar:"drink-nectar",
-      bread_ritual:"bread-ritual", tool_scribe:"tool-scribe", jewelry_gold:"jewelry-gold" };
-        const iconFile = FILE_MAP[hint.symbol] || hint.symbol;
-        const iconPath = `assets/img/symbols/${iconFile}.png`;
-        logMessage(`<img src="${iconPath}" class="message-icon" alt="${hint.symbol}"> ${hint.text}`, "mystic");
-      }
-    }
+    logMessage(`<span class="log-spininfo">${spinLines} linee  ×${spinBet}  Puntata: ${spinCost} Deben</span>`, "spininfo");
+    logMessage(`Nessuna vincita`, "lose");
   }
 
   // Effetti speciali
   result.winningLines.forEach(line => {
     if (line.isSpecialEffect) {
       switch (line.symbol) {
-        case "jar":         logMessage(`🏺 Vaso Antico attivato!`, "bonus"); break;
-        case "hieroglyphs": logMessage(`🔄 Geroglifici trasformati!`, "bonus"); break;
-        case "sphinx":      logMessage(`✨ Sfinge: mini-gioco!`, "bonus"); break;
-        case "pschent":     logMessage(`👑 Pschent: Jackpot!`, "win"); break;
-        case "papyrus":     logMessage(`📜 Papyrus: tesoro!`, "bonus"); break;
+        case "jar":         logMessage(`Vaso Antico: attivato`, "bonus"); break;
+        case "hieroglyphs": logMessage(`Geroglifici: trasformazione in corso`, "bonus"); break;
+        case "sphinx":      logMessage(`Sfinge: mini-gioco avviato`, "bonus"); break;
+        case "pschent":     logMessage(`Pschent: <span class="log-payout">JACKPOT</span>`, "win"); break;
+        case "papyrus":     logMessage(`Papiro Sacro: rivelazione in corso`, "bonus"); break;
       }
     }
   });
 
   if (totalGemPointsThisSpin > 0) {
-    logMessage(`💠 Pietre raccolte: +${totalGemPointsThisSpin} (totale: ${gemPoints}/1000)`, "level");
+    gemPoints += totalGemPointsThisSpin; // accumulo gemme qui, non dentro calculateWinnings
+    logMessage(`Pietre raccolte: <span class="log-payout">+${totalGemPointsThisSpin}</span> (totale: ${gemPoints}/100)`, "level");
   }
   // Nota: checkGemBonus() viene chiamato alla fine di applyResult
   // dopo TUTTI gli effetti (jar/papyrus possono aggiungere gemme)
@@ -1626,7 +2037,8 @@ function _applyResultContent(result) {
           currentCredits += newResult.totalWin;
           totalScore += newResult.totalWin;
           levelXP += newResult.totalWin;
-          logMessage(`📜 I geroglifici rivelano: +${newResult.totalWin} Monete antiche!`, "bonus");
+          if (newResult.totalGemPointsThisSpin > 0) gemPoints += newResult.totalGemPointsThisSpin;
+          logMessage(`Geroglifici: <span class="log-payout">+${newResult.totalWin} Deben</span>`, "bonus");
           animateWinningSymbols(newResult.winningSymbols);
           highlightWinningLines(newResult.winningLines);
           updateUI();
@@ -1638,19 +2050,20 @@ function _applyResultContent(result) {
 
     if (effect === "sphinx") {
       setTimeout(() => playSphinxGame(), 1000);
-      playSound("win3");
+      { const ns = addSymbolStoryPoints("sphinx", 60); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("sphinx")} (${symbolStoriesUnlocked["sphinx"]}/${getHintsForSymbol("sphinx").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
     }
 
     if (effect === "market") {
       const prize = 80 + Math.floor(Math.random() * 170);
       setTimeout(() => playMarketGame(prize), 800);
       playSound("bonus");
+      { const ns = addSymbolStoryPoints("market", 50); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("market")} (${symbolStoriesUnlocked["market"]}/${getHintsForSymbol("market").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
     }
 
     if (effect === "scale") {
       const prize = 200 + Math.floor(Math.random() * 300);
       setTimeout(() => playAnubiGame(prize), 800);
-      playSound("win2");
+      { const ns = addSymbolStoryPoints("scale", 60); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("scale")} (${symbolStoriesUnlocked["scale"]}/${getHintsForSymbol("scale").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
     }
 
     if (typeof effect === "object" && effect.type === "papyrus_bonus") {
@@ -1658,30 +2071,68 @@ function _applyResultContent(result) {
       if (choice === 0) {
         const coins = 50 + Math.floor(Math.random() * 151);
         currentCredits += coins;
-        logMessage(`📜 Il Papiro rivela un tesoro: +${coins} Deben di rame!`, "bonus");
+        logMessage(`Papiro: +${coins} Deben`, "bonus");
         playSound("bonus");
       } else if (choice === 1) {
         const gems = 10 + Math.floor(Math.random() * 291);
         gemPoints += gems;
-        logMessage(`📜 Il Papiro rivela pietre perdute: +${gems} Pietre Preziose!`, "bonus");
+        logMessage(`Papiro: +${gems} Pietre Preziose`, "bonus");
         playSound("bonus");
       } else {
         const consolation = 10 + Math.floor(Math.random() * 30);
         gemPoints += consolation;
-        logMessage(`📜 Il Papiro è oscuro... +${consolation} Pietre Preziose come conforto.`, "bonus");
+        logMessage(`Papiro: oscuro. +${consolation} Pietre come conforto`, "bonus");
         playSound("bonus");
       }
     }
 
+    // ── PENALITÀ ROBUSTE ──
+
+    // Mummy: una sola penalità percentuale (la più alta trovata nello spin)
     if (typeof effect === "object" && effect.type === "mummy_penalty") {
-      currentCredits = Math.max(0, currentCredits - effect.amount);
-      logMessage(`🧟 Maledizione della Mummia! -${effect.amount} Deben di rame!`, "curse");
-      playSound("gameover");
+      const amount = Math.floor(currentCredits * effect.rate);
+      currentCredits = Math.max(0, currentCredits - amount);
+      logMessage(`Mummia: <span class="log-penalty">-${amount} Deben</span> (${Math.round(effect.rate*100)}% dei crediti)`, "curse");
+      playSound("ghost");
+      { const ns = addSymbolStoryPoints("mummy", 80); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("mummy")} (${symbolStoriesUnlocked["mummy"]}/${getHintsForSymbol("mummy").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
     }
 
+    // Skull come simbolo base (3×skull): dimezza i crediti correnti
+    if (typeof effect === "object" && effect.type === "skull_base_penalty") {
+      const amount = Math.floor(currentCredits / 2);
+      currentCredits = Math.max(0, currentCredits - amount);
+      logMessage(`Teschio: Deben dimezzati — <span class="log-penalty">-${amount} Deben</span>`, "curse");
+      playSound("ghost");
+      { const ns = addSymbolStoryPoints("skull", 80); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("skull")} (${symbolStoriesUnlocked["skull"]}/${getHintsForSymbol("skull").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
+    }
+
+    // Skull come presenza su linea vincente (già dimezzato nel payout)
     if (typeof effect === "object" && effect.type === "skull_penalty") {
-      logMessage(`💀 Teschio sulla linea ${effect.lineIndex + 1}: premio dimezzato!`, "curse");
+      logMessage(`Teschio (linea ${effect.lineIndex + 1}): premio <span class="log-penalty">dimezzato</span>`, "curse");
       playSound("scrapper");
+    }
+
+    // Curse: sottrae deben fissi, scala con count e bet
+    if (typeof effect === "object" && effect.type === "curse_penalty") {
+      const base = [0, 0, 0, 30, 70, 140, 280][Math.min(effect.count, 6)];
+      const amount = base * currentBet;
+      currentCredits = Math.max(0, currentCredits - amount);
+      logMessage(`Maledizione: <span class="log-penalty">-${amount} Deben</span>`, "curse");
+      playSound("ghost");
+      { const ns = addSymbolStoryPoints("curse", 80); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("curse")} (${symbolStoriesUnlocked["curse"]}/${getHintsForSymbol("curse").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
+    }
+
+    // Spirit: azzera i free spin
+    if (typeof effect === "object" && effect.type === "spirit_penalty") {
+      const lost = freeSpinsRemaining;
+      freeSpinsRemaining = 0;
+      if (lost > 0) {
+        logMessage(`Spirito Maligno: <span class="log-penalty">${lost} giri gratuiti persi</span>`, "curse");
+      } else {
+        logMessage(`Spirito Maligno: nessun giro da sottrarre`, "curse");
+      }
+      playSound("ghost");
+      { const ns = addSymbolStoryPoints("spirit", 80); if (ns) { logMessage(`<span class="log-story-unlock">Storia sbloccata — ${symName("spirit")} (${symbolStoriesUnlocked["spirit"]}/${getHintsForSymbol("spirit").length})</span>`, "story-unlock"); playSound("level"); updateSymbolList(); } }
     }
   });
 
@@ -1689,7 +2140,11 @@ function _applyResultContent(result) {
   if (levelsGained > 0) {
     currentLevel += levelsGained;
     levelXP = levelXP % pointsPerLevel;
-    logMessage(`⚡️ Hai raggiunto il livello ${currentLevel}!`, "level");
+    const newClass = getSocialStatus(currentLevel);
+    logMessage(
+      `<span class="log-levelup">LIVELLO ${currentLevel}</span><span class="log-levelup-class">${newClass}</span>`,
+      "levelup"
+    );
     playSound("level");
   }
 
@@ -1706,6 +2161,15 @@ function _applyResultContent(result) {
 
   animateWinningSymbols(result.winningSymbols);
   highlightWinningLines(result.winningLines);
+
+  // Auto-adjust bet SOLO ora, dopo che la vincita è stata applicata
+  if (currentBet > 1 && getBetCost() > currentCredits) {
+    while (currentBet > 1 && getBetCost() > currentCredits) currentBet--;
+  }
+
+  // Controlla record mondiale
+  checkWorldRecord();
+
   updateUI();
 }
 
@@ -1715,7 +2179,7 @@ function checkGemBonus() {
     const bonus = stacks * GEM_BONUS_AMOUNT;
     currentCredits += bonus;
     gemPoints %= GEM_BONUS_THRESHOLD;
-    logMessage(`💎 Tesoro del Tempio! +${bonus} Deben dalle pietre preziose!`, "bonus");
+    logMessage(`Tesoro del Tempio: <span class="log-payout">+${bonus} Deben</span> dalle pietre`, "bonus");
     playSound("bonus");
   }
 }
@@ -1775,24 +2239,140 @@ function animateNumberChange(id, newValue) {
   function startGame() {
     const name = introInput.value.trim();
     if (name.length < 2) return;
-    // Trasferisci nome al campo di gioco
     playerName = name;
-    // Aggiorna il display statico nell'header di gioco
     const nameDisplay = document.getElementById("playerNameDisplay");
     if (nameDisplay) nameDisplay.textContent = name;
-    // Attiva dev tools se nome inizia con "developer"
     const devTools = document.getElementById("devTools");
     if (devTools) {
       devTools.style.display = name.toLowerCase().startsWith("developer") ? "flex" : "none";
     }
-    // Aggiorna hidden input se ancora presente
     const gameInput = document.getElementById("playerNameInput");
     if (gameInput) gameInput.value = name;
-    // Fade out intro
     introScreen.classList.remove("visible");
     setTimeout(() => { introScreen.classList.add("hidden"); }, 700);
-    // Avvia musica
     startBgMusic();
+
+    // Pool di messaggi di benvenuto — scelti a caso
+    const WELCOME_POOL = [
+      [
+        `Il Nilo ti ha scelto, <strong>${name}</strong>.`,
+        `Ogni simbolo custodisce una storia. Ogni vincita svela un frammento di eternità.`,
+        `Consulta le <strong>Regole</strong> per conoscere le vie del tempio — o lasciati guidare dal destino.`,
+      ],
+      [
+        `Benvenuto nel tempio, <strong>${name}</strong>.`,
+        `Gli dei osservano. I simboli parlano a chi sa ascoltare.`,
+        `Accumula vincite, svela storie, ascendi dalla polvere alla divinità.`,
+      ],
+      [
+        `<strong>${name}</strong> — il tuo nome è ora inciso sulle pareti del tempio.`,
+        `Ogni giro è un respiro del Nilo. Ogni storia sbloccata è un segreto eterno.`,
+        `Inizia a giocare, o studia prima le <strong>Regole</strong> del destino.`,
+      ],
+      [
+        `Ra illumina il tuo cammino, <strong>${name}</strong>.`,
+        `I simboli nascondono verità antiche. Le vincite le portano alla luce.`,
+        `Il tempio è aperto. Il dado è tratto. La sabbia comincia a scorrere.`,
+      ],
+      [
+        `Osiride ti giudica, <strong>${name}</strong>. Il tuo cuore è leggero come una piuma?`,
+        `Solo chi accumula saggezza — e Deben — potrà salire di rango.`,
+        `Leggi le <strong>Regole</strong>, o affidati alla corrente del Grande Fiume.`,
+      ],
+      [
+        `Il sacerdote ti annuncia, <strong>${name}</strong>: il tempio attende la tua offerta.`,
+        `Ogni simbolo che vinci porta con sé una storia dimenticata.`,
+        `Sbloccale tutte. Il papiro non mente.`,
+      ],
+      [
+        `<strong>${name}</strong>, schiavo o dio — lo decide il Nilo.`,
+        `Il grano sfama, la pietra costruisce, l'oro eleva. Vinci tutto.`,
+        `Le <strong>Regole</strong> sono il tuo grimorio. Il resto è fortuna.`,
+      ],
+      [
+        `Thoth registra il tuo arrivo, <strong>${name}</strong>.`,
+        `La scrittura sacra non dimentica chi vince — né chi perde.`,
+        `Ogni storia sbloccata è un verso del Libro dei Morti. Leggilo tutto.`,
+      ],
+      [
+        `Horus veglia su di te, <strong>${name}</strong>.`,
+        `L'occhio del falco vede ogni combinazione prima ancora che appaia.`,
+        `Fidati del tuo istinto. O consulta le <strong>Regole</strong>, se preferisci la certezza.`,
+      ],
+      [
+        `<strong>${name}</strong> — il deserto è vasto, ma il tempio è qui.`,
+        `Le pietre preziose non si trovano in superficie. Scava con ogni giro.`,
+        `Le storie dei simboli ti aspettano nel <strong>Papiro</strong>.`,
+      ],
+      [
+        `Bastet ti sorride, <strong>${name}</strong>. Sarà di buon auspicio.`,
+        `Il gatto porta fortuna nel tempio. Ma la fortuna va guadagnata.`,
+        `Gira. Vinci. Sali. Le storie si sbloccano lungo la strada.`,
+      ],
+      [
+        `<strong>${name}</strong> — Anubi pesa le anime. La tua inizia adesso.`,
+        `Le bilance di Ma'at non mentono. Ogni azione ha il suo peso nel tempio.`,
+        `Studia le <strong>Regole</strong> o lascia che il destino decida per te.`,
+      ],
+      [
+        `Seth agita il vento del cambiamento, <strong>${name}</strong>.`,
+        `Caos e ordine si alternano come il Nilo in piena e in secca.`,
+        `Abbraccia l'incertezza. È lì che vivono le grandi vincite.`,
+      ],
+      [
+        `<strong>${name}</strong>, l'acqua del Nilo scorre da sempre. Ora scorre anche per te.`,
+        `I simboli del tempio parlano lingue antiche. Impara ad ascoltarli.`,
+        `Ogni livello è una nuova vita. Quante ne vivrai?`,
+      ],
+      [
+        `Nefertiti ti osserva, <strong>${name}</strong>. La bellezza si conquista.`,
+        `Dal grano grezzo all'oro puro — questo è il cammino del tempio.`,
+        `Le storie sbloccate vivono nel <strong>Papiro</strong>. Le vincite vivono nei Deben.`,
+      ],
+      [
+        `<strong>${name}</strong> — il faraone un giorno nacque anche lui senza corona.`,
+        `Ogni giro è un mattone. Ogni vittoria è una pietra della piramide.`,
+        `Costruisci la tua eternità. Il tempio ha tutto ciò che ti serve.`,
+      ],
+      [
+        `Iside stende le ali su di te, <strong>${name}</strong>.`,
+        `La dea della magia protegge chi conosce le regole del gioco — e chi le ignora.`,
+        `Scegli: leggi le <strong>Regole</strong>, o fidati della magia.`,
+      ],
+      [
+        `<strong>${name}</strong> — lo scarabeo rotola la sua sfera. Oggi sei tu quella sfera.`,
+        `Il mondo gira. I rulli girano. Le storie si sbloccano lentamente, ma si sbloccano.`,
+        `Pazienza e audacia. Questi sono i due pilastri del tempio.`,
+      ],
+      [
+        `Amon, il nascosto, ti rivela il suo tempio, <strong>${name}</strong>.`,
+        `Ciò che è nascosto nei simboli si svela solo attraverso le vincite.`,
+        `Il <strong>Papiro</strong> custodisce ciò che hai conquistato. Aprilo quando sei pronto.`,
+      ],
+      [
+        `<strong>${name}</strong> — la stella del nord ha guidato i navigatori. Oggi guida te.`,
+        `Il tempio di Kemet non ha uscita. Solo ascesa.`,
+        `Inizia dal basso. Finisci tra gli dei. Questa è la promessa del Nilo.`,
+      ],
+    ];
+
+    const picked = WELCOME_POOL[Math.floor(Math.random() * WELCOME_POOL.length)];
+    setTimeout(() => {
+      const msgBox = document.getElementById("winMessage");
+      if (!msgBox) return;
+      msgBox.innerHTML = "";
+      picked.forEach((line, i) => {
+        setTimeout(() => {
+          const p = document.createElement("p");
+          p.className = "log-entry mystic";
+          p.style.opacity = "0";
+          p.style.transition = "opacity 0.6s ease";
+          p.innerHTML = line;
+          msgBox.appendChild(p);
+          requestAnimationFrame(() => requestAnimationFrame(() => { p.style.opacity = "1"; }));
+        }, i * 600);
+      });
+    }, 800);
   }
 })();
 
@@ -1824,15 +2404,18 @@ function _buildPapyrusBook() {
       drink_water:"drink-water", drink_beer:"drink-beer", drink_wine:"drink-wine", drink_nectar:"drink-nectar",
       bread_ritual:"bread-ritual", tool_scribe:"tool-scribe", jewelry_gold:"jewelry-gold" };
 
-  // Simboli attivi con frasi
+  // Simboli attivi — solo storie sbloccate
   const activeSyms = getSymbolsForCurrentLevel().map(s => s.name);
   const bySymbol = {};
   activeSyms.forEach(sym => {
-    const frasi = mysteriousHints.filter(h => h.symbol === sym);
+    const tutteFragasi = mysteriousHints.filter(h => h.symbol === sym);
+    const numUnlocked = symbolStoriesUnlocked[sym] || 0;
+    const frasi = tutteFragasi.slice(0, numUnlocked);
     if (frasi.length > 0) bySymbol[sym] = frasi;
   });
   const symsWithStories = Object.keys(bySymbol);
-  const totalAvail = Object.values(bySymbol).reduce((a,b) => a + b.length, 0);
+  const totalUnlocked = Object.values(symbolStoriesUnlocked).reduce((a, b) => a + b, 0);
+  const totalAll = mysteriousHints.length;
 
   if (!_papyrusActiveFilter || !bySymbol[_papyrusActiveFilter]) {
     _papyrusActiveFilter = symsWithStories[0] || null;
@@ -1843,7 +2426,7 @@ function _buildPapyrusBook() {
   // Contatore
   const ctr = document.createElement('div');
   ctr.style.cssText = 'font-family:"Syne Mono",monospace;font-size:13px;color:#9a7040;margin-bottom:28px;';
-  ctr.textContent = totalAvail + ' storie sbloccate su ' + mysteriousHints.length;
+  ctr.textContent = totalUnlocked + ' storie sbloccate su ' + totalAll;
   inner.appendChild(ctr);
 
   const layout = document.createElement('div');
@@ -1949,6 +2532,11 @@ function showGameOver() {
       });
       const res = await fetch(LEADERBOARD_API + "/leaderboard");
       const scores = await res.json();
+      // Aggiorna record mondiale con i dati freschi
+      if (scores && scores.length > 0) {
+        worldRecord = { name: scores[0].name, score: scores[0].score };
+        updateTickerRecord();
+      }
       renderLeaderboard(scores.slice(0, 10));
     } catch(e) {
       list.innerHTML = "<div style='color:#9a7040;font-size:13px;text-align:center;padding:10px;'>Leaderboard non disponibile.</div>";
@@ -2046,7 +2634,7 @@ function playMarketGame(prize) {
   // Usa payout x3 come valore di riferimento
   const stallRewards = normPool.map(s => {
     const val = (payoutTable[s.name] && payoutTable[s.name][3]) ? payoutTable[s.name][3] * currentBet : 20;
-    return { icon: s.file, name: s.name, label: NOMI_M[s.name] || s.name, value: val };
+    return { icon: s.file, name: s.name, label: symName(s.name) || s.name, value: val };
   });
 
   desc.textContent = ui("marketDesc");
@@ -2323,7 +2911,9 @@ function playAnubiGame(prize) {
         totalScore += prize;
         levelXP += prize;
         result.textContent = `✅ La bilancia pende dalla tua parte! +${prize} Deben`;
-        playSound("sphinxwin");
+        if (prize >= 400)      playSound("win3");
+        else if (prize >= 250) playSound("win2");
+        else                   playSound("win");
       } else {
         result.textContent = `❌ Anubi non approva. Nessun premio questa volta.`;
         playSound("sphinxlose");
@@ -2345,7 +2935,7 @@ function closeAnubi() {
 
 function restartGame() {
   // Reset stato
-  currentCredits = 500;
+  currentCredits = 250;
   totalScore     = 0;
   gemPoints      = 0;
   currentBet     = 1;
@@ -2353,6 +2943,7 @@ function restartGame() {
   levelXP        = 0;
   freeSpinsRemaining = 0;
   isSpinning     = false;
+  _recordBeaten  = false;
 
   document.getElementById("gameOverScreen").classList.add("hidden");
   document.getElementById("winMessage").innerHTML = "";
@@ -2404,19 +2995,19 @@ function buildPaytable() {
   const SPECIALS_LIST  = [...FIXED, ...PENALTIES, ...MINIGAMES, ...MULTIPLIERS];
 
   const SPECIAL_DESC = {
-    ouroboros:  "<em>WILD</em> — Sostituisce qualsiasi simbolo normale.",
-    pschent:    "<em>JACKPOT</em> — 3x: <em>2000</em> · 4x: <em>5000</em> · 5x: <em>12000</em> · 6x: <em>50000</em> Deben.",
-    scarab:     "<em>Moltiplicatore ×2</em> — Ogni scarabeo sulla linea vincente raddoppia il premio.",
-    coin:       "<em>Moltiplicatore ×10</em> — Moltiplica per 10 il premio della linea.",
-    skull:      "<em>Teschio</em> — Penalità: dimezza il premio della linea vincente.",
-    curse:      "<em>Maledizione</em> — Penalità: sottrae Deben.",
-    spirit:     "<em>Spirito Maligno</em> — Penalità: blocca i giri gratuiti.",
-    mummy:      "<em>Mummia</em> — Penalità percentuale sui tuoi Deben.",
-    market:     "<em>Mercato del Nilo</em> — Mini-gioco Lv1-4: scegli 1 cesto su 3.",
-    scale:      "<em>Bilancia di Ma'at</em> — Mini-gioco Lv5-9: scegli la divinità più potente.",
-    sphinx:     "<em>Sfinge</em> — Mini-gioco Lv10+: indovina la carta più alta.",
-    papyrus:    "<em>Papiro Sacro</em> — Mini-gioco futuro: rivela antichi segreti.",
-    jar:        "<em>Vaso Antico</em> — Scegli 3 vasi su 5: Deben, Giri o Pietre Preziose.",
+    ouroboros:  "<em>Wild — Ouroboros</em> — Sostituisce qualsiasi simbolo normale. Può completare o estendere qualsiasi combinazione vincente. Non si combina con Scarabeo o Moneta.",
+    pschent:    "<em>Jackpot — Pschent</em> — La Doppia Corona del Faraone. 3×: 2.000 · 4×: 5.000 · 5×: 12.000 · 6×: 50.000 Deben. Il premio più alto del tempio.",
+    scarab:     "<em>Moltiplicatore ×2 — Scarabeo</em> — Ogni scarabeo sulla linea raddoppia il premio. Due scarabei = ×4. Non si combina con Wild o Moneta.",
+    coin:       "<em>Moltiplicatore ×10 — Moneta</em> — Moltiplica per 10 il premio della linea. Non si combina con Wild o Scarabeo.",
+    skull:      "<em>Penalità — Teschio</em> — Se appare sulla tua linea vincente: dimezza il premio di quella linea. Se esce in combo 3×: dimezza tutti i tuoi Deben attuali.",
+    curse:      "<em>Penalità — Maledizione</em> — Combo 3×: -30×Bet · 4×: -70×Bet · 5×: -140×Bet · 6×: -280×Bet. Gli dei sottraggono i Deben direttamente.",
+    spirit:     "<em>Penalità — Spirito Maligno</em> — Combo 3×: azzera tutti i giri gratuiti accumulati. Se non ne hai, il tempio rimane silenzioso.",
+    mummy:      "<em>Penalità — Mummia</em> — Combo 3×: -10% dei crediti · 4×: -20% · 5×: -30% · 6×: -50%. Se escono più combo nello stesso spin, si applica solo la penalità più grave.",
+    market:     "<em>Mini-gioco — Mercato del Nilo</em> — Attivo ai livelli bassi. Scegli 1 cesto su 3: ogni cesto nasconde simboli del livello con premi diversi.",
+    scale:      "<em>Mini-gioco — Bilancia di Ma'at</em> — Attivo ai livelli medi. Scegli la divinità più potente tra tre: se indovini, vinci il premio.",
+    sphinx:     "<em>Mini-gioco — Sfinge</em> — Attivo dai livelli alti. La Sfinge rivela una carta: scegli la tua e prova a batterla. Puoi raddoppiare il premio fino a 3 volte.",
+    papyrus:    "<em>Mini-gioco — Papiro Sacro</em> — Rivela un tesoro nascosto: Deben, Pietre Preziose o un piccolo conforto dal Nilo.",
+    jar:        "<em>Mini-gioco — Vaso Antico</em> — Scegli 3 vasi su 5. Ogni vaso nasconde: Deben, Giri Gratuiti, Pietre Preziose o una Maledizione.",
   };
 
   // (filtri per livello spostati sotto, nella sezione paytable completa)
@@ -2465,14 +3056,14 @@ function buildPaytable() {
   const intro = document.createElement("div");
   intro.style.cssText = "background:#fdfdfd8f;border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:16px;color:#5a3010;line-height:1.8;";
   intro.innerHTML = `
-    <div style="font-family:'Cinzel',serif;font-size:20px;color:#3d1a00;font-weight:bold;margin-bottom:16px;">☥ Come si gioca</div>
+    <div style="font-family:'Cinzel',serif;font-size:20px;color:#3d1a00;font-weight:bold;margin-bottom:20px;">☥ Come si gioca</div>
 
-    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Le Basi</div>
-    <p style="margin-bottom:8px;">Premi <strong>SPIN</strong> per far girare i 6 rulli. Le combinazioni vincenti si formano da <strong>sinistra a destra</strong> su una delle <strong>50 linee</strong> sempre attive.</p>
-    <p style="margin-bottom:16px;">Servono almeno <strong>3 simboli identici consecutivi</strong> partendo dal primo rullo per vincere.</p>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Le Basi</div>
+    <p style="margin-bottom:8px;">Premi <strong>SPIN</strong> per far girare i 6 rulli. Le combinazioni vincenti si formano da <strong>sinistra a destra</strong> su una delle payline attive.</p>
+    <p style="margin-bottom:16px;">Servono almeno <strong>3 simboli identici consecutivi</strong> partendo dal primo rullo. Più simboli = premio più alto.</p>
 
-    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Linee Attive</div>
-    <p style="margin-bottom:10px;">Scegli quante linee giocare con i bottoni sotto lo SPIN. Meno linee = meno costo, meno possibilità di vincita.</p>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Bet e Linee</div>
+    <p style="margin-bottom:8px;">Scegli il <strong>Bet</strong> (×1 → ×5) e il numero di <strong>linee attive</strong> (5, 10, 25, 50). Il costo dello spin è mostrato in tempo reale come <em>Costo Spin</em>.</p>
     <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px;">
       <tr style="background:#c4a55a22;">
         <th style="padding:6px 8px;text-align:left;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">Linee</th>
@@ -2487,20 +3078,43 @@ function buildPaytable() {
       <tr><td style="padding:5px 8px;border-bottom:1px solid #d4b87033;font-weight:bold;">10 linee</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">3</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">12</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">25</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">60</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">125</td></tr>
       <tr style="background:#c4a55a11;"><td style="padding:5px 8px;font-weight:bold;">5 linee</td><td style="padding:5px 8px;text-align:center;">1</td><td style="padding:5px 8px;text-align:center;">5</td><td style="padding:5px 8px;text-align:center;">12</td><td style="padding:5px 8px;text-align:center;">30</td><td style="padding:5px 8px;text-align:center;">70</td></tr>
     </table>
-    <p style="margin-bottom:8px;font-size:13px;color:#9a7040;">Tutti i costi sono in <strong>Deben ⚖</strong>. Il moltiplicatore (×1→×5) si applica sia al costo che alla vincita.</p>
-    <p style="margin-bottom:16px;font-size:13px;color:#9a7040;font-style:italic;">Esempio: 25 linee × Bet ×3 → costi 50 Deben, ma ogni vincita è triplicata.</p>
+    <p style="margin-bottom:16px;font-size:13px;color:#9a7040;font-style:italic;">Il Bet moltiplica sia il costo che i premi. Esempio: 25 linee × Bet ×3 = 50 Deben di costo, vincite triple.</p>
 
-    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Progressione e XP</div>
-    <p style="margin-bottom:8px;">Ogni Deben vinto aggiunge <strong>XP</strong>. Accumulando 2000 XP per livello sali di grado sociale — da <strong>Schiavo</strong> fino a <strong>Dio</strong>. Ad ogni livello nuovi simboli entrano nel pool.</p>
-    <p style="margin-bottom:16px;">Il <strong>Grano 🌾</strong> è il tuo punteggio totale — non si spende mai. Viene usato per la classifica globale.</p>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Wild — Ouroboros</div>
+    <p style="margin-bottom:16px;">Il serpente che si morde la coda sostituisce qualsiasi simbolo normale. Può completare o estendere una combo vincente. Non si combina con Scarabeo o Moneta d'Oro.</p>
 
-    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Pietre Preziose</div>
-    <p style="margin-bottom:16px;">Le gemme non pagano in Deben ma in <strong>Pietre Preziose 💎</strong>. Ogni 100 Pietre ricevi <strong>+500 Deben</strong> bonus automatico. Le gemme cambiano ogni 2 livelli — sempre più preziose.</p>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Moltiplicatori</div>
+    <p style="margin-bottom:8px;"><strong>Scarabeo</strong> — Se appare sulla linea vincente, il premio viene raddoppiato. Due scarabei = ×4. Non si combina con Wild o Moneta.</p>
+    <p style="margin-bottom:16px;"><strong>Moneta d'Oro</strong> — Moltiplica il premio per 10. Non si combina con Wild o Scarabeo.</p>
 
-    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">⚖ L'economia dell'antico Egitto</div>
-    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Deben ⚖</strong> — Un peso in rame di 91 grammi, prima valuta dell'Egitto. Non era una moneta fisica ma un'unità di misura del valore.</p>
-    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Grano 🌾</strong> — La vera valuta del popolo. I lavoratori delle piramidi venivano pagati in grano, pane e birra. Chi controllava i granai controllava il mondo.</p>
-    <p><strong style="color:#8b4510;">Pietre Preziose 💎</strong> — Custodite nei templi come tesoro divino. Non circolavano tra il popolo ma erano offerte agli dei o sepolte con i faraoni per l'eternità.</p>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Penalità</div>
+    <p style="margin-bottom:6px;"><strong>Teschio</strong> — Dimezza il premio della linea (presenza) o tutti i Deben (combo 3×).</p>
+    <p style="margin-bottom:6px;"><strong>Maledizione</strong> — Combo 3×-6×: sottrae Deben proporzionali al Bet.</p>
+    <p style="margin-bottom:6px;"><strong>Spirito Maligno</strong> — Combo 3×: azzera i giri gratuiti.</p>
+    <p style="margin-bottom:16px;"><strong>Mummia</strong> — Combo 3×-6×: sottrae una percentuale (10%-50%) dei crediti attuali. Una sola penalità per spin.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Mini-giochi</div>
+    <p style="margin-bottom:6px;"><strong>Mercato del Nilo</strong> — Scegli 1 cesto su 3, ognuno con un simbolo e un premio nascosto.</p>
+    <p style="margin-bottom:6px;"><strong>Bilancia di Ma'at</strong> — Scegli la divinità più potente tra tre per vincere il premio.</p>
+    <p style="margin-bottom:6px;"><strong>Sfinge</strong> — Sfida la Sfinge a chi ha la carta più alta. Puoi raddoppiare fino a 3 volte.</p>
+    <p style="margin-bottom:6px;"><strong>Vaso Antico</strong> — Scegli 3 vasi su 5: Deben, Giri Gratuiti, Pietre Preziose o Maledizione.</p>
+    <p style="margin-bottom:16px;"><strong>Papiro Sacro</strong> — Rivela un tesoro casuale: Deben o Pietre Preziose.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Progressione e XP</div>
+    <p style="margin-bottom:8px;">Ogni Deben vinto aggiunge <strong>XP</strong>. Ogni 2.000 XP sali di livello e di rango sociale — da Schiavo fino a Dio. Ad ogni livello nuovi simboli entrano nel pool.</p>
+    <p style="margin-bottom:16px;">Il <strong>Grano</strong> è il tuo punteggio totale — non si spende mai. Viene usato per la classifica globale.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Pietre Preziose e Gemme</div>
+    <p style="margin-bottom:8px;">Le gemme non pagano in Deben ma accumulano <strong>Pietre Preziose</strong>. Ogni 100 Pietre ricevi automaticamente <strong>+500 Deben</strong>. Le gemme cambiano ogni 2 livelli, diventando sempre più preziose.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Storie dei Simboli</div>
+    <p style="margin-bottom:8px;">Ogni simbolo nasconde fino a <strong>10 storie</strong> tratte da testi egiziani antichi. Si sbloccano accumulando punti vincendo con quel simbolo — la barra di avanzamento è visibile nella colonna sinistra.</p>
+    <p style="margin-bottom:16px;">Le storie sbloccate si leggono nel <strong>Papiro</strong>. Il tempio custodisce 1.030 frasi in totale.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">L'economia dell'antico Egitto</div>
+    <p style="margin-bottom:8px;"><strong>Deben</strong> — Un peso in rame di 91 grammi, prima unità di valore dell'Egitto. Non era una moneta ma una misura: tutto si pesava in Deben.</p>
+    <p style="margin-bottom:8px;"><strong>Grano</strong> — La vera valuta del popolo. I lavoratori delle piramidi venivano pagati in grano, pane e birra. Chi controllava i granai controllava l'Egitto.</p>
+    <p style="margin-bottom:0;"><strong>Pietre Preziose</strong> — Custodite nei templi come tesoro divino. Non circolavano tra il popolo: erano offerte agli dei o sepolte con i faraoni per l'eternità.</p>
   `;
   container.appendChild(intro);
 
