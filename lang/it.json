@@ -5260,5 +5260,609 @@
     "anubiDesc": "Anubi ti mostra tre simboli. Scegli quello con il valore più alto nella gerarchia degli dei. Il più potente ti darà il premio.",
     "specialTitle": "Simboli Speciali, Wild e Penalità",
     "anonymous": "Anonimo"
-  }
+  },
+  "noWinMessages": [
+    "Il Nilo scorre. I tuoi Deben no.",
+    "Neanche questa volta, {name}. Osiride prende nota.",
+    "Il deserto non dà, {name}. Il deserto prende.",
+    "I rulli hanno parlato. Non in tuo favore.",
+    "Anubi ha pesato il tuo giro. Troppo leggero.",
+    "Seth ride. Da qualche parte, Seth sta ridendo.",
+    "Il grano non cresce su terreno arido, {name}.",
+    "Nessun faraone è diventato grande senza perdere prima.",
+    "Il serpente Apep ha inghiottito la tua vincita.",
+    "Thoth ha scritto. Non era buona notizia.",
+    "Le stelle non erano allineate. Forse la prossima.",
+    "{name}, anche le piramidi sono state costruite mattone per mattone.",
+    "Il Nilo in secca. I simboli pure.",
+    "Horus distoglie lo sguardo. Non era un bello spin.",
+    "La Sfinge sorride. Non è un sorriso gentile.",
+    "Il papiro di questa giocata resterà in bianco.",
+    "Persino gli schiavi a volte vincono. Tu no. Stavolta.",
+    "{name} — il destino ha altri piani per te.",
+    "I sacerdoti hanno consultato gli astri. Male.",
+    "Nefertiti ha alzato un sopracciglio. Solo uno.",
+    "Il vento del deserto ha portato via tutto tranne i rimpianti.",
+    "Ra si è girato dall'altra parte proprio adesso.",
+    "La bilancia di Ma'at ha pesato questa giocata: vuota.",
+    "{name}, il Nilo aspetta. I tuoi Deben anche.",
+    "Cleopatra avrebbe tentato ancora. Tu sei libero di farlo.",
+    "Il coccodrillo di Sobek ha aperto la bocca. Nessun premio dentro.",
+    "Anche i faraoni perdevano. Di solito facevano finta di no.",
+    "Lo scarabeo rotola. Non verso di te.",
+    "{name} — il tempio ha molti segreti. Questo non è uno di quelli buoni.",
+    "Gli dei sono distratti. Oppure no.",
+    "Il papiro è vergine. Come le tue vincite.",
+    "Bastet si lecca le zampe. Non interessata ai tuoi risultati.",
+    "La maledizione di Tutankhamon era reale. Forse si è estesa anche qui.",
+    "{name}, l'eternità è lunga. Hai tempo per ritentare.",
+    "Nessun geroglifico racconta questa storia. Troppo imbarazzante.",
+    "Il falco di Horus vola alto. Troppo in alto per vedere i tuoi simboli.",
+    "Seth ha mescolato le carte. Non a tuo vantaggio.",
+    "Anche Iside piangeva, {name}. Ma poi riprovava.",
+    "Il fiume dà e il fiume prende. Oggi prende.",
+    "I tuoi antenati guardano dall'aldilà. Scuotono la testa.",
+    "{name} — neanche Ramses II vinceva sempre.",
+    "Il Libro dei Morti non menziona questa combinazione. Forse è meglio così.",
+    "Khnum modella il destino sul tornio. Il tuo era storto.",
+    "La luna di Khonsu era in posizione sfavorevole.",
+    "Un altro giro senza storia da raccontare, {name}.",
+    "Il cobra si ritira. Non c'è niente da proteggere qui.",
+    "Amon resta nascosto. Come le tue vincite.",
+    "Persino il vaso canopo era vuoto stavolta.",
+    "La sabbia ha coperto ogni traccia di fortuna.",
+    "Il tempio respira. Purtroppo non in tuo favore.",
+    "{name}, il Nilo ha correnti misteriose. Questa ti ha portato altrove.",
+    "I geroglifici tacciono. Non c'è niente di buono da scrivere.",
+    "Ptah, dio degli artigiani, scuote il capo. Il risultato era difettoso.",
+    "Sekhmet osserva. Non è il momento della clemenza.",
+    "L'obelisco punta al cielo. I tuoi Deben no.",
+    "{name} — Anubi tiene il conto. Il saldo è invariato.",
+    "Il djed pilastro regge il mondo. Reggerà anche te, nonostante tutto.",
+    "Nessuna piramide è stata costruita in un giorno, {name}.",
+    "Il mercato del Nilo era chiuso per questo giro.",
+    "Gli occhi dell'Udjat hanno visto tutto. Tutto tranne una vincita.",
+    "Il papiro sacro è rimasto in silenzio.",
+    "Nut stende il cielo stellato su di te. Nessuna stella porta fortuna stanotte.",
+    "{name}, anche Osiride è morto una volta. Poi è risorto. Coraggio.",
+    "La barca del sole viaggia. Senza portarti Deben.",
+    "Taweret protegge i vulnerabili. Stasera sei molto vulnerabile.",
+    "Il sigillo del faraone non era su questo spin.",
+    "Hathor suona il sistro. Non è una melodia di vittoria.",
+    "Bes, il protettore, dormiva. Peccato.",
+    "{name} — il deserto è paziente. Molto più paziente di te.",
+    "Neith ha intrecciato il destino. Con filo sottile.",
+    "I papiri di Leiden non prevedevano questo esito. Ottimisticamente.",
+    "Il cobra ureo si abbassa. Segno di rispetto per la sconfitta.",
+    "Sobek nuota placido. Lontano da questo spin.",
+    "Il bitume del Nilo ha sigillato questa giocata nell'oblio.",
+    "{name}, il faraone non piange. Tu puoi, se vuoi.",
+    "La stella di Sopdet non sorge ancora per te.",
+    "L'ibis di Thoth vola via. Non c'era niente da annotare.",
+    "Il sarcofago è vuoto. Come questo risultato.",
+    "Khepri spinge il sole ogni mattina. Anche tu puoi riprovare.",
+    "{name} — Ramses II ha combattuto a Qadesh da solo. E ha vinto. Prendine esempio.",
+    "Il grano ammuffirebbe aspettando queste vincite.",
+    "Persino i servi del tempio guadagnavano qualcosa. Non tu. Stavolta.",
+    "Il vento del khamsin soffia. Porta sabbia. Non Deben.",
+    "Akhénaton ha cambiato religione per meno di così.",
+    "{name}, il destino è scritto nelle stelle. Le stelle erano nuvolose.",
+    "La bilancia pende. Purtroppo dalla parte sbagliata.",
+    "Nessun dio ha firmato questa giocata. Anonima e vuota.",
+    "Il cartiglio del faraone non proteggeva questo giro.",
+    "La porta degli inferi si è aperta un momento. Solo per curiosità.",
+    "Thoth scrive tutto. Anche questo. Soprattutto questo.",
+    "{name} — gli dei hanno un piano. Non lo condividono.",
+    "Il loto emerge dal fango. Le tue vincite ancora no.",
+    "Anche il deserto dopo quarant'anni dà vita. Aspetta.",
+    "Il vaso di Horus piange. Lacrime senza premi.",
+    "Cleopatra ha sedotto Cesare. Tu non hai sedotto nemmeno un simbolo.",
+    "Il Libro dei Morti aveva capitoli più allegri di questo.",
+    "{name} — la sfinge sorride sempre. Ma non ti dice perché.",
+    "Il sole tramonta sul Nilo. E sulle tue speranze di vincita.",
+    "Ogni giro è un rito. Questo era il rito del nulla.",
+    "Il cielo notturno di Nut è bellissimo, {name}. Peccato che non paghi."
+  ],
+  "welcomeMessages": [
+    [
+      "{name} — il tuo nome è ora inciso sulle pareti del tempio.",
+      "Il record da battere appartiene a {recordName}: {recordScore} Grano.",
+      "Inizia a giocare, o studia prima le Regole."
+    ],
+    [
+      "Il Nilo ti ha scelto, {name}.",
+      "In testa alla classifica c'è {recordName} con {recordScore} Grano. Il trono è vuoto per chi osa.",
+      "Ogni vincita svela un frammento di eternità."
+    ],
+    [
+      "Benvenuto nel tempio, {name}.",
+      "Il faraone {recordName} guida la classifica con {recordScore} Grano. Puoi scalzarlo?",
+      "Gli dei osservano. I simboli parlano a chi sa ascoltare."
+    ],
+    [
+      "Ra illumina il tuo cammino, {name}.",
+      "{recordName} ha raggiunto {recordScore} Grano. La sua statua è già nell'atrio.",
+      "Il tempio è aperto. La sabbia comincia a scorrere."
+    ],
+    [
+      "Osiride ti giudica, {name}. Il tuo cuore è leggero come una piuma?",
+      "Il record è di {recordName}: {recordScore} Grano. Osiride tiene il conto.",
+      "Accumula saggezza e Deben per salire di rango."
+    ],
+    [
+      "{name} — il destino ti ha portato qui.",
+      "Il migliore in classifica è {recordName} con {recordScore} Grano. Per ora.",
+      "Consulta le Regole o lasciati guidare dal Grande Fiume."
+    ],
+    [
+      "Thoth registra il tuo arrivo, {name}.",
+      "Ha già registrato {recordName}: {recordScore} Grano. Vuoi che scriva il tuo nome più in alto?",
+      "Ogni storia sbloccata è un verso del Libro dei Morti."
+    ],
+    [
+      "Horus veglia su di te, {name}.",
+      "{recordName} ha {recordScore} Grano. L'occhio del falco vede tutto — anche il tuo potenziale.",
+      "Fidati dell'istinto. O consulta le Regole."
+    ],
+    [
+      "Bastet ti sorride, {name}.",
+      "Il record di {recordName} — {recordScore} Grano — non è eterno. Niente lo è.",
+      "Gira. Vinci. Sali."
+    ],
+    [
+      "Il sacerdote annuncia il tuo ingresso, {name}.",
+      "Il tempio inchina la testa a {recordName}: {recordScore} Grano. Per ora.",
+      "Ogni simbolo custodisce una storia. Sbloccale."
+    ],
+    [
+      "{name} — schiavo o dio, lo decide il Nilo.",
+      "Il dio in cima alla classifica si chiama {recordName}: {recordScore} Grano.",
+      "Le Regole sono il tuo grimorio. Il resto è fortuna."
+    ],
+    [
+      "Anubi pesa le anime, {name}. La tua inizia adesso.",
+      "{recordName} ha già pesato la sua: {recordScore} Grano. Abbastanza pesante.",
+      "Le bilance di Ma'at non mentono."
+    ],
+    [
+      "Il deserto è vasto, {name}, ma il tempio è qui.",
+      "{recordName} lo ha trovato prima di te: {recordScore} Grano di vantaggio.",
+      "Le pietre preziose non si trovano in superficie."
+    ],
+    [
+      "Nefertiti ti osserva, {name}. La bellezza si conquista.",
+      "Ha osservato anche {recordName} fare {recordScore} Grano. Con stile.",
+      "Dal grano grezzo all'oro puro — questo è il cammino."
+    ],
+    [
+      "Il faraone un giorno nacque senza corona, {name}.",
+      "Oggi la corona appartiene a {recordName}: {recordScore} Grano.",
+      "Costruisci la tua eternità mattone per mattone."
+    ],
+    [
+      "Iside stende le ali su di te, {name}.",
+      "Ha protetto anche {recordName} fino a {recordScore} Grano. La magia funziona.",
+      "Scegli: Regole, o magia."
+    ],
+    [
+      "{name} — lo scarabeo rotola la sua sfera.",
+      "Quella di {recordName} ha raggiunto {recordScore} Grano. La tua?",
+      "Pazienza e audacia. Questi sono i pilastri del tempio."
+    ],
+    [
+      "Amon, il nascosto, ti rivela il suo tempio, {name}.",
+      "{recordName} ha strappato i suoi segreti per {recordScore} Grano.",
+      "Il Papiro custodisce ciò che hai conquistato."
+    ],
+    [
+      "{name} — la stella del nord ha guidato i navigatori.",
+      "Ha guidato anche {recordName} a {recordScore} Grano. Seguila.",
+      "Il tempio di Kemet non ha uscita. Solo ascesa."
+    ],
+    [
+      "Seth agita il vento del cambiamento, {name}.",
+      "Ha già soffiato verso {recordName}: {recordScore} Grano di vantaggio su di te.",
+      "Abbraccia l'incertezza. È lì che vivono le grandi vincite."
+    ],
+    [
+      "Khnum modella il destino sul tornio, {name}.",
+      "Ha modellato {recordName} per arrivare a {recordScore} Grano. Il tuo stampo è pronto.",
+      "Ogni livello è una nuova vita."
+    ],
+    [
+      "Il Nilo porta vita, {name}. E Deben a chi sa aspettare.",
+      "{recordName} ha aspettato fino a {recordScore} Grano. Vale la pena.",
+      "Leggi le Regole o affidati alla corrente."
+    ],
+    [
+      "Sekhmet ruggisce, {name}. Il tempio si sveglia.",
+      "Ha ruggito anche per {recordName}: {recordScore} Grano di potere.",
+      "Sbloccale tutte. Il papiro non mente."
+    ],
+    [
+      "Cleopatra ti accoglie, {name}. Con un sorriso calcolato.",
+      "Ha sorriso anche a {recordName} — {recordScore} Grano dopo.",
+      "Accumula. Ascendi. Vinci."
+    ],
+    [
+      "Il cobra ureo ti protegge, {name}.",
+      "Ha protetto {recordName} fino a {recordScore} Grano. Oggi protegge te.",
+      "Gira i rulli. Il destino è lì."
+    ],
+    [
+      "Sobek nuota placido, {name}. L'acqua è calma.",
+      "{recordName} ha attraversato questo fiume con {recordScore} Grano. Puoi farlo.",
+      "Consulta le Regole se hai dubbi."
+    ],
+    [
+      "Ptah, dio degli artigiani, ti dà il benvenuto, {name}.",
+      "Ha accolto anche {recordName}: {recordScore} Grano costruiti con cura.",
+      "Ogni giro è un mattone. Ogni vittoria è una pietra."
+    ],
+    [
+      "Hathor suona il sistro per te, {name}.",
+      "Ha suonato anche per {recordName} — {recordScore} Grano di melodia.",
+      "Le storie sbloccate vivono nel Papiro."
+    ],
+    [
+      "Nut stende il cielo su di te, {name}.",
+      "Sotto queste stelle, {recordName} ha raccolto {recordScore} Grano.",
+      "Ogni simbolo è una costellazione da scoprire."
+    ],
+    [
+      "Thoth scrive il tuo nome, {name}.",
+      "Ha già scritto quello di {recordName}: {recordScore} Grano in lettere d'oro.",
+      "Il Libro dei Morti parla a chi gioca."
+    ],
+    [
+      "Bienvenuto nel grande tempio, {name}.",
+      "La vetta appartiene a {recordName}: {recordScore} Grano. Per ora è sola.",
+      "Puoi cambiarla. Il Nilo scorre anche per te."
+    ],
+    [
+      "Ra sorge per te, {name}. Come ogni mattina sul Nilo.",
+      "{recordName} ha salutato molti albe per arrivare a {recordScore} Grano.",
+      "Il sole illumina chi osa giocare."
+    ],
+    [
+      "Il vento del khamsin porta il tuo nome, {name}.",
+      "Ha portato anche {recordName} fino a {recordScore} Grano.",
+      "Lasciati trasportare. O consulta le Regole."
+    ],
+    [
+      "Bes, il protettore, danza per te, {name}.",
+      "Ha danzato anche per {recordName}: {recordScore} Grano di protezione.",
+      "La fortuna ama chi si muove."
+    ],
+    [
+      "Il djed pilastro regge il mondo, {name}. E te.",
+      "{recordName} si è aggrappato fino a {recordScore} Grano.",
+      "Stabilità e fortuna. Questo è il tempio."
+    ],
+    [
+      "Taweret ti benedice, {name}.",
+      "{recordName} ha ricevuto la stessa benedizione: {recordScore} Grano.",
+      "Inizia a giocare. La dea è dalla tua parte."
+    ],
+    [
+      "Khonsu illumina la notte per te, {name}.",
+      "Ha illuminato {recordName} fino a {recordScore} Grano.",
+      "Le storie del tempio si sbloccano nel buio."
+    ],
+    [
+      "Neith intreccia il destino, {name}.",
+      "Ha intrecciato quello di {recordName}: {recordScore} Grano di filo d'oro.",
+      "Il tuo pattern è ancora da tessere."
+    ],
+    [
+      "Il loto emerge dal fango, {name}. Come te.",
+      "{recordName} è già sbocciato: {recordScore} Grano in cima.",
+      "Anche tu puoi emergere. Gira."
+    ],
+    [
+      "La barca del sole ti aspetta, {name}.",
+      "{recordName} è già a bordo con {recordScore} Grano.",
+      "Sali. Il Nilo ti porterà dove devi andare."
+    ],
+    [
+      "Udjat, l'occhio di Ra, ti vede, {name}.",
+      "Vede anche {recordName} in cima con {recordScore} Grano.",
+      "Niente sfugge al tempio. Nemmeno le tue vincite."
+    ],
+    [
+      "Il cartiglio del faraone attende il tuo nome, {name}.",
+      "{recordName} lo ha già inciso con {recordScore} Grano.",
+      "Scrivi il tuo. Lo spazio c'è."
+    ],
+    [
+      "Il grande fiume scorre, {name}.",
+      "Ha portato {recordName} a {recordScore} Grano. Molto lontano.",
+      "Ogni giro è un passo verso la foce."
+    ],
+    [
+      "Ankh — vita, {name}. Il simbolo ti appartiene.",
+      "{recordName} lo porta con {recordScore} Grano di vita accumulata.",
+      "Vinci. Sali. Vivi l'eternità."
+    ],
+    [
+      "La stella di Sopdet sorge, {name}. Segno di abbondanza.",
+      "{recordName} ha colto il momento: {recordScore} Grano.",
+      "Il tempio abbonda per chi sa aspettare."
+    ],
+    [
+      "Il papiro sacro è pronto, {name}.",
+      "{recordName} ha già riempito il suo con {recordScore} Grano di storia.",
+      "Il tuo è ancora bianco. Inizia a scrivere."
+    ],
+    [
+      "Ramses II ti osserva, {name}.",
+      "Osserva anche {recordName} con i suoi {recordScore} Grano. Invidioso.",
+      "Mostra al faraone di cosa sei capace."
+    ],
+    [
+      "Il tempio di Karnak ti apre le porte, {name}.",
+      "{recordName} le ha attraversate con {recordScore} Grano.",
+      "Entra. Il destino è dentro."
+    ],
+    [
+      "Persino gli schiavi diventano faraoni, {name}.",
+      "{recordName} lo sa bene: {recordScore} Grano lo testimoniano.",
+      "Inizia dal basso. Finisci tra gli dei."
+    ],
+    [
+      "Il vaso canopo custodisce i segreti, {name}.",
+      "{recordName} ne ha svelati abbastanza: {recordScore} Grano.",
+      "I tuoi segreti aspettano di essere scoperti."
+    ],
+    [
+      "La sfinge guarda all'orizzonte, {name}.",
+      "Vede {recordName} con {recordScore} Grano avanzare.",
+      "Rispondi all'enigma. Il tesoro è là."
+    ],
+    [
+      "Akhénaton ha cambiato tutto, {name}. Anche tu puoi.",
+      "{recordName} ha fatto la sua rivoluzione: {recordScore} Grano.",
+      "Non temere i cambiamenti. I rulli cambiano ad ogni spin."
+    ],
+    [
+      "Il sole di Aton scalda le mura del tempio, {name}.",
+      "{recordName} si è scaldato abbastanza: {recordScore} Grano.",
+      "Siediti sotto il sole. E gira."
+    ],
+    [
+      "La necropoli di Saqqara guarda, {name}.",
+      "Custodisce anche il nome di {recordName}: {recordScore} Grano nella pietra.",
+      "I vivi giocano. I morti aspettano il turno."
+    ],
+    [
+      "Nefertiti alza il mento, {name}. Eleganza prima di tutto.",
+      "{recordName} ha già impressionato con {recordScore} Grano.",
+      "Ora tocca a te fare colpo sul tempio."
+    ],
+    [
+      "Il Nilo scorre da diecimila anni, {name}.",
+      "{recordName} lo ha attraversato con {recordScore} Grano.",
+      "Hai tutto il tempo. Ma non troppo."
+    ],
+    [
+      "Gli scarabei spingono il sole ogni mattina, {name}.",
+      "Anche {recordName} ha spinto fino a {recordScore} Grano.",
+      "Non fermarti. Il sole non si ferma."
+    ],
+    [
+      "Il sarcofago d'oro del faraone brilla, {name}.",
+      "{recordName} ci si specchia con {recordScore} Grano.",
+      "Il tuo sarcofago ti aspetta. Dorato, si spera."
+    ],
+    [
+      "La cobra di Iside si dispiega, {name}.",
+      "{recordName} l'ha già domata: {recordScore} Grano.",
+      "Doma anche tu i simboli del tempio."
+    ],
+    [
+      "Il tempio di Abu Simbel ti guarda, {name}.",
+      "Ha già guardato {recordName}: {recordScore} Grano nelle fondamenta.",
+      "Costruisci il tuo monumento. Spin dopo spin."
+    ],
+    [
+      "Il grande Nilo porta abbondanza, {name}.",
+      "{recordName} ha raccolto {recordScore} Grano dalla corrente.",
+      "Immergi le mani. Il tuo turno."
+    ],
+    [
+      "{name} — il tempio di Kemet non dorme mai.",
+      "{recordName} ha vegliato fino a {recordScore} Grano.",
+      "Anche tu puoi restare sveglio. E vincere."
+    ],
+    [
+      "La Luna di Khonsu illumina il tuo ingresso, {name}.",
+      "{recordName} ha navigato sotto questa luna: {recordScore} Grano.",
+      "Le maree cambiano. I simboli anche."
+    ],
+    [
+      "Il falco di Ra vola sopra di te, {name}.",
+      "Sorvola anche {recordName}: {recordScore} Grano sul dorso.",
+      "Vola anche tu. I rulli sono le tue ali."
+    ],
+    [
+      "Anubi apre il Libro della Vita, {name}.",
+      "Il nome di {recordName} è scritto in cima: {recordScore} Grano.",
+      "Il tuo capitolo inizia adesso."
+    ],
+    [
+      "Il tempio di Luxor ti accoglie, {name}.",
+      "{recordName} ne ha percorso i corridoi: {recordScore} Grano di passi.",
+      "Ogni spin è un passo verso la luce."
+    ],
+    [
+      "Khepri, lo scarabeo del mattino, ti saluta, {name}.",
+      "{recordName} ha salutato molti mattini: {recordScore} Grano.",
+      "Ogni nuovo giro è un'alba. Approfitta."
+    ],
+    [
+      "Il sacerdote di Ptah ti benedice, {name}.",
+      "Ha benedetto anche {recordName}: {recordScore} Grano di benedizione.",
+      "La fortuna favorisce chi conosce le Regole."
+    ],
+    [
+      "Il grande obelisco indica il cielo, {name}.",
+      "{recordName} è arrivato fin lassù: {recordScore} Grano in alto.",
+      "Punta in alto. I simboli ti aspettano."
+    ],
+    [
+      "Iside piange lacrime di gioia per il tuo arrivo, {name}.",
+      "Ha pianto anche per {recordName}: {recordScore} Grano di felicità.",
+      "Le sue lacrime portano fortuna. Usale."
+    ],
+    [
+      "Il papiro del Nilo ti accoglie, {name}.",
+      "{recordName} ha già riempito le sue pagine: {recordScore} Grano.",
+      "Scrivi la tua storia. Uno spin alla volta."
+    ],
+    [
+      "Ra sorride a {name} dall'alto del suo carro solare.",
+      "Ha sorriso anche a {recordName}: {recordScore} Grano raccolti sotto il sole.",
+      "Gira. Il sole gira per te."
+    ],
+    [
+      "Il tempio di Iside a File ti apre le braccia, {name}.",
+      "{recordName} le ha abbracciato fino a {recordScore} Grano.",
+      "Entra nel tempio. Il destino è qui."
+    ],
+    [
+      "Bes balla per te, {name}. Buon segno.",
+      "{recordName} ha ballato con lui fino a {recordScore} Grano.",
+      "Unisciti alla danza. I simboli ti chiamano."
+    ],
+    [
+      "La vela della barca del sole si gonfia, {name}.",
+      "{recordName} ha navigato fino a {recordScore} Grano.",
+      "Salpa. Il Nilo porta lontano."
+    ],
+    [
+      "Neith, la cacciatrice, tende l'arco, {name}.",
+      "Ha già colpito {recordName}: {recordScore} Grano nel bersaglio.",
+      "Anche tu puoi mirare in alto."
+    ],
+    [
+      "Il grano del Nilo è dorato come il sole, {name}.",
+      "{recordName} ne ha raccolto {recordScore} Grano.",
+      "Raccogli anche tu. I campi sono aperti."
+    ],
+    [
+      "Teti, il faraone antico, ti osserva dalla pietra, {name}.",
+      "Osserva anche {recordName} con i suoi {recordScore} Grano.",
+      "I morti giudicano. Dagli qualcosa di cui parlare."
+    ],
+    [
+      "Il cielo stellato di Nut avvolge il tempio, {name}.",
+      "{recordName} ha contato le stelle: {recordScore} Grano.",
+      "Ogni simbolo è una stella. Trovale tutte."
+    ],
+    [
+      "Maat, dea della giustizia, ti attende, {name}.",
+      "Ha già pesato {recordName}: {recordScore} Grano sul piatto della bilancia.",
+      "Sii giusto con i rulli. Gira spesso."
+    ],
+    [
+      "Il coccodrillo sacro di Sobek dorme, {name}. Puoi passare.",
+      "{recordName} è già passato: {recordScore} Grano in tasca.",
+      "Approfitta. Il coccodrillo non dorme per sempre."
+    ],
+    [
+      "Sekhmet, la leonessa, ruggisce per te, {name}.",
+      "Ha ruggito anche a {recordName}: {recordScore} Grano di rispetto.",
+      "Sii feroce. Il tempio premia chi non si ferma."
+    ],
+    [
+      "Il sarcofago d'oro ti aspetta, {name}. Ma non ancora.",
+      "{recordName} lo ha già sfiorato con {recordScore} Grano.",
+      "Prima vinci. Poi riposa."
+    ],
+    [
+      "Il Nilo ti chiama, {name}. Sente il tuo nome.",
+      "Ha chiamato anche {recordName}: {recordScore} Grano di risposta.",
+      "Rispondi. I rulli sono pronti."
+    ],
+    [
+      "Khnum ti ha modellato bene, {name}.",
+      "Ha modellato anche {recordName}: {recordScore} Grano di perfezione.",
+      "Sfrutta la forma. Gira."
+    ],
+    [
+      "Il tempio sorge all'alba per te, {name}.",
+      "{recordName} lo ha visto sorgere molte volte: {recordScore} Grano.",
+      "Ogni mattina è una nuova possibilità."
+    ],
+    [
+      "Anubi tiene aperto il cancello, {name}.",
+      "{recordName} è già dall'altra parte: {recordScore} Grano.",
+      "Passa. Il tempio interiore ti aspetta."
+    ],
+    [
+      "Il cobra ureo si inchina, {name}. Segno di rispetto.",
+      "Si era inhinato anche a {recordName}: {recordScore} Grano.",
+      "Meritalo. Spin dopo spin."
+    ],
+    [
+      "Ramses costruisce il suo tempio, {name}. Tu il tuo.",
+      "{recordName} ha già posato le fondamenta: {recordScore} Grano.",
+      "Ogni vittoria è un blocco di pietra."
+    ],
+    [
+      "Il vento del nord porta fortuna oggi, {name}.",
+      "L'ha portata a {recordName}: {recordScore} Grano.",
+      "Apri le braccia. Il vento è dalla tua parte."
+    ],
+    [
+      "Hatshepsut, la faraona, ti mostra la via, {name}.",
+      "Ha mostrato la via a {recordName}: {recordScore} Grano di direzione.",
+      "Seguila. Le donne faraone non sbagliano strada."
+    ],
+    [
+      "Il tempio di Dendara brilla per te, {name}.",
+      "{recordName} ne ha raccolto la luce: {recordScore} Grano.",
+      "La luce illumina i simboli giusti."
+    ],
+    [
+      "Thoth apre il suo calamo, {name}.",
+      "Ha già scritto {recordName}: {recordScore} Grano nell'eternità.",
+      "Cosa vuoi che scriva del tuo viaggio?"
+    ],
+    [
+      "Il pilastro djed regge il cielo, {name}. E te.",
+      "{recordName} si è aggrappato fino a {recordScore} Grano.",
+      "Tieniti forte. I rulli possono essere instabili."
+    ],
+    [
+      "Il Grande Carro stellare ti indica la strada, {name}.",
+      "Ha guidato {recordName} fino a {recordScore} Grano.",
+      "Segui le stelle. Il tempio è sotto di loro."
+    ],
+    [
+      "Nut ti abbraccia con il cielo, {name}.",
+      "Ha abbracciato anche {recordName}: {recordScore} Grano nel suo grembo.",
+      "L'universo è dalla tua parte. Forse."
+    ],
+    [
+      "La maschera d'oro di Tutankhamon luccica, {name}.",
+      "{recordName} ci si è specchiato: {recordScore} Grano di riflesso.",
+      "Anche tu meriti oro. Guadagnatelo."
+    ],
+    [
+      "Il papiro di Ani ti accoglie, {name}.",
+      "{recordName} ha già scritto la sua storia: {recordScore} Grano.",
+      "Il tuo capitolo è bianco. Riempilo."
+    ],
+    [
+      "Monthu, dio della guerra, ti dà coraggio, {name}.",
+      "Ha dato coraggio a {recordName}: {recordScore} Grano di battaglia.",
+      "Combatti i rulli. Vinci la guerra."
+    ],
+    [
+      "Il rebus della sfinge ha una risposta, {name}.",
+      "{recordName} l'ha trovata: {recordScore} Grano come soluzione.",
+      "Trova la tua. È nei simboli."
+    ]
+  ]
 }

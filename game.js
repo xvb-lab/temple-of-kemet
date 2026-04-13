@@ -624,12 +624,16 @@ async function loadHints(lang = "it") {
     window._gameoverQuotes = data.gameover || [];
     window._socialClasses = data.socialClasses || [];
     window._ui = data.ui || {};
+    window._welcomeMessages = data.welcomeMessages || [];
+    window._noWinMessages = data.noWinMessages || [];
   } catch(e) {
     console.warn("Hints non caricati:", e);
     mysteriousHints = [];
     window._gameoverQuotes = [];
     window._socialClasses = [];
     window._ui = {};
+    window._welcomeMessages = [];
+    window._noWinMessages = [];
   }
 }
 
@@ -1983,7 +1987,16 @@ function _applyResultContent(result, spinBet = currentBet, spinLines = activeLin
   } else {
     playRandomLoseSound();
     logMessage(`<span class="log-spininfo">${spinLines} linee  ×${spinBet}  Puntata: ${spinCost} Deben</span>`, "spininfo");
-    logMessage(`Nessuna vincita`, "lose");
+
+    // Frase ironica dal JSON — usa {name} qualche volta
+    const noWinPool = window._noWinMessages || [];
+    if (noWinPool.length > 0) {
+      const raw = noWinPool[Math.floor(Math.random() * noWinPool.length)];
+      const msg = raw.replace(/\{name\}/g, playerName || "mortale");
+      logMessage(msg, "lose");
+    } else {
+      logMessage(`Nessuna vincita`, "lose");
+    }
   }
 
   // Effetti speciali
@@ -2252,111 +2265,21 @@ function animateNumberChange(id, newValue) {
     setTimeout(() => { introScreen.classList.add("hidden"); }, 700);
     startBgMusic();
 
-    // Pool di messaggi di benvenuto — scelti a caso
-    const WELCOME_POOL = [
-      [
-        `Il Nilo ti ha scelto, <strong>${name}</strong>.`,
-        `Ogni simbolo custodisce una storia. Ogni vincita svela un frammento di eternità.`,
-        `Consulta le <strong>Regole</strong> per conoscere le vie del tempio — o lasciati guidare dal destino.`,
-      ],
-      [
-        `Benvenuto nel tempio, <strong>${name}</strong>.`,
-        `Gli dei osservano. I simboli parlano a chi sa ascoltare.`,
-        `Accumula vincite, svela storie, ascendi dalla polvere alla divinità.`,
-      ],
-      [
-        `<strong>${name}</strong> — il tuo nome è ora inciso sulle pareti del tempio.`,
-        `Ogni giro è un respiro del Nilo. Ogni storia sbloccata è un segreto eterno.`,
-        `Inizia a giocare, o studia prima le <strong>Regole</strong> del destino.`,
-      ],
-      [
-        `Ra illumina il tuo cammino, <strong>${name}</strong>.`,
-        `I simboli nascondono verità antiche. Le vincite le portano alla luce.`,
-        `Il tempio è aperto. Il dado è tratto. La sabbia comincia a scorrere.`,
-      ],
-      [
-        `Osiride ti giudica, <strong>${name}</strong>. Il tuo cuore è leggero come una piuma?`,
-        `Solo chi accumula saggezza — e Deben — potrà salire di rango.`,
-        `Leggi le <strong>Regole</strong>, o affidati alla corrente del Grande Fiume.`,
-      ],
-      [
-        `Il sacerdote ti annuncia, <strong>${name}</strong>: il tempio attende la tua offerta.`,
-        `Ogni simbolo che vinci porta con sé una storia dimenticata.`,
-        `Sbloccale tutte. Il papiro non mente.`,
-      ],
-      [
-        `<strong>${name}</strong>, schiavo o dio — lo decide il Nilo.`,
-        `Il grano sfama, la pietra costruisce, l'oro eleva. Vinci tutto.`,
-        `Le <strong>Regole</strong> sono il tuo grimorio. Il resto è fortuna.`,
-      ],
-      [
-        `Thoth registra il tuo arrivo, <strong>${name}</strong>.`,
-        `La scrittura sacra non dimentica chi vince — né chi perde.`,
-        `Ogni storia sbloccata è un verso del Libro dei Morti. Leggilo tutto.`,
-      ],
-      [
-        `Horus veglia su di te, <strong>${name}</strong>.`,
-        `L'occhio del falco vede ogni combinazione prima ancora che appaia.`,
-        `Fidati del tuo istinto. O consulta le <strong>Regole</strong>, se preferisci la certezza.`,
-      ],
-      [
-        `<strong>${name}</strong> — il deserto è vasto, ma il tempio è qui.`,
-        `Le pietre preziose non si trovano in superficie. Scava con ogni giro.`,
-        `Le storie dei simboli ti aspettano nel <strong>Papiro</strong>.`,
-      ],
-      [
-        `Bastet ti sorride, <strong>${name}</strong>. Sarà di buon auspicio.`,
-        `Il gatto porta fortuna nel tempio. Ma la fortuna va guadagnata.`,
-        `Gira. Vinci. Sali. Le storie si sbloccano lungo la strada.`,
-      ],
-      [
-        `<strong>${name}</strong> — Anubi pesa le anime. La tua inizia adesso.`,
-        `Le bilance di Ma'at non mentono. Ogni azione ha il suo peso nel tempio.`,
-        `Studia le <strong>Regole</strong> o lascia che il destino decida per te.`,
-      ],
-      [
-        `Seth agita il vento del cambiamento, <strong>${name}</strong>.`,
-        `Caos e ordine si alternano come il Nilo in piena e in secca.`,
-        `Abbraccia l'incertezza. È lì che vivono le grandi vincite.`,
-      ],
-      [
-        `<strong>${name}</strong>, l'acqua del Nilo scorre da sempre. Ora scorre anche per te.`,
-        `I simboli del tempio parlano lingue antiche. Impara ad ascoltarli.`,
-        `Ogni livello è una nuova vita. Quante ne vivrai?`,
-      ],
-      [
-        `Nefertiti ti osserva, <strong>${name}</strong>. La bellezza si conquista.`,
-        `Dal grano grezzo all'oro puro — questo è il cammino del tempio.`,
-        `Le storie sbloccate vivono nel <strong>Papiro</strong>. Le vincite vivono nei Deben.`,
-      ],
-      [
-        `<strong>${name}</strong> — il faraone un giorno nacque anche lui senza corona.`,
-        `Ogni giro è un mattone. Ogni vittoria è una pietra della piramide.`,
-        `Costruisci la tua eternità. Il tempio ha tutto ciò che ti serve.`,
-      ],
-      [
-        `Iside stende le ali su di te, <strong>${name}</strong>.`,
-        `La dea della magia protegge chi conosce le regole del gioco — e chi le ignora.`,
-        `Scegli: leggi le <strong>Regole</strong>, o fidati della magia.`,
-      ],
-      [
-        `<strong>${name}</strong> — lo scarabeo rotola la sua sfera. Oggi sei tu quella sfera.`,
-        `Il mondo gira. I rulli girano. Le storie si sbloccano lentamente, ma si sbloccano.`,
-        `Pazienza e audacia. Questi sono i due pilastri del tempio.`,
-      ],
-      [
-        `Amon, il nascosto, ti rivela il suo tempio, <strong>${name}</strong>.`,
-        `Ciò che è nascosto nei simboli si svela solo attraverso le vincite.`,
-        `Il <strong>Papiro</strong> custodisce ciò che hai conquistato. Aprilo quando sei pronto.`,
-      ],
-      [
-        `<strong>${name}</strong> — la stella del nord ha guidato i navigatori. Oggi guida te.`,
-        `Il tempio di Kemet non ha uscita. Solo ascesa.`,
-        `Inizia dal basso. Finisci tra gli dei. Questa è la promessa del Nilo.`,
-      ],
-    ];
+    // Messaggi di benvenuto — dal JSON, con {name}, {recordName}, {recordScore}
+    const welcomePool = (window._welcomeMessages && window._welcomeMessages.length > 0)
+      ? window._welcomeMessages
+      : [["Il Nilo ti ha scelto.", "Il tempio attende.", "Inizia a giocare."]];
 
-    const picked = WELCOME_POOL[Math.floor(Math.random() * WELCOME_POOL.length)];
+    const rawPicked = welcomePool[Math.floor(Math.random() * welcomePool.length)];
+    const recName  = worldRecord.score > 0 ? worldRecord.name  : "nessuno ancora";
+    const recScore = worldRecord.score > 0 ? worldRecord.score.toLocaleString() : "0";
+    const picked = rawPicked.map(line =>
+      line
+        .replace(/\{name\}/g, `<strong>${name}</strong>`)
+        .replace(/\{recordName\}/g, `<strong>${recName}</strong>`)
+        .replace(/\{recordScore\}/g, `<strong>${recScore}</strong>`)
+    );
+
     setTimeout(() => {
       const msgBox = document.getElementById("winMessage");
       if (!msgBox) return;
