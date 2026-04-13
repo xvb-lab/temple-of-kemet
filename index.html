@@ -611,6 +611,111 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
   flex-shrink: 0;
   letter-spacing: 0.05em;
 }
+
+/* ── LOADING SCREEN ── */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: #f5e6c4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.5s ease;
+}
+#loadingScreen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.loading-title {
+  font-family: "Cinzel", serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #7a3a00;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.loading-sub {
+  font-family: "Syne Mono", monospace;
+  font-size: 13px;
+  color: #9a7040;
+  letter-spacing: 0.2em;
+  margin-bottom: 40px;
+}
+.loading-glyphs {
+  font-size: 28px;
+  color: #c4881a;
+  letter-spacing: 0.3em;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+
+/* ── CLASSIFICA MODAL ── */
+#classificaModal {
+  position: fixed;
+  inset: 0;
+  background: #f5e6c4;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 48px 20px;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#classificaModal.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.cl-title {
+  font-family: "Cinzel", serif;
+  font-size: 28px;
+  color: #5a2800;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.cl-sub {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: #9a7040;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.cl-card {
+  background: #fffffeb8;
+  border-radius: 10px;
+  padding: 16px 28px;
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.cl-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid #d4b870;
+  font-size: 15px;
+}
+.cl-row:last-child { border-bottom: none; }
+.cl-rank { font-family: "Cinzel", serif; font-weight: 700; color: #c4881a; min-width: 28px; }
+.cl-rank.gold { color: #c4881a; }
+.cl-rank.silver { color: #888; }
+.cl-rank.bronze { color: #a06030; }
+.cl-name { flex: 1; color: #3d1a00; font-weight: 500; }
+.cl-score { color: #c0321a; font-weight: 700; }
+.cl-level { color: #9a7040; font-size: 13px; }
+.cl-class { color: #5a2800; font-size: 12px; font-family: "Cinzel", serif; }
+.cl-empty { color: #9a7040; font-style: italic; text-align: center; padding: 20px; }
 </style>
 </head>
 <body>
@@ -624,6 +729,7 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
     <label for="introNameInput">Inserisci il tuo nome, mortale</label>
     <input type="text" id="introNameInput" placeholder="Il tuo nome..." maxlength="20" autocomplete="off"/>
     <button class="intro-btn" id="introStartBtn" disabled>Entra nel Tempio</button>
+      <button class="intro-btn" onclick="openClassifica()" style="margin-top:8px;font-size:13px;letter-spacing:0.15em;">⊕ Classifica</button>
     <p class="intro-warning">⚠️ Questo è un gioco di puro intrattenimento.<br>Nessun denaro reale è coinvolto.</p>
   </div>
 </div>
@@ -666,6 +772,12 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
 </div>
 
 <!-- GIOCO -->
+<div id="loadingScreen">
+  <div class="loading-title">Temple of Kemet</div>
+  <div class="loading-sub">il tempio del destino ti attende</div>
+  <div class="loading-glyphs">𓂀 𓆣 𓇳 𓁢 𓆙 𓅃</div>
+</div>
+
 <div class="contenitore">
 
   <!-- TITOLO centrato libero -->
@@ -810,6 +922,17 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
   </div>
 </div>
 
+
+
+<!-- CLASSIFICA MODAL -->
+<div id="classificaModal">
+  <div class="cl-title">⊕ Migliori Faraoni di Kemet ⊕</div>
+  <div class="cl-sub">La gloria degli dei è eterna</div>
+  <div class="cl-card" id="cl-list">
+    <div class="cl-empty">Caricamento...</div>
+  </div>
+  <button onclick="closeClassifica()" style="margin-top:10px;padding:10px 40px;font-family:'Cinzel',serif;font-size:16px;font-weight:700;letter-spacing:0.2em;border:1px solid #c4a55a;border-radius:6px;background:none;cursor:pointer;color:#5a2800;">✕ Chiudi</button>
+</div>
 
 <!-- Audio Effects -->
   <audio id="win" src="assets/audio/win.mp3"></audio>
@@ -3175,6 +3298,42 @@ function showGameOver() {
   saveAndShowLeaderboard();
 }
 
+function openClassifica() {
+  const modal = document.getElementById("classificaModal");
+  modal.classList.add("visible");
+  const list = document.getElementById("cl-list");
+  list.innerHTML = "<div class='cl-empty'>Caricamento...</div>";
+  fetch(LEADERBOARD_API + "/leaderboard")
+    .then(r => r.json())
+    .then(scores => {
+      if (!scores.length) {
+        list.innerHTML = "<div class='cl-empty'>Nessun faraone ancora registrato.</div>";
+        return;
+      }
+      list.innerHTML = "";
+      const medals = ["gold","silver","bronze"];
+      scores.slice(0,10).forEach((e, i) => {
+        const row = document.createElement("div");
+        row.className = "cl-row";
+        row.innerHTML = `
+          <span class="cl-rank ${medals[i]||''}">${i===0?"👑":i+1}</span>
+          <span class="cl-name">${e.name}</span>
+          <span class="cl-score">${e.score.toLocaleString()} 🌾</span>
+          <span class="cl-class">${e.socialClass||""}</span>
+          <span class="cl-level">Lv${e.level}</span>
+        `;
+        list.appendChild(row);
+      });
+    })
+    .catch(() => {
+      list.innerHTML = "<div class='cl-empty'>Classifica non disponibile.</div>";
+    });
+}
+
+function closeClassifica() {
+  document.getElementById("classificaModal").classList.remove("visible");
+}
+
 function restartGame() {
   // Reset stato
   currentCredits = 500;
@@ -3334,6 +3493,16 @@ function restartGame() {
   }
 })();
 
+// Nascondi loading screen
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const ls = document.getElementById("loadingScreen");
+    if (ls) {
+      ls.classList.add("fade-out");
+      setTimeout(() => ls.remove(), 500);
+    }
+  }, 600);
+});
 
 </script>
 </body>
