@@ -1002,20 +1002,20 @@ const LEADERBOARD_API = "https://temple-of-kemet.jonalinux-uk.workers.dev";
 const masterAllSymbols = [
 
   // ── LV 1 — Lo Schiavo (13 simboli + 4 nuovi poveri) ─────────────────────────────
-  { file: "copper.png", name: "copper", weight: 25, minLevel: 1, maxLevel: 2 }, // rame — la valuta dello schiavo
-  { file: "wheat.png",  name: "wheat",  weight: 70, minLevel: 1, maxLevel: 2 }, // grano — la valuta del popolo
-  { file: "rope.png",   name: "rope",   weight: 65, minLevel: 1, maxLevel: 2 }, // corda — l'unico strumento dello schiavo
-  { file: "fig.png",    name: "fig",    weight: 62, minLevel: 1, maxLevel: 2 }, // fico — frutto del deserto
-  { file: "sickle.png", name: "sickle", weight: 60, minLevel: 1, maxLevel: 2 }, // falce — attrezzo del bracciante
-  { file: "bowl.png",      name: "bowl",     weight: 65, minLevel: 1 },
-  { file: "chisel.png",    name: "chisel",   weight: 58, minLevel: 1 },
-  { file: "oil-lamp.png",  name: "oillamp",  weight: 60, minLevel: 1 },
-  { file: "onion.png",     name: "onion",    weight: 62, minLevel: 1 },
+  { file: "copper.png", name: "copper", weight: 80, minLevel: 1, maxLevel: 2 }, // rame — la valuta dello schiavo
+  { file: "wheat.png",  name: "wheat",  weight: 90, minLevel: 1, maxLevel: 2 }, // grano — la valuta del popolo
+  { file: "rope.png",   name: "rope",   weight: 80, minLevel: 1, maxLevel: 2 }, // corda — l'unico strumento dello schiavo
+  { file: "fig.png",    name: "fig",    weight: 78, minLevel: 1, maxLevel: 2 }, // fico — frutto del deserto
+  { file: "sickle.png", name: "sickle", weight: 76, minLevel: 1, maxLevel: 2 }, // falce — attrezzo del bracciante
+  { file: "bowl.png",      name: "bowl",     weight: 82, minLevel: 1 },
+  { file: "chisel.png",    name: "chisel",   weight: 74, minLevel: 1 },
+  { file: "oil-lamp.png",  name: "oillamp",  weight: 76, minLevel: 1 },
+  { file: "onion.png",     name: "onion",    weight: 78, minLevel: 1 },
   { file: "park.png",      name: "ibis",     weight: 35, minLevel: 1 },
   { file: "cobra.png",     name: "cobra",    weight: 30, minLevel: 1 },
   { file: "beetle.png",    name: "beetle",   weight: 45, minLevel: 1 },
-  { file: "grape.png",     name: "grape",    weight: 55, minLevel: 1 },
-  { file: "pistachio.png", name: "pistachio",weight: 48, minLevel: 1 },
+  { file: "grape.png",     name: "grape",    weight: 72, minLevel: 1 },
+  { file: "pistachio.png", name: "pistachio",weight: 65, minLevel: 1 },
 
   // ── Simboli Lv1 originali ─────────────────────────────
   // Pool ampio di simboli poveri → combo frequenti → il giocatore
@@ -1031,7 +1031,7 @@ const masterAllSymbols = [
   { file: "sarcophagus.png",name: "sarcophagus", weight: 44, minLevel: 2, maxLevel: 4 }, // la morte è ovunque
   { file: "dagger.png",     name: "dagger",      weight: 38, minLevel: 1, maxLevel: 6 }, // l'unica arma che possiedi
   { file: "ankh.png",       name: "ankh",        weight: 34, minLevel: 2, maxLevel: 7 }, // simbolo della vita — lo impari presto
-  { file: "skull.png",      name: "skull",       weight:  4, minLevel: 1, maxLevel: 7 }, // il pericolo è reale fin dall'inizio
+  { file: "skull.png",      name: "skull",       weight:  2, minLevel: 1, maxLevel: 7 }, // il pericolo è reale fin dall'inizio
   { file: "scarab.png",     name: "scarab",      weight: 14, minLevel: 1, maxLevel: 7 }, // portafortuna — lo trovi nella sabbia
   { file: "ouroboros.png",  name: "ouroboros",   weight:  9, minLevel: 2 }, // wild — il serpente eterno ti aiuta
 
@@ -1092,80 +1092,78 @@ const masterAllSymbols = [
 
 
 const payoutTable = {
-  // ── Nuovi simboli poveri (Lv1) ──
-  copper:      { 3:  5, 4:  8, 5: 12, 6:  18 },
-  wheat:       { 3:  5, 4:  8, 5: 12, 6:  18 },
-  rope:        { 3:  5, 4:  8, 5: 12, 6:  18 },
-  fig:         { 3:  6, 4:  9, 5: 14, 6:  20 },
-  sickle:      { 3:  6, 4:  9, 5: 14, 6:  20 },
-  bowl:        { 3:  6, 4:  9, 5: 13, 6:  19 },
-  chisel:      { 3:  7, 4: 10, 5: 15, 6:  22 },
-  oillamp:     { 3:  7, 4: 10, 5: 15, 6:  22 },
-  onion:       { 3:  5, 4:  8, 5: 12, 6:  18 },
-  ibis:        { 3: 20, 4: 35, 5: 55, 6:  80 },
-  cobra:       { 3: 25, 4: 42, 5: 65, 6:  95 },
-  beetle:      { 3: 12, 4: 18, 5: 26, 6:  38 },
-  grape:       { 3:  8, 4: 12, 5: 18, 6:  26 },
-  pistachio:   { 3: 10, 4: 15, 5: 22, 6:  32 },
+  // ── Simboli comuni Lv1 — payout aumentati ──
+  copper:      { 3: 15, 4: 25, 5: 40, 6:  60 },
+  wheat:       { 3: 15, 4: 25, 5: 40, 6:  60 },
+  rope:        { 3: 15, 4: 25, 5: 40, 6:  60 },
+  fig:         { 3: 18, 4: 28, 5: 45, 6:  65 },
+  sickle:      { 3: 18, 4: 28, 5: 45, 6:  65 },
+  bowl:        { 3: 18, 4: 28, 5: 42, 6:  62 },
+  chisel:      { 3: 20, 4: 32, 5: 50, 6:  72 },
+  oillamp:     { 3: 20, 4: 32, 5: 50, 6:  72 },
+  onion:       { 3: 15, 4: 25, 5: 40, 6:  60 },
+  ibis:        { 3: 45, 4: 80, 5:120, 6: 180 },
+  cobra:       { 3: 55, 4: 95, 5:145, 6: 210 },
+  beetle:      { 3: 28, 4: 45, 5: 68, 6: 100 },
+  grape:       { 3: 22, 4: 35, 5: 55, 6:  80 },
+  pistachio:   { 3: 25, 4: 40, 5: 62, 6:  90 },
 
-  // ── Simboli poverissimi (Lv1) — pagano poco ma appaiono spesso ──
-  bread:       { 3:  8, 4: 12, 5: 18, 6:  25 },
-  reed:        { 3: 10, 4: 15, 5: 22, 6:  30 },
-  sandal:      { 3: 10, 4: 15, 5: 22, 6:  30 },
-  fish:        { 3: 12, 4: 18, 5: 26, 6:  38 },
-  basket:      { 3: 12, 4: 18, 5: 26, 6:  38 },
-
-  // ── Simboli base (Lv1) ──
-  dates:       { 3: 20, 4: 35, 5: 50, 6:  70 },
-  ankh:        { 3: 20, 4: 35, 5: 50, 6:  70 },
-  cat:         { 3: 15, 4: 23, 5: 32, 6:  50 },
-  sarcophagus: { 3: 16, 4: 25, 5: 35, 6:  55 },
-  dagger:      { 3: 14, 4: 19, 5: 26, 6:  42 },
+  // ── Simboli base Lv1 ──
+  bread:       { 3: 22, 4: 35, 5: 52, 6:  75 },
+  reed:        { 3: 25, 4: 40, 5: 60, 6:  88 },
+  sandal:      { 3: 25, 4: 40, 5: 60, 6:  88 },
+  fish:        { 3: 30, 4: 48, 5: 72, 6: 105 },
+  basket:      { 3: 30, 4: 48, 5: 72, 6: 105 },
+  dates:       { 3: 45, 4: 75, 5:110, 6: 160 },
+  ankh:        { 3: 45, 4: 75, 5:110, 6: 160 },
+  cat:         { 3: 35, 4: 55, 5: 80, 6: 120 },
+  sarcophagus: { 3: 38, 4: 60, 5: 88, 6: 130 },
+  dagger:      { 3: 32, 4: 50, 5: 72, 6: 108 },
 
   // ── Lv2 ──
-  goose:       { 3: 14, 4: 22, 5: 32, 6:  48 },
-  scorpion:    { 3: 15, 4: 25, 5: 34, 6:  52 },
-  ruby:      { 3: 20, 4: 32, 5: 48, 6:  70 },
+  goose:       { 3: 35, 4: 58, 5: 85, 6: 125 },
+  scorpion:    { 3: 38, 4: 62, 5: 90, 6: 135 },
+  ruby:        { 3: 50, 4: 80, 5:120, 6: 175 },
 
   // ── Lv3 ──
-  brick:       { 3: 16, 4: 25, 5: 36, 6:  55 },
-  obelisk:     { 3: 20, 4: 30, 5: 42, 6:  65 },
-  sapphire:      { 3: 30, 4: 48, 5: 72, 6: 105 },
+  brick:       { 3: 40, 4: 65, 5: 95, 6: 140 },
+  obelisk:     { 3: 48, 4: 78, 5:115, 6: 168 },
+  sapphire:    { 3: 70, 4:112, 5:168, 6: 245 },
 
   // ── Lv4 ──
-  pyramid:     { 3: 20, 4: 30, 5: 42, 6:  65 },
-  ra:          { 3: 80, 4:160, 5:240, 6: 480 },
-  amethyst:      { 3: 40, 4: 64, 5: 96, 6: 140 },
+  pyramid:     { 3: 50, 4: 80, 5:118, 6: 172 },
+  ra:          { 3:120, 4:240, 5:360, 6: 720 },
+  amethyst:    { 3: 90, 4:144, 5:216, 6: 315 },
 
   // ── Lv5 ──
-  scepter:     { 3: 14, 4: 20, 5: 28, 6:  45 },
-  emerald:      { 3: 55, 4: 88, 5:132, 6: 190 },
+  scepter:     { 3: 35, 4: 55, 5: 80, 6: 120 },
+  emerald:     { 3:110, 4:176, 5:264, 6: 385 },
 
   // ── Lv6 ──
-  djed:        { 3: 20, 4: 30, 5: 42, 6:  65 },
-  osiris:      { 3: 90, 4:180, 5:270, 6: 540 },
-  topaz:      { 3: 70, 4:112, 5:168, 6: 240 },
+  djed:        { 3: 48, 4: 78, 5:115, 6: 168 },
+  osiris:      { 3:150, 4:300, 5:450, 6: 900 },
+  topaz:       { 3:130, 4:208, 5:312, 6: 455 },
 
   // ── Lv7 ──
-  udjat:       { 3: 20, 4: 35, 5: 55, 6:  80 },
-  pharaoh:     { 3: 18, 4: 28, 5: 40, 6:  60 },
-  isis:        { 3:100, 4:200, 5:300, 6: 600 },
-  diamond:      { 3: 90, 4:144, 5:216, 6: 310 },
+  udjat:       { 3: 50, 4: 85, 5:130, 6: 190 },
+  pharaoh:     { 3: 45, 4: 72, 5:105, 6: 155 },
+  isis:        { 3:170, 4:340, 5:510, 6:1020 },
+  diamond:     { 3:160, 4:256, 5:384, 6: 560 },
 
   // ── Lv8 ──
-  horus:       { 3:110, 4:220, 5:330, 6: 660 },
-  coin:        { 3:  0, 4:  0, 5:  0, 6:   0 }, // solo moltiplicatore x10
-  gold:      { 3:120, 4:192, 5:288, 6: 415 },
+  horus:       { 3:180, 4:360, 5:540, 6:1080 },
+  coin:        { 3:  0, 4:  0, 5:  0, 6:   0 },
+  gold:        { 3:200, 4:320, 5:480, 6: 700 },
 
   // ── Lv9 ──
-  seth:        { 3:120, 4:240, 5:360, 6: 720 },
-  thoth:       { 3:115, 4:230, 5:345, 6: 690 },
-  anubis:      { 3:130, 4:260, 5:390, 6: 780 },
+  seth:        { 3:200, 4:400, 5:600, 6:1200 },
+  thoth:       { 3:190, 4:380, 5:570, 6:1140 },
+  anubis:      { 3:220, 4:440, 5:660, 6:1320 },
 
   // ── Lv10 ──
-  hathor:      { 3:125, 4:250, 5:375, 6: 750 },
-  bastet:      { 3:140, 4:280, 5:420, 6: 840 },
-  nefertiti:   { 3:150, 4:300, 5:450, 6: 900 },
+  hathor:      { 3:210, 4:420, 5:630, 6:1260 },
+  bastet:      { 3:240, 4:480, 5:720, 6:1440 },
+  nefertiti:   { 3:260, 4:520, 5:780, 6:1560 },
   pschent:     { 3:500, 4:1000,5:2500,6:10000 },
 };
 
@@ -2938,7 +2936,9 @@ function _applyResultContent(result) {
     const activeSymNames = new Set(getSymbolsForCurrentLevel().map(s => s.name));
     const availableHints = mysteriousHints.filter(h => h.minLevel <= currentLevel && activeSymNames.has(h.symbol));
     const hint = availableHints[Math.floor(Math.random() * availableHints.length)];
-    const iconPath = `assets/img/symbols/${hint.symbol}.png`;
+    const FILE_MAP = { oillamp: "oil-lamp", ibis: "park" };
+    const iconFile = FILE_MAP[hint.symbol] || hint.symbol;
+    const iconPath = `assets/img/symbols/${iconFile}.png`;
     const html = `<img src="${iconPath}" class="message-icon" alt="${hint.symbol}"> ${hint.text}`;
     logMessage(html, "mystic");
   }
