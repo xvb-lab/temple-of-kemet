@@ -804,7 +804,11 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
       <div class="score-item"><span class="score-label">Grano</span><span id="totalScore" class="score-value">0</span></div>
       <div class="score-item"><span class="score-label">Deben ⚖</span><span id="currentCredits" class="score-value">500</span></div>
       <div class="score-item"><span class="score-label">Pietre</span><span id="gemPoints" class="score-value">0</span></div>
-      <div class="score-item"><span class="score-label">Linee</span><span id="activeLines" class="score-value">1</span></div>
+      <div class="score-item"><span class="score-label">Linee</span><span id="activeLinesCount" class="score-value" style="color:#1a3a7a!important">50</span>
+      </div>
+      <div class="score-item"><span class="score-label">Costo Spin</span><span id="activeLines" class="score-value">10</span>
+      </div>
+      <div class="score-item"><span class="score-label">Moltiplicatore</span><span id="betMultiplier" class="score-value" style="color:#8b4510!important">×1</span></div>
     </div>
     <div id="footerStats">
       <span id="ft-symbols">Simboli: 0 / 46</span>
@@ -849,6 +853,16 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
         </div>
       </div>
       <button id="spinButton">SPIN</button>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px;">
+        <span style="font-family:'Cinzel',serif;font-size:11px;color:#9a7040;letter-spacing:0.1em;">LINEE</span>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;">
+          <button class="lines-btn" data-lines="5"  onclick="setActiveLines(5)"  style="padding:3px 7px;font-family:'Cinzel',serif;font-size:11px;border:1px solid #c4a55a;border-radius:4px;background:#c4881a;cursor:pointer;color:#fff;">5</button>
+          <button class="lines-btn" data-lines="10" onclick="setActiveLines(10)" style="padding:3px 7px;font-family:'Cinzel',serif;font-size:11px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">10</button>
+          <button class="lines-btn" data-lines="25" onclick="setActiveLines(25)" style="padding:3px 7px;font-family:'Cinzel',serif;font-size:11px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">25</button>
+          <button class="lines-btn" data-lines="50" onclick="setActiveLines(50)" style="padding:3px 7px;font-family:'Cinzel',serif;font-size:11px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">50</button>
+        </div>
+      </div>
 
     </div>
 
@@ -970,6 +984,25 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
   <audio id="audioLose10" src="assets/audio/lose-10.mp3"></audio>
 
 <script>
+
+// ── COSTI FISSI PER BET E LINEE ──
+let activeLines = 5;
+const BET_COSTS_MAP = {
+  50: [0,  10,  50, 100, 250, 500],
+  25: [0,   5,  25,  50, 125, 250],
+  10: [0,   3,  12,  25,  60, 125],
+   5: [0,   1,   5,  12,  30,  70],
+};
+function getBetCost() { return (BET_COSTS_MAP[activeLines] || BET_COSTS_MAP[50])[currentBet] || 1; }
+function setActiveLines(n) {
+  activeLines = n;
+  document.querySelectorAll(".lines-btn").forEach(b => {
+    b.style.background = parseInt(b.dataset.lines) === n ? "#c4881a" : "none";
+    b.style.color      = parseInt(b.dataset.lines) === n ? "#fff"    : "#5a2800";
+  });
+  updateLineNumbers();
+  updateUI();
+}
 // ── LEADERBOARD API ──────────────────────────────────────
 const LEADERBOARD_API = "https://temple-of-kemet.jonalinux-uk.workers.dev";
 // ─────────────────────────────────────────────────────────
@@ -1002,7 +1035,7 @@ const LEADERBOARD_API = "https://temple-of-kemet.jonalinux-uk.workers.dev";
 const masterAllSymbols = [
 
   // ── LV 1 — Lo Schiavo (13 simboli + 4 nuovi poveri) ─────────────────────────────
-  { file: "copper.png", name: "copper", weight: 80, minLevel: 1, maxLevel: 2 }, // rame — la valuta dello schiavo
+  { file: "copper.png", name: "copper", weight: 40, minLevel: 1, maxLevel: 2 }, // rame — la valuta dello schiavo
   { file: "wheat.png",  name: "wheat",  weight: 90, minLevel: 1, maxLevel: 2 }, // grano — la valuta del popolo
   { file: "rope.png",   name: "rope",   weight: 80, minLevel: 1, maxLevel: 2 }, // corda — l'unico strumento dello schiavo
   { file: "fig.png",    name: "fig",    weight: 78, minLevel: 1, maxLevel: 2 }, // fico — frutto del deserto
@@ -1031,8 +1064,8 @@ const masterAllSymbols = [
   { file: "sarcophagus.png",name: "sarcophagus", weight: 44, minLevel: 2, maxLevel: 4 }, // la morte è ovunque
   { file: "dagger.png",     name: "dagger",      weight: 38, minLevel: 1, maxLevel: 6 }, // l'unica arma che possiedi
   { file: "ankh.png",       name: "ankh",        weight: 34, minLevel: 2, maxLevel: 7 }, // simbolo della vita — lo impari presto
-  { file: "skull.png",      name: "skull",       weight:  2, minLevel: 1, maxLevel: 7 }, // il pericolo è reale fin dall'inizio
-  { file: "scarab.png",     name: "scarab",      weight: 14, minLevel: 1, maxLevel: 7 }, // portafortuna — lo trovi nella sabbia
+  { file: "skull.png",      name: "skull",       weight:  4, minLevel: 1, maxLevel: 7 }, // il pericolo è reale fin dall'inizio
+  { file: "scarab.png",     name: "scarab",      weight:  8, minLevel: 1, maxLevel: 7 }, // portafortuna — lo trovi nella sabbia
   { file: "ouroboros.png",  name: "ouroboros",   weight:  9, minLevel: 2 }, // wild — il serpente eterno ti aiuta
 
   // ── LV 2 — Il Contadino (+4, tot 17) ────────────────────────────
@@ -1164,7 +1197,7 @@ const payoutTable = {
   hathor:      { 3:210, 4:420, 5:630, 6:1260 },
   bastet:      { 3:240, 4:480, 5:720, 6:1440 },
   nefertiti:   { 3:260, 4:520, 5:780, 6:1560 },
-  pschent:     { 3:500, 4:1000,5:2500,6:10000 },
+  pschent:     { 3:2000, 4:5000, 5:12000,6:50000 },
 };
 
 
@@ -2020,7 +2053,11 @@ function updateUI() {
   animateNumberChange("totalScore", totalScore);
   animateNumberChange("currentCredits", currentCredits);
   animateNumberChange("gemPoints", gemPoints);
-  animateNumberChange("activeLines", currentBet);
+  animateNumberChange("activeLines", getBetCost());
+  const linesEl = document.getElementById("activeLinesCount");
+  if (linesEl) linesEl.textContent = activeLines;
+  const multEl = document.getElementById("betMultiplier");
+  if (multEl) multEl.textContent = `×${currentBet}`;
 
   betDisplay.textContent = currentBet;
   if (levelDisplay) levelDisplay.textContent = currentLevel;
@@ -2043,9 +2080,61 @@ function updateUI() {
   const ftXp    = document.getElementById("ft-xp");
   const ftClass = document.getElementById("ft-class");
 
-  if (ftSym)   ftSym.textContent   = `Simboli: ${symUnlocked} / ${symUnlocked}`;
+  // Conta simboli MAI apparsi: simula pool esatto per ogni livello
+  const seenSymbols = new Set();
+  const allGems_ = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
+  const allDivine_ = ["ra","osiris","isis","horus","anubis","thoth","hathor","seth","bastet","udjat","pharaoh","nefertiti"];
+  const SPECIALS_ = ["skull","scarab","ouroboros","jar","hieroglyphs","mummy","coin","sphinx","papyrus","pschent"];
+  const normalsSchedule = {
+    1:["wheat","onion","bowl","oillamp","bread","reed","sandal","fish","chisel","dates"],
+    2:["sandal","fish","chisel","dates","cat","goose","rope","fig","sickle","basket"],
+    3:["dagger","goose","cobra","ankh","grape","scorpion","sarcophagus","brick","obelisk","bowl"],
+    4:["brick","obelisk","beetle","scepter","pistachio","pyramid","djed","ankh","cobra","ibis"],
+    5:["wheat","rope","fig","sickle","grape","pistachio","bowl","chisel","onion","oillamp"],
+    6:["fish","ibis","dates","cat","goose","scorpion","ankh","sarcophagus","cobra","grape"],
+    7:["goose","cobra","ankh","obelisk","ibis","pistachio","brick","pyramid","scepter","djed"],
+    8:["pyramid","scepter","djed","ibis","cobra","grape","pistachio","obelisk","brick","ankh"],
+    9:["grape","pistachio","bread","wheat","reed","fish","dates","cat","bowl","oillamp"],
+    10:["djed","pyramid","scepter","ibis","cobra","grape","pistachio","wheat","bread","reed"],
+  };
+  const gemSchedule_ = [
+    ["copper",1,2],["onyx",3,4],["ruby",5,6],["sapphire",7,8],
+    ["amethyst",9,10],["emerald",11,12],["topaz",13,14],
+    ["diamond",15,16],["gold",17,18],["meteorite",19,20]
+  ];
+  for (let lv = 1; lv <= currentLevel; lv++) {
+    // Gemma attiva
+    let activeGem_ = null;
+    for (const [g, mn, mx] of gemSchedule_) {
+      if (lv >= mn && lv <= mx) { activeGem_ = g; break; }
+    }
+    if (!activeGem_) {
+      const cyc = ["diamond","gold","meteorite"];
+      activeGem_ = cyc[Math.floor((lv - 21) / 2) % cyc.length];
+    }
+    // Divino attivo
+    const activeDivine_ = lv >= 10
+      ? ["ra","osiris","isis","horus","anubis","thoth","hathor","seth","bastet","udjat","pharaoh","nefertiti"][Math.floor((lv - 10) / 2) % 12]
+      : null;
+    // Normali attivi per questo livello
+    const activeNormals_ = new Set(normalsSchedule[lv] || normalsSchedule[10]);
+
+    masterAllSymbols.forEach(s => {
+      if (allGems_.includes(s.name)) { if (s.name === activeGem_) seenSymbols.add(s.name); return; }
+      if (allDivine_.includes(s.name)) { if (s.name === activeDivine_) seenSymbols.add(s.name); return; }
+      if (SPECIALS_.includes(s.name)) {
+        if (s.minLevel <= lv && (s.maxLevel === undefined || s.maxLevel >= lv)) seenSymbols.add(s.name);
+        return;
+      }
+      // Normali: solo se nel pool del livello
+      if (activeNormals_.has(s.name)) seenSymbols.add(s.name);
+    });
+  }
+  if (ftSym) ftSym.textContent = `Simboli: ${seenSymbols.size} / ${symTotal}`;
   if (ftFrasi) ftFrasi.textContent = `Storie: ${fraseLearned} / ${frasiTotal}`;
-  if (ftXp)    ftXp.textContent    = `XP: ${levelXP} / ${pointsPerLevel} al Lv${currentLevel + 1}`;
+  const totalXPEarned = (currentLevel - 1) * pointsPerLevel + levelXP;
+  const totalXPNeeded = currentLevel * pointsPerLevel;
+  if (ftXp)    ftXp.textContent    = `XP: ${totalXPEarned.toLocaleString()} / ${totalXPNeeded.toLocaleString()} al Lv${currentLevel + 1}`;
 
   // Cambia traccia musicale se necessario
   if (bgMusicStarted) {
@@ -2055,6 +2144,8 @@ function updateUI() {
 
   // Aggiorna lista simboli sinistra
   updateSymbolList();
+  // Aggiorna numeri linee visibili
+  updateLineNumbers();
 }
 
 function updateSymbolList() {
@@ -2099,9 +2190,8 @@ function updateSymbolList() {
 
 
 function adjustBet() {
-  if (currentBet > currentCredits) {
-    currentBet = Math.max(minBet, currentCredits);
-  }
+  while (currentBet > 1 && getBetCost() > currentCredits) currentBet--;
+  updateUI();
   updateUI();
 }
 
@@ -2252,7 +2342,7 @@ function calculateWinnings(grid) {
   const GEM_SYMBOLS = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
   const WILD_PAYOUT = { 3: 50, 4: 120, 5: 250, 6: 500 };
 
-  allAvailablePaylines.slice(0, currentBet).forEach((line, lineIndex) => {
+  allAvailablePaylines.slice(0, activeLines).forEach((line, lineIndex) => {
     const symbolsOnLine = line.map((row, col) => grid[col][row]);
 
     for (let start = 0; start <= symbolsOnLine.length - 3; start++) {
@@ -2330,8 +2420,8 @@ function calculateWinnings(grid) {
 
       // Gemme
       if (isGem) {
-        gemPoints += linePayoutAmount;
-        totalGemPointsThisSpin += linePayoutAmount;
+        gemPoints += linePayoutAmount * currentBet;
+        totalGemPointsThisSpin += linePayoutAmount * currentBet;
       }
 
       // Effetti speciali
@@ -2351,7 +2441,7 @@ function calculateWinnings(grid) {
       const isLineEligible = linePayoutAmount > 0 || isGem || isSpecial;
 
       if (isLineEligible) {
-        if (!isGem) totalWin += linePayoutAmount;
+        if (!isGem) totalWin += linePayoutAmount * currentBet;
         linesWon++;
         winningSymbols.push(...matchedPositions);
         winningLines.push({
@@ -2380,14 +2470,22 @@ function calculateWinnings(grid) {
 
 // === CREATE LINE NUMBER ELEMENTS (ONCE) ===
 function createLineNumbers() {
+  updateLineNumbers();
+}
+
+function updateLineNumbers() {
   const left = document.getElementById("lineNumbersLeft");
   const right = document.getElementById("lineNumbersRight");
+  left.innerHTML = "";
+  right.innerHTML = "";
 
   for (let i = 1; i <= 25; i++) {
     const num = document.createElement("div");
     num.className = "line-number";
     num.textContent = i;
     num.style.setProperty("--glow", `var(--glow-line-${i})`);
+    num.style.opacity = i <= activeLines ? "1" : "0.12";
+    num.style.pointerEvents = i <= activeLines ? "auto" : "none";
     left.appendChild(num);
   }
 
@@ -2396,6 +2494,8 @@ function createLineNumbers() {
     num.className = "line-number";
     num.textContent = i;
     num.style.setProperty("--glow", `var(--glow-line-${i})`);
+    num.style.opacity = i <= activeLines ? "1" : "0.12";
+    num.style.pointerEvents = i <= activeLines ? "auto" : "none";
     right.appendChild(num);
   }
 }
@@ -2686,7 +2786,7 @@ function handleSpin() {
   playSound("spinSound"); // 🔊 suono di spin
 
   // Verifica se puoi scommettere (escluse free spin)
-  if (freeSpinsRemaining === 0 && currentCredits < currentBet) {
+  if (freeSpinsRemaining === 0 && currentCredits < getBetCost()) {
     logMessage("⚖ Deben insufficienti per questa puntata!", "error");
     return;
   }
@@ -2694,12 +2794,13 @@ function handleSpin() {
   // Scala credito o free spin
   if (freeSpinsRemaining > 0) {
     freeSpinsRemaining--;
-    logMessage("🌀 Giri del Destino rimasti: " + freeSpinsRemaining, "info"); // Usa logMessage
+    logMessage("🌀 Giro gratuito! Rimasti: " + freeSpinsRemaining, "info");
   } else {
-    currentCredits -= currentBet;
-    // Dopo aver scommesso, aggiorna il bet se ora è troppo alto
-    if (currentBet > currentCredits) {
-      currentBet = Math.max(minBet, currentCredits);
+    const spinCost = getBetCost();
+    currentCredits -= spinCost;
+    if (getBetCost() > currentCredits) {
+      while (currentBet > 1 && getBetCost() > currentCredits) currentBet--;
+  updateUI();
     }
   }
 
@@ -2807,22 +2908,22 @@ document.addEventListener("touchstart", startBgMusic, { once: true });
 // === EVENTI ===
 spinButton.addEventListener("click", handleSpin);
 betPlus.addEventListener("click", () => {
-  currentBet = Math.min(currentBet + 1, linesCount);
+  currentBet = Math.min(currentBet + 1, 5);
 
   playSound("betSound"); // Suono ogni volta che aumenti
   adjustBet();
 });
 betMinus.addEventListener("click", () => {
   currentBet = Math.max(minBet, currentBet - 1);
-  playSound("betSound"); // Suono ogni volta che aumenti
+  playSound("betSound");
   adjustBet();
 });
 // Nome bloccato in partita — impostato solo dalla schermata intro
 // playerInput rimosso dall'header, playerName viene settato da startGame()
 document.addEventListener("keydown", (e) => {
   if (e.key === " ") { e.preventDefault(); handleSpin(); }
-  else if (e.key === "+" || e.key === "=") { currentBet = Math.min(currentBet + 1, linesCount);   playSound("betSound"); adjustBet(); }
-  else if (e.key === "-" || e.key === "_") { currentBet = Math.max(minBet, currentBet - 1);   playSound("betSound"); adjustBet(); }
+  else if (e.key === "+" || e.key === "=") { currentBet = Math.min(currentBet + 1, 5); playSound("betSound"); adjustBet(); }
+  else if (e.key === "-" || e.key === "_") { currentBet = Math.max(minBet, currentBet - 1); playSound("betSound"); adjustBet(); }
 });
 
 window.addEventListener("load", () => {
@@ -3459,13 +3560,41 @@ function restartGame() {
   const intro = document.createElement("div");
   intro.style.cssText = "background:#fdfdfd8f;border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:16px;color:#5a3010;line-height:1.8;";
   intro.innerHTML = `
-    <div style="font-family:'Cinzel',serif;font-size:18px;color:#3d1a00;font-weight:bold;margin-bottom:12px;">☥ Come si gioca</div>
-    <p style="margin-bottom:10px;">Premi <strong>SPIN</strong> per far girare i 6 rulli. Le combinazioni vincenti si formano da <strong>sinistra a destra</strong> su una delle 50 linee attive.</p>
-    <p style="margin-bottom:10px;">Usa <strong>BET</strong> per selezionare quante linee giocare (1–50). Più linee attivi, più possibilità di vincita.</p>
-    <p style="margin-bottom:16px;">Accumula <strong>Grano</strong> vincendo partite, <strong>Deben</strong> per le vincite in crediti e <strong>Pietre Preziose</strong> con le gemme. Ogni 100 Pietre → <strong>+500 Deben</strong> bonus!</p>
-    <div style="font-family:'Cinzel',serif;font-size:15px;color:#3d1a00;font-weight:bold;margin-bottom:10px;">⚖ L'economia dell'antico Egitto</div>
-    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Deben ⚖</strong> — Era un peso in rame di circa 91 grammi, usato come misura di valore. Non era una moneta fisica ma un'unità di conto. L'argento e l'oro erano deben più preziosi, riservati allo Stato e ai templi.</p>
-    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Grano 🌾</strong> — La vera valuta del popolo. I lavoratori delle piramidi venivano pagati in pane, birra e grano. Il grano si conservava nei granai del faraone e veniva ridistribuito come stipendio.</p>
+    <div style="font-family:'Cinzel',serif;font-size:20px;color:#3d1a00;font-weight:bold;margin-bottom:16px;">☥ Come si gioca</div>
+
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Le Basi</div>
+    <p style="margin-bottom:8px;">Premi <strong>SPIN</strong> per far girare i 6 rulli. Le combinazioni vincenti si formano da <strong>sinistra a destra</strong> su una delle <strong>50 linee</strong> sempre attive.</p>
+    <p style="margin-bottom:16px;">Servono almeno <strong>3 simboli identici consecutivi</strong> partendo dal primo rullo per vincere.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Linee Attive</div>
+    <p style="margin-bottom:10px;">Scegli quante linee giocare con i bottoni sotto lo SPIN. Meno linee = meno costo, meno possibilità di vincita.</p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px;">
+      <tr style="background:#c4a55a22;">
+        <th style="padding:6px 8px;text-align:left;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">Linee</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">×1</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">×2</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">×3</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">×4</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;color:#5a2800;border-bottom:1px solid #c4a55a;">×5</th>
+      </tr>
+      <tr><td style="padding:5px 8px;border-bottom:1px solid #d4b87033;font-weight:bold;">50 linee</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">10</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">50</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">100</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">250</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">500</td></tr>
+      <tr style="background:#c4a55a11;"><td style="padding:5px 8px;border-bottom:1px solid #d4b87033;font-weight:bold;">25 linee</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">5</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">25</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">50</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">125</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">250</td></tr>
+      <tr><td style="padding:5px 8px;border-bottom:1px solid #d4b87033;font-weight:bold;">10 linee</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">3</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">12</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">25</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">60</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #d4b87033;">125</td></tr>
+      <tr style="background:#c4a55a11;"><td style="padding:5px 8px;font-weight:bold;">5 linee</td><td style="padding:5px 8px;text-align:center;">1</td><td style="padding:5px 8px;text-align:center;">5</td><td style="padding:5px 8px;text-align:center;">12</td><td style="padding:5px 8px;text-align:center;">30</td><td style="padding:5px 8px;text-align:center;">70</td></tr>
+    </table>
+    <p style="margin-bottom:8px;font-size:13px;color:#9a7040;">Tutti i costi sono in <strong>Deben ⚖</strong>. Il moltiplicatore (×1→×5) si applica sia al costo che alla vincita.</p>
+    <p style="margin-bottom:16px;font-size:13px;color:#9a7040;font-style:italic;">Esempio: 25 linee × Bet ×3 → costi 50 Deben, ma ogni vincita è triplicata.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Progressione e XP</div>
+    <p style="margin-bottom:8px;">Ogni Deben vinto aggiunge <strong>XP</strong>. Accumulando 2000 XP per livello sali di grado sociale — da <strong>Schiavo</strong> fino a <strong>Dio</strong>. Ad ogni livello nuovi simboli entrano nel pool.</p>
+    <p style="margin-bottom:16px;">Il <strong>Grano 🌾</strong> è il tuo punteggio totale — non si spende mai. Viene usato per la classifica globale.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Pietre Preziose</div>
+    <p style="margin-bottom:16px;">Le gemme non pagano in Deben ma in <strong>Pietre Preziose 💎</strong>. Ogni 100 Pietre ricevi <strong>+500 Deben</strong> bonus automatico. Le gemme cambiano ogni 2 livelli — sempre più preziose.</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">⚖ L'economia dell'antico Egitto</div>
+    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Deben ⚖</strong> — Un peso in rame di 91 grammi, prima valuta dell'Egitto. Non era una moneta fisica ma un'unità di misura del valore.</p>
+    <p style="margin-bottom:8px;"><strong style="color:#8b4510;">Grano 🌾</strong> — La vera valuta del popolo. I lavoratori delle piramidi venivano pagati in grano, pane e birra. Chi controllava i granai controllava il mondo.</p>
     <p><strong style="color:#8b4510;">Pietre Preziose 💎</strong> — Custodite nei templi come tesoro divino. Non circolavano tra il popolo ma erano offerte agli dei o sepolte con i faraoni per l'eternità.</p>
   `;
   container.appendChild(intro);
