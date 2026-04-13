@@ -11,7 +11,7 @@ function setActiveLines(n) {
   activeLines = n;
   document.querySelectorAll(".lines-btn").forEach(b => {
     b.style.background = parseInt(b.dataset.lines) === n ? "#c4881a" : "none";
-    b.style.color      = parseInt(b.dataset.lines) === n ? "#fff"    : "#5a2800";
+    b.style.color      = parseInt(b.dataset.lines) === n ? "#fff"    : "#fff";
   });
   updateLineNumbers();
   updateUI();
@@ -1775,7 +1775,7 @@ function switchMusicTrack(trackNum) {
   const newTrack = document.getElementById("bgMusic" + trackNum);
   if (!newTrack) return;
   newTrack.loop = true;
-  newTrack.volume = 0.45;
+  newTrack.volume = _masterVolume;
   newTrack.play().catch(e => console.warn("Music:", e));
 }
 
@@ -1786,10 +1786,81 @@ function startBgMusic() {
   switchMusicTrack(track);
 }
 
+// ── VOLUME ──
+let _masterVolume = 0.70;
+let _isMuted = false;
+let _volBeforeMute = 0.70;
+
+function setMasterVolume(val) {
+  _masterVolume = val / 100;
+  _isMuted = (_masterVolume === 0);
+  applyVolume();
+  // Aggiorna gradiente slider
+  const slider = document.getElementById("volMaster");
+  if (slider) slider.style.background =
+    `linear-gradient(to right, #c4881a 0%, #c4881a ${val}%, rgba(90,40,0,0.15) ${val}%)`;
+  // Icona
+  const icon = document.querySelector("#volumeBtn .material-icons");
+  if (icon) icon.textContent = _isMuted ? "volume_off" : val < 40 ? "volume_down" : "volume_up";
+}
+
+function applyVolume() {
+  const v = _isMuted ? 0 : _masterVolume;
+  document.querySelectorAll("audio").forEach(a => { a.volume = v; a.muted = false; });
+}
+
+function toggleMute() {
+  if (_isMuted) {
+    _isMuted = false;
+    _masterVolume = _volBeforeMute || 0.70;
+  } else {
+    _volBeforeMute = _masterVolume;
+    _isMuted = true;
+  }
+  const slider = document.getElementById("volMaster");
+  if (slider) {
+    const v = _isMuted ? 0 : Math.round(_masterVolume * 100);
+    slider.value = v;
+    setMasterVolume(v);
+  } else {
+    applyVolume();
+    const icon = document.querySelector("#volumeBtn .material-icons");
+    if (icon) icon.textContent = _isMuted ? "volume_off" : "volume_up";
+  }
+}
+
+
+
+// ── DARK / LIGHT MODE ──
+let _isDark = false;
+function toggleDark() {
+  _isDark = !_isDark;
+  document.body.classList.toggle("dark", _isDark);
+  const icon = document.querySelector("#darkBtn .material-icons");
+  if (icon) icon.textContent = _isDark ? "light_mode" : "dark_mode";
+}
+
+// ── FULLSCREEN ──
+function toggleFullscreen() {
+  const btn = document.getElementById("fullscreenBtn");
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+    if (btn) btn.querySelector(".material-icons").textContent = "fullscreen_exit";
+  } else {
+    document.exitFullscreen().catch(() => {});
+    if (btn) btn.querySelector(".material-icons").textContent = "fullscreen";
+  }
+}
+document.addEventListener("fullscreenchange", () => {
+  const btn = document.getElementById("fullscreenBtn");
+  if (btn) btn.querySelector(".material-icons").textContent =
+    document.fullscreenElement ? "fullscreen_exit" : "fullscreen";
+});
+
 // Preload
 [1, 2, 3].forEach(i => {
   const el = document.getElementById("bgMusic" + i);
-  if (el) { el.loop = true; el.volume = 0.45; el.preload = "auto"; }
+  if (el) { el.loop = true; el.volume = _masterVolume; el.preload = "auto"; }
 });
 
 // Autoplay al primo click
