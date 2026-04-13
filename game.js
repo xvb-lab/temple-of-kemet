@@ -212,6 +212,12 @@ const masterAllSymbols = [
 
 ];
 
+// Pietre preziose guadagnate per combo di gemme (base ×3, scala con count)
+const GEM_POINTS_TABLE = {
+  copper:4, onyx:8, ruby:14, sapphire:20, amethyst:28,
+  emerald:38, topaz:50, diamond:65, gold:85, meteorite:110
+};
+
 const payoutTable = {
   // ── Fissi ──
   ouroboros:     { 3:  0, 4:  0, 5:   0, 6:    0 }, // Wild, no payout diretto
@@ -1188,7 +1194,10 @@ function calculateWinnings(grid) {
 
       // ── Gemme: accumula solo nel risultato, non su gemPoints direttamente ──
       if (isGem) {
-        const gemEarned = linePayoutAmount * currentBet;
+        const baseGemVal = GEM_POINTS_TABLE[baseSymbol] || 4;
+        // Scala con il numero di simboli matchati (3×=base, 4×=×1.6, 5×=×2.4, 6×=×3.5)
+        const countMult = [0,0,0,1,1.6,2.4,3.5][Math.min(currentCount,6)] || 1;
+        const gemEarned = Math.round(baseGemVal * countMult * currentBet);
         totalGemPointsThisSpin += gemEarned;
       }
 
@@ -2085,6 +2094,7 @@ function _applyResultContent(result, spinBet = currentBet, spinLines = activeLin
 
   if (totalGemPointsThisSpin > 0) {
     gemPoints += totalGemPointsThisSpin; // accumulo gemme qui, non dentro calculateWinnings
+    totalScore += totalGemPointsThisSpin; // le pietre contano anche per la classifica
     logMessage(`Pietre raccolte: <span class="log-payout">+${totalGemPointsThisSpin}</span> (totale: ${gemPoints}/100)`, "level");
   }
   // Nota: checkGemBonus() viene chiamato alla fine di applyResult
@@ -2546,10 +2556,10 @@ function showGameOver() {
       row.className = "go-lb-row";
       const rankClass = medals[i] || "";
       row.innerHTML = `
-        <span class="go-lb-rank ${rankClass}">${i === 0 ? "👑" : i + 1}</span>
+        <span class="go-lb-rank ${rankClass}">${i === 0 ? '<span class="material-icons" style="font-size:18px;color:#ffd11d">military_tech</span>' : i + 1}</span>
         <span class="go-lb-name">${entry.name}</span>
-        <span class="go-lb-score">${entry.score.toLocaleString()} 🌾</span>
-        <span class="go-lb-level">Lv${entry.level} · ${entry.socialClass || ""}</span>
+        <span class="go-lb-score"><span class="material-icons" style="font-size:14px;vertical-align:middle;color:#fbd06a">grain</span> ${entry.score.toLocaleString()}</span>
+        <span class="go-lb-level"><span class="material-icons" style="font-size:13px;vertical-align:middle;opacity:0.7">military_tech</span> ${entry.socialClass || ""} Lv${entry.level}</span>
       `;
       list.appendChild(row);
     });
@@ -2576,11 +2586,10 @@ function openClassifica() {
         const row = document.createElement("div");
         row.className = "cl-row";
         row.innerHTML = `
-          <span class="cl-rank ${medals[i]||''}">${i===0?"👑":i+1}</span>
+          <span class="cl-rank ${medals[i]||''}">${i===0?'<span class="material-icons" style="font-size:18px;color:#ffd11d">military_tech</span>':i+1}</span>
           <span class="cl-name">${e.name}</span>
-          <span class="cl-score">${e.score.toLocaleString()} 🌾</span>
-          <span class="cl-class">${e.socialClass||""}</span>
-          <span class="cl-level">Lv${e.level}</span>
+          <span class="cl-score"><span class="material-icons" style="font-size:14px;vertical-align:middle;color:#fbd06a">grain</span> ${e.score.toLocaleString()}</span>
+          <span class="cl-class"><span class="material-icons" style="font-size:13px;vertical-align:middle;opacity:0.7">military_tech</span> ${e.socialClass||""} Lv${e.level}</span>
         `;
         list.appendChild(row);
       });
