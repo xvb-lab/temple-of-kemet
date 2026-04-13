@@ -537,14 +537,52 @@ body {
 .pt-special-desc em{color:#8b2010;font-style:normal;font-weight:bold}
 
 /* ════ SFINGE ════ */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:flex;justify-content:center;align-items:center;z-index:9999}
-.modal-content{background:#f0dfa8;padding:30px;border-radius:14px;color:#3d1a00;text-align:center;width:560px;max-width:95%;font-size:1.1em;border:2px solid #c4a55a}
-.card-row{display:flex;justify-content:space-around;margin:20px 0}
-.card-choice{width:120px;cursor:pointer;border-radius:8px;border:2px solid #c4a55a;transition:all 0.2s}
-.card-choice:hover{border-color:#8b4510;transform:translateY(-3px)}
-.sphinx-card{width:100px;margin:10px auto;display:block}
+.modal{position:fixed;inset:0;background:#f5e6c4;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;padding:40px 20px;overflow-y:auto;}
+.modal-content{background:transparent;padding:0;border-radius:0;color:#3d1a00;text-align:center;width:100%;max-width:680px;font-size:1em;border:none;font-family:"Cinzel",serif;}
+.card-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap;}
+
+/* Dorso carta con glifi egizi */
+.card-choice{
+  width:110px;height:160px;cursor:pointer;border-radius:10px;
+  border:2px solid #c4a55a;transition:all 0.2s;
+  background: linear-gradient(135deg, #8b4510 0%, #5a2800 50%, #8b4510 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;color:#e8c050;font-size:22px;letter-spacing:0.1em;
+  box-shadow:0 4px 12px rgba(90,40,0,0.3);
+  position:relative;overflow:hidden;
+}
+.card-choice::before {
+  content:"𓂀 𓆣 𓇳";
+  position:absolute;top:8px;font-size:11px;opacity:0.5;letter-spacing:0.05em;color:#e8c050;
+}
+.card-choice::after {
+  content:"𓁢 𓆙 𓅃";
+  position:absolute;bottom:8px;font-size:11px;opacity:0.5;letter-spacing:0.05em;color:#e8c050;
+}
+.card-choice:hover{border-color:#e8c050;transform:translateY(-5px);box-shadow:0 8px 20px rgba(90,40,0,0.4);}
+.card-choice img{width:90px;height:130px;object-fit:contain;border-radius:8px;}
+
+.sphinx-card{width:110px;height:160px;margin:10px auto;display:block;border-radius:10px;border:2px solid #c4a55a;object-fit:contain;}
 .hidden{display:none!important}
-button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospace;cursor:pointer}
+button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Cinzel",monospace;cursor:pointer}
+
+/* Titolo sfinge */
+.sphinx-header-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;font-family:"Cinzel",serif;
+}
+.sphinx-header-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;
+}
+.sphinx-question { font-size:15px;color:#5a2800;margin:16px 0;line-height:1.6;font-family:"Syne Mono",monospace; }
+.sphinx-result-text { font-size:16px;font-weight:bold;color:#5a2800;margin:12px 0;font-family:"Syne Mono",monospace; }
+.sphinx-buttons { display:flex;justify-content:center;gap:12px;margin-top:16px;flex-wrap:wrap; }
+.sphinx-buttons button {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 28px;
+  cursor:pointer;transition:all 0.15s;
+}
+.sphinx-buttons button:hover { background:#eedbb0; }
 
 /* Simboli non vincenti opachi */
 #slotContainer.has-winners .symbol:not(.pulse) {
@@ -716,6 +754,170 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
 .cl-level { color: #9a7040; font-size: 13px; }
 .cl-class { color: #5a2800; font-size: 12px; font-family: "Cinzel", serif; }
 .cl-empty { color: #9a7040; font-style: italic; text-align: center; padding: 20px; }
+
+/* ════ MERCATO DEL NILO ════ */
+#marketModal {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+.market-box {
+  background:transparent;padding:0;border-radius:0;
+  color:#3d1a00;text-align:center;width:100%;max-width:600px;
+  border:none;font-family:"Cinzel",serif;
+}
+.market-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;
+}
+.market-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:24px;
+}
+.market-stalls {
+  display:flex;justify-content:center;gap:20px;margin:20px 0 28px;
+}
+.market-stall {
+  width:130px;cursor:pointer;
+  border-radius:12px;border:2px solid #c4a55a;
+  background:#fdf5dc;padding:16px 10px;
+  transition:all 0.2s;display:flex;flex-direction:column;
+  align-items:center;gap:10px;
+}
+.market-stall:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.market-stall img { width:70px;height:70px;object-fit:contain; }
+.market-stall-label {
+  font-size:12px;color:#9a7040;letter-spacing:0.1em;text-transform:uppercase;
+}
+.market-stall.revealed { pointer-events:none; }
+.market-stall.win-stall { border-color:#c4881a;background:#fff8d0; }
+.market-stall.lose-stall { border-color:#8b2010;background:#fff0ee;opacity:0.6; }
+.market-result {
+  font-size:18px;color:#5a2800;margin:10px 0 20px;min-height:28px;font-weight:bold;
+}
+.market-btn {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 32px;
+  cursor:pointer;transition:all 0.15s;margin:4px;
+}
+.market-btn:hover { background:#eedbb0; }
+
+/* ════ GIUDIZIO DI ANUBI ════ */
+#anubiModal {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+.anubi-box {
+  background:transparent;padding:0;border-radius:0;
+  color:#3d1a00;text-align:center;width:100%;max-width:640px;
+  border:none;font-family:"Cinzel",serif;
+}
+.anubi-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;
+}
+.anubi-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:24px;
+}
+.anubi-cards {
+  display:flex;justify-content:center;gap:16px;margin:20px 0 28px;flex-wrap:wrap;
+}
+.anubi-card {
+  width:140px;cursor:pointer;border-radius:10px;
+  border:1px solid #c4a55a;background:#fffffeb8;
+  padding:16px 10px;transition:all 0.2s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.anubi-card:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.anubi-card img { width:70px;height:70px;object-fit:contain; }
+.anubi-card-name { font-size:12px;color:#8a6030;letter-spacing:0.08em;text-transform:uppercase; }
+.anubi-card-value { font-size:20px;font-weight:700;color:#c4881a; }
+.anubi-card.revealed { pointer-events:none; }
+.anubi-card.win-card { border-color:#2a6030;background:#e8f5e0; }
+.anubi-card.lose-card { border-color:#8b2010;background:#fef0ee;opacity:0.5; }
+.anubi-result {
+  font-size:18px;color:#5a2800;margin:10px 0 20px;min-height:28px;font-weight:bold;
+}
+.anubi-btn {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 32px;
+  cursor:pointer;transition:all 0.15s;margin:4px;
+}
+.anubi-btn:hover { background:#eedbb0; }
+
+/* ════ VASO ANTICO ════ */
+#jarModal {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+.jar-box {
+  text-align:center;width:100%;max-width:900px;font-family:"Cinzel",serif;
+}
+.jar-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;
+}
+.jar-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:28px;
+}
+.jar-reveal {
+  background:#fffffeb8;border-radius:12px;padding:28px;
+  margin:20px 0;font-size:20px;color:#5a2800;font-weight:bold;
+  border:1px solid #c4a55a;min-height:80px;display:flex;
+  align-items:center;justify-content:center;
+}
+.jar-reveal.bonus { color:#2a6030; }
+.jar-reveal.curse { color:#8b2010; }
+.jar-btn {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 32px;
+  cursor:pointer;transition:all 0.15s;margin-top:16px;
+}
+.jar-btn:hover { background:#eedbb0; }
+
+/* ── JAR ANIMATION ── */
+@keyframes jarPulse {
+  0%   { transform: scale(1) rotate(0deg); }
+  20%  { transform: scale(1.08) rotate(-3deg); }
+  40%  { transform: scale(1.12) rotate(3deg); }
+  60%  { transform: scale(1.08) rotate(-2deg); }
+  80%  { transform: scale(1.04) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes jarGlow {
+  0%, 100% { filter: drop-shadow(0 0 0px #c4881a); }
+  50%       { filter: drop-shadow(0 0 20px #c4881a); }
+}
+.jar-img-anim {
+  animation: jarPulse 0.6s ease-in-out, jarGlow 1.5s ease-in-out infinite;
+}
+@keyframes revealFade {
+  from { opacity:0; transform: scale(0.85); }
+  to   { opacity:1; transform: scale(1); }
+}
+.jar-reveal-anim {
+  animation: revealFade 0.5s ease-out forwards;
+}
+
+/* ── JAR VASES ── */
+.jar-vase {
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;padding:14px 10px;border-radius:10px;
+  border:1px solid #c4a55a;background:#fffffeb8;
+  transition:all 0.2s;width:110px;flex-shrink:0;
+}
+.jar-vase:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.jar-vase img { width:80px;height:80px;object-fit:contain; }
+.jar-vase-label { font-size:12px;color:#9a7040;font-family:"Cinzel",serif; }
+.jar-vase.opened { pointer-events:none;cursor:default; }
+.jar-vase.opened.bonus-vase { border-color:#2a6030;background:#e8f5e0; }
+.jar-vase.opened.curse-vase { border-color:#8b2010;background:#fef0ee; }
+.jar-vase.opened.neutral-vase { border-color:#c4a55a;background:#fdf5dc; }
+.jar-vase-value { font-size:13px;font-weight:bold;color:#5a2800;font-family:"Cinzel",serif; }
 </style>
 </head>
 <body>
@@ -773,8 +975,6 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
 
 <!-- GIOCO -->
 <div id="loadingScreen">
-  <div class="loading-title">Temple of Kemet</div>
-  <div class="loading-sub">il tempio del destino ti attende</div>
   <div class="loading-glyphs">𓂀 𓆣 𓇳 𓁢 𓆙 𓅃</div>
 </div>
 
@@ -905,16 +1105,19 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
 
   <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
     <span style="color:#9a7040;min-width:60px;">PIETRE</span>
-    <button onclick="gemPoints+=200;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">+200</button>
-    <button onclick="gemPoints+=500;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">+500</button>
-    <button onclick="gemPoints=90;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">→ soglia bonus</button>
+    <button onclick="gemPoints+=20;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">+20</button>
+    <button onclick="gemPoints+=50;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">+50</button>
+    <button onclick="gemPoints=95;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">→ soglia bonus</button>
+    <button onclick="checkGemBonus();updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">💠 Trigger Bonus</button>
     <button onclick="gemPoints=0;updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">reset</button>
   </div>
 
   <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
     <span style="color:#9a7040;min-width:60px;">MINI GIOCHI</span>
     <button onclick="playSphinxGame(500);" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏛 Sfinge</button>
-    <button onclick="(function(){const jarType=Math.floor(Math.random()*4);const bonus=50+Math.floor(Math.random()*451);if(jarType===0){currentCredits+=bonus;logMessage('🏺 Vaso: +'+bonus+' Deben','bonus');}else if(jarType===1){freeSpinsRemaining+=3;logMessage('🌀 Vaso: +3 giri','bonus');}else if(jarType===2){const c=Math.floor(currentCredits*0.1);currentCredits=Math.max(0,currentCredits-c);logMessage('☠️ Vaso maledetto: -'+c,'curse');}else{gemPoints+=50;logMessage('💎 Vaso: +50 pietre','bonus');}updateUI();})();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏺 Vaso</button>
+    <button onclick="playMarketGame(100);" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏺 Mercato</button>
+    <button onclick="playAnubiGame(200);" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">⚖ Anubi</button>
+    <button onclick="playJarGame();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏺 Vaso</button>
     <button onclick="(function(){const p=Math.floor(Math.random()*3);if(p===0){const c=50+Math.floor(Math.random()*151);currentCredits+=c;logMessage('📜 Papiro: +'+c+' Deben','bonus');}else if(p===1){const g=10+Math.floor(Math.random()*291);gemPoints+=g;logMessage('📜 Papiro: +'+g+' pietre','bonus');}else{const l=Math.floor(currentCredits*0.25);currentCredits=Math.max(0,currentCredits-l);logMessage('📜 Maledizione papiro: -'+l,'curse');}updateUI();})();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">📜 Papiro</button>
     <button onclick="freeSpinsRemaining+=3;logMessage('🌀 +3 giri gratuiti DEV','bonus');updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🌀 +3 Giri</button>
   </div>
@@ -924,7 +1127,7 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
     <button onclick="(function(){const g=getGridSymbols();const reels=document.querySelectorAll('.reel');const pool=getWeightedSymbolPool().filter(s=>s.name!=='hieroglyphs'&&s.name!=='sphinx'&&s.name!=='papyrus');[[0,0],[1,1],[2,2]].forEach(function(p){const s=pool[Math.floor(Math.random()*pool.length)];const c=reels[p[0]].children[p[1]];c.dataset.symbol=s.name;c.querySelector('img').src='assets/img/symbols/'+s.file;});logMessage('🔄 Geroglifici trasformati DEV','mystic');})();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🔄 Geroglifici</button>
     <button onclick="(function(){const pen=Math.floor(currentCredits*0.2);currentCredits=Math.max(0,currentCredits-pen);logMessage('🧟 Mummia: -'+pen+' Deben','curse');updateUI();})();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🧟 Mummia</button>
     <button onclick="logMessage('💀 Teschio: premio dimezzato (simulazione)','curse');" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">💀 Teschio</button>
-    <button onclick="checkGemBonus();updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">💠 Bonus Pietre</button>
+    <button onclick="gemPoints=100;checkGemBonus();updateUI();logMessage('💠 DEV: bonus gemme triggerato','bonus');" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">💠 Bonus Pietre</button>
   </div>
 
   <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
@@ -946,6 +1149,47 @@ button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Syne Mono",monospa
     <div class="cl-empty">Caricamento...</div>
   </div>
   <button onclick="closeClassifica()" style="margin-top:10px;padding:10px 40px;font-family:'Cinzel',serif;font-size:16px;font-weight:700;letter-spacing:0.2em;border:1px solid #c4a55a;border-radius:6px;background:none;cursor:pointer;color:#5a2800;">✕ Chiudi</button>
+</div>
+
+
+<!-- MERCATO DEL NILO -->
+<div id="marketModal" class="hidden">
+  <div class="market-box">
+    <img src="assets/img/symbols/market.png" style="width:256px;height:256px;object-fit:contain;margin-bottom:16px;">
+    <div class="market-title">Il Mercato del Nilo</div>
+    <div class="market-sub">Scegli una bancarella</div>
+    <p id="marketDesc" style="font-size:14px;color:#8a6030;margin-bottom:4px;min-height:40px;font-family:'Syne Mono',monospace;"></p>
+    <div class="market-stalls" id="marketStalls"></div>
+    <div class="market-result" id="marketResult" style="font-family:'Syne Mono',monospace;"></div>
+    <div id="marketButtons"></div>
+  </div>
+</div>
+
+<!-- GIUDIZIO DI ANUBI -->
+<div id="anubiModal" class="hidden">
+  <div class="anubi-box">
+    <img src="assets/img/symbols/scale.png" style="width:256px;height:256px;object-fit:contain;margin-bottom:16px;">
+    <div class="anubi-title">Il Giudizio di Anubi</div>
+    <div class="anubi-sub">Scegli il simbolo più potente</div>
+    <p id="anubiDesc" style="font-size:13px;color:#9a7040;margin-bottom:4px;min-height:36px;font-family:'Syne Mono',monospace;"></p>
+    <div class="anubi-cards" id="anubiCards"></div>
+    <div class="anubi-result" id="anubiResult" style="font-family:'Syne Mono',monospace;"></div>
+    <div id="anubiButtons"></div>
+  </div>
+</div>
+
+
+<!-- VASO ANTICO MODAL -->
+<div id="jarModal" class="hidden">
+  <div class="jar-box">
+    <img src="assets/img/symbols/jar.png" style="width:180px;height:180px;object-fit:contain;margin-bottom:12px;">
+    <div class="jar-title">Il Vaso Antico</div>
+    <div class="jar-sub">Scegli 3 vasi su 5 — scopri cosa nascondono</div>
+    <div id="jarVases" style="display:flex;justify-content:center;gap:16px;flex-wrap:nowrap;margin:20px 0;width:100%;max-width:900px;"></div>
+    <div class="jar-reveal" id="jarReveal" style="display:none;font-family:'Syne Mono',monospace;"></div>
+    <div id="jarTotal" style="font-size:15px;color:#5a2800;margin:8px 0;font-family:'Syne Mono',monospace;min-height:24px;line-height:1.7;max-width:600px;margin:12px auto;"></div>
+    <button class="jar-btn hidden" id="jarContinueBtn" onclick="closeJar()">Continua</button>
+  </div>
 </div>
 
 <!-- Audio Effects -->
@@ -1106,7 +1350,7 @@ const masterAllSymbols = [
   { file: "horus.png",      name: "horus",       weight: 10, minLevel: 10 }, // il falcone celeste — per i valorosi
   { file: "coin.png",       name: "coin",        weight: 11, minLevel: 8 }, // la moneta d'oro — solo i nobili
   { file: "gold.png",       name: "gold",        weight: 10, minLevel: 17 }, // l'oro dei faraoni
-  { file: "sphinx.png",     name: "sphinx",      weight:  8, minLevel: 8 }, // la sfinge ti sfida — sei pronto?
+  { file: "sphinx.png",     name: "sphinx",      weight:  8, minLevel: 10 }, // la sfinge ti sfida — sei pronto?
 
   // ── LV 9 — Il Visir (+3, tot 41) ────────────────────────────────
   { file: "seth.png",       name: "seth",        weight:  8, minLevel: 10 }, // il caos si manifesta ai potenti
@@ -1119,6 +1363,8 @@ const masterAllSymbols = [
   { file: "bastet.png",     name: "bastet",      weight:  6, minLevel: 10 }, // la protettrice suprema
   { file: "nefertiti.png",  name: "nefertiti",   weight:  5, minLevel: 10 }, // apparizione leggendaria
   { file: "papyrus.png",    name: "papyrus",     weight:  4, minLevel: 10 }, // i segreti proibiti dei saggi
+  { file: "market.png",      name: "canopic_jar", weight: 40, minLevel: 1,  maxLevel: 4 }, // mini-gioco Lv1
+  { file: "scale.png",       name: "scale",       weight: 32, minLevel: 5,  maxLevel: 9 }, // mini-gioco Lv5
   { file: "pschent.png",    name: "pschent",     weight:  2, minLevel: 10 }, // LA CORONA DEL FARAONE — JACKPOT
 
 ];
@@ -1198,6 +1444,8 @@ const payoutTable = {
   bastet:      { 3:240, 4:480, 5:720, 6:1440 },
   nefertiti:   { 3:260, 4:520, 5:780, 6:1560 },
   pschent:     { 3:2000, 4:5000, 5:12000,6:50000 },
+  canopic_jar: { 3:0, 4:0, 5:0, 6:0 }, // effetto speciale
+  scale:       { 3:0, 4:0, 5:0, 6:0 },
 };
 
 
@@ -1782,7 +2030,7 @@ const frasiGiocoIniziale = [
   "Il Pesce del Nilo era tabù nelle cerimonie sacre: troppo vicino alle acque primordiali di Nun, il caos originale.",
   "Il Sandalo del faraone — intessuto di giunco bianco — era usato nella cerimonia di 'stirare i passi' per consacrare il territorio.",
   "Il Cesto — neb — significa 'signore' e 'tutto' in geroglifico. Un semplice intreccio conteneva il concetto dell'universo intero.",
-  "Il Vaso Canopo custodiva i visceri del defunto: fegato, polmoni, stomaco e intestino, protetti dai Quattro Figli di Horus.",
+  "Il Mercato del Nilo era il cuore pulsante delle città egizie. Merci, spezie, grano e tessuti si scambiavano sulle rive del grande fiume.",
 
   // ── ECONOMIA, DEBEN E VITA QUOTIDIANA ──
   "Il Deben era un peso in rame di 91 grammi — non una moneta, ma un'unità di misura. L'economia egizia era un'economia di pesi.",
@@ -2164,7 +2412,7 @@ function updateSymbolList() {
     bastet:"Bastet", udjat:"Udjat", pharaoh:"Faraone", nefertiti:"Nefertiti",
     ouroboros:"Ouroboros", scarab:"Scarabeo", skull:"Teschio", jar:"Vaso Antico",
     hieroglyphs:"Geroglifici", mummy:"Mummia", coin:"Moneta d'Oro",
-    sphinx:"Sfinge", papyrus:"Papiro", pschent:"Corona Pschent",
+    sphinx:"Sfinge", papyrus:"Papiro", canopic_jar:"Mercato del Nilo", scale:"Bilancia di Ma'at", pschent:"Corona Pschent",
     copper:"Rame", onyx:"Onice", ruby:"Rubino", sapphire:"Zaffiro",
     amethyst:"Ametista", emerald:"Smeraldo", topaz:"Topazio",
     diamond:"Diamante", gold:"Oro", meteorite:"Meteorite",
@@ -2264,7 +2512,7 @@ function getSymbolsForCurrentLevel() {
     // Normali: solo quelli del livello
     if (!s.special) {
       // Determina se è un normale (ha payout, non è gemma, non è divino, non è speciale)
-      const SPECIALS = ["skull","scarab","ouroboros","jar","hieroglyphs","mummy","coin","sphinx","papyrus","pschent"];
+      const SPECIALS = ["skull","scarab","ouroboros","jar","hieroglyphs","mummy","coin","sphinx","papyrus","pschent","canopic_jar","scale"];
       if (!SPECIALS.includes(s.name) && !allGems.includes(s.name) && !allDivine.includes(s.name)) {
         return activeNormals.has(s.name);
       }
@@ -2338,7 +2586,7 @@ function calculateWinnings(grid) {
   let winningLines = [];
   let totalGemPointsThisSpin = 0;
 
-  const SPECIALS = ["jar", "hieroglyphs", "sphinx", "pschent", "papyrus", "mummy"];
+  const SPECIALS = ["jar", "hieroglyphs", "sphinx", "pschent", "papyrus", "mummy", "canopic_jar", "scale"];
   const GEM_SYMBOLS = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
   const WILD_PAYOUT = { 3: 50, 4: 120, 5: 250, 6: 500 };
 
@@ -2436,6 +2684,8 @@ function calculateWinnings(grid) {
         effects.push({ type: "mummy_penalty", amount: Math.floor(currentCredits * penaltyRate) });
       }
       if (baseSymbol === "papyrus") effects.push({ type: "papyrus_bonus" });
+      if (baseSymbol === "canopic_jar" && !effects.includes("canopic_jar")) effects.push("canopic_jar");
+      if (baseSymbol === "scale" && !effects.includes("scale")) effects.push("scale");
 
       const isSpecial = SPECIALS.includes(baseSymbol);
       const isLineEligible = linePayoutAmount > 0 || isGem || isSpecial;
@@ -2626,9 +2876,12 @@ function playSphinxGame(initialPrize = 100) {
     const backs = ["back.png", "back2.png"];
     content.innerHTML = `
       <div class="sphinx-casino">
+        <img src="assets/img/symbols/sphinx.png" style="width:180px;height:180px;object-fit:contain;margin-bottom:12px;">
+        <div class="sphinx-header-title">La Sfinge ti sfida</div>
+        <div class="sphinx-header-sub">scegli la carta più alta</div>
         <div class="card-row" style="margin-bottom: 10px">
           ${Array.from({ length: 4 }).map(() =>
-            `<img src="assets/img/cards/${backs[Math.floor(Math.random() * backs.length)]}" class="card-choice" style="pointer-events: none;">`
+            `<div class="card-choice" style="pointer-events: none;">𓂀<br>𓆣<br>𓇳</div>`
           ).join("")}
         </div>
         <div class="sphinx-question">
@@ -2636,7 +2889,7 @@ function playSphinxGame(initialPrize = 100) {
           Vuoi giocare per raddoppiare o accettare la vincita?
         </div>
         <div class="sphinx-buttons">
-          <button id="acceptPrize">Accetta</button>
+          <button id="acceptPrize">Accetta il premio</button>
           <button id="challengeSphinx">Sfida la Sfinge</button>
         </div>
       </div>
@@ -2666,9 +2919,10 @@ function playSphinxGame(initialPrize = 100) {
 
     content.innerHTML = `
       <div class="sphinx-casino">
-        <div class="sphinx-header">Carta della Sfinge da battere</div>
+        <img src="assets/img/symbols/sphinx.png" style="width:140px;height:140px;object-fit:contain;margin-bottom:8px;">
+        <div class="sphinx-header-title">Carta della Sfinge</div>
         <img id="sphinxCard" class="sphinx-card" src="assets/img/cards/${sphinxCard}.png" alt="Carta Sfinge">
-        <div class="sphinx-header">Scegli una carta coperta</div>
+        <div class="sphinx-header-sub" style="margin-top:16px;">Scegli una carta coperta</div>
         <div class="card-row" id="playerChoices"></div>
         <div id="sphinxResultText" class="sphinx-result-text"></div>
         <div class="sphinx-buttons" id="afterResultButtons" style="display: none;">
@@ -2684,14 +2938,14 @@ function playSphinxGame(initialPrize = 100) {
     const afterResult = document.getElementById("afterResultButtons");
 
     for (let i = 0; i < 4; i++) {
-      const img = document.createElement("img");
+      const img = document.createElement("div");
       img.className = "card-choice";
-      img.src = `assets/img/cards/${backs[Math.floor(Math.random() * backs.length)]}`;
       img.style.cursor = "pointer";
+      img.innerHTML = "𓂀<br>𓆣<br>𓇳";
 
-      img.onclick = (event) => { // Usa 'event' per ottenere la carta cliccata
+      img.onclick = (event) => {
         const playerCard = cardFiles[Math.floor(Math.random() * cardFiles.length)];
-        event.target.src = `assets/img/cards/${playerCard}.png`; // Mostra la carta del giocatore
+        img.innerHTML = `<img src="assets/img/cards/${playerCard}.png" style="width:90px;height:130px;object-fit:contain;border-radius:8px;">`; 
         document.querySelectorAll(".card-choice").forEach(c => c.onclick = null); // Disabilita i click sulle altre carte
 
         const win = getValue(playerCard) > getValue(sphinxCard);
@@ -2733,10 +2987,9 @@ function playSphinxGame(initialPrize = 100) {
           afterResult.style.display = "flex";
 
           document.getElementById("closeSphinx").onclick = () => {
-            currentCredits = Math.max(0, currentCredits - prize);
             modal.classList.add("hidden");
             modal.style.display = "none";
-            logMessage(`😨 La Sfinge ha vinto: -${prize} Deben di rame`, "curse");
+            logMessage(`❌ La Sfinge ti ha sconfitto. Hai perso l'occasione di bonus.`, "curse");
             playSound("sphinxlose");
             updateUI();
             spinButton.disabled = false;
@@ -3011,7 +3264,7 @@ function _applyResultContent(result) {
         bastet:"Bastet", udjat:"Udjat", pharaoh:"Faraone", nefertiti:"Nefertiti",
         ouroboros:"Wild", scarab:"Scarabeo", skull:"Teschio", jar:"Vaso",
         hieroglyphs:"Geroglifici", mummy:"Mummia", coin:"Moneta", sphinx:"Sfinge",
-        papyrus:"Papiro", pschent:"Jackpot", bowl:"Ciotola", chisel:"Scalpello",
+        papyrus:"Papiro", canopic_jar:"Mercato del Nilo", scale:"Bilancia di Ma'at", pschent:"Jackpot", bowl:"Ciotola", chisel:"Scalpello",
         oillamp:"Lampada", onion:"Cipolla", ibis:"Ibis", cobra:"Cobra", beetle:"Scarabeo",
         copper:"Rame", onyx:"Onice", ruby:"Rubino", sapphire:"Zaffiro",
         amethyst:"Ametista", emerald:"Smeraldo", topaz:"Topazio",
@@ -3065,31 +3318,7 @@ function _applyResultContent(result) {
 
   result.effects.forEach(effect => {
     if (effect === "jar") {
-  const jarType = Math.floor(Math.random() * 4);  
-  switch (jarType) {
-    case 0:
-      const bonus = 50 + Math.floor(Math.random() * 451);
-      currentCredits += bonus;
-      logMessage(`🏺 Vaso Antico: +${bonus} Deben di rame!`, "bonus");
-      break;
-    case 1:
-      const spins = 1 + Math.floor(Math.random() * 5);
-      freeSpinsRemaining += spins;
-      logMessage(`🌀 Vaso Antico: +${spins} Giri del Destino!`, "bonus");
-      break;
-    case 2:
-      const curse = Math.floor(currentCredits * 0.1);
-      currentCredits = Math.max(0, currentCredits - curse);
-      logMessage(`☠️ Vaso Maledetto: -${curse} Deben di rame!`, "curse");
-      break;
-    case 3:
-      const gem = 10 + Math.floor(Math.random() * 191);
-      gemPoints += gem;
-      logMessage(`💎 Vaso Antico: +${gem} Pietre Preziose!`, "bonus");
-      break;
-    
-  }
-  playSound("jar");
+  playJarGame();
 }
 
     if (typeof effect === "object" && effect.type === "transform") {
@@ -3133,6 +3362,18 @@ function _applyResultContent(result) {
       playSound("win3");
     }
 
+    if (effect === "canopic_jar") {
+      const prize = 80 + Math.floor(Math.random() * 170);
+      setTimeout(() => playMarketGame(prize), 800);
+      playSound("bonus");
+    }
+
+    if (effect === "scale") {
+      const prize = 200 + Math.floor(Math.random() * 300);
+      setTimeout(() => playAnubiGame(prize), 800);
+      playSound("win2");
+    }
+
     if (typeof effect === "object" && effect.type === "papyrus_bonus") {
       const choice = Math.floor(Math.random() * 3);
       if (choice === 0) {
@@ -3146,10 +3387,10 @@ function _applyResultContent(result) {
         logMessage(`📜 Il Papiro rivela pietre perdute: +${gems} Pietre Preziose!`, "bonus");
         playSound("bonus");
       } else {
-        const lost = Math.floor(currentCredits * 0.25);
-        currentCredits = Math.max(0, currentCredits - lost);
-        logMessage(`📜 Maledizione del Papiro! -${lost} Deben di rame!`, "curse");
-        playSound("gameover");
+        const consolation = 10 + Math.floor(Math.random() * 30);
+        gemPoints += consolation;
+        logMessage(`📜 Il Papiro è oscuro... +${consolation} Pietre Preziose come conforto.`, "bonus");
+        playSound("bonus");
       }
     }
 
@@ -3364,6 +3605,12 @@ function showGameOver() {
       socialClass: getSocialStatus(currentLevel),
     };
 
+    // Developer non va in classifica
+    if (playerName.toLowerCase().startsWith("developer")) {
+      renderLeaderboard([]);
+      return;
+    }
+
     try {
       await fetch(LEADERBOARD_API + "/leaderboard", {
         method: "POST",
@@ -3435,6 +3682,341 @@ function closeClassifica() {
   document.getElementById("classificaModal").classList.remove("visible");
 }
 
+
+// ════════════════════════════════════════════════════
+// MERCATO DEL NILO — Lv1+ 
+// Scegli tra 3 bancarelle: grano, pesce o vaso vuoto
+// ════════════════════════════════════════════════════
+function playMarketGame(prize) {
+  const modal = document.getElementById("marketModal");
+  const stalls = document.getElementById("marketStalls");
+  const result = document.getElementById("marketResult");
+  const desc   = document.getElementById("marketDesc");
+  const btns   = document.getElementById("marketButtons");
+
+  spinButton.disabled = true;
+  betPlus.disabled = true;
+  betMinus.disabled = true;
+
+  const rewards = [
+    { type: "grano",  icon: "wheat.png",      label: "Grano",      value: prize,           msg: `🌾 Hai trovato Grano! +${prize} Deben` },
+    { type: "pesce",  icon: "fish.png",        label: "Pesce",      value: Math.floor(prize*0.5), msg: `🐟 Hai trovato Pesce. +${Math.floor(prize*0.5)} Deben` },
+    { type: "vuoto",  icon: "canopic-jar.png", label: "Vaso vuoto", value: 0,               msg: `🏺 Il vaso è vuoto... nessuna ricompensa.` },
+  ];
+
+  // Scegli 3 simboli normali del livello
+  const NOMI_M = {
+    wheat:"Grano", rope:"Corda", fig:"Fico", sickle:"Falce", bread:"Pane",
+    reed:"Canna", sandal:"Sandalo", fish:"Pesce", basket:"Cesto", dates:"Datteri",
+    cat:"Gatto", sarcophagus:"Sarcofago", dagger:"Pugnale", ankh:"Ankh",
+    goose:"Oca", scorpion:"Scorpione", grape:"Uva", pistachio:"Pistacchio",
+    brick:"Mattone", obelisk:"Obelisco", pyramid:"Piramide", scepter:"Scettro",
+    djed:"Djed", bowl:"Ciotola", chisel:"Scalpello", oillamp:"Lampada",
+    onion:"Cipolla", ibis:"Ibis", cobra:"Cobra", beetle:"Scarabeo",
+  };
+  const allGems_m2 = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
+  const allDiv_m2  = ["ra","osiris","isis","horus","anubis","thoth","hathor","seth","bastet","udjat","pharaoh","nefertiti"];
+  const allSpc_m2  = ["skull","scarab","ouroboros","jar","hieroglyphs","mummy","coin","sphinx","papyrus","pschent","canopic_jar","scale"];
+  const normPool = getSymbolsForCurrentLevel().filter(s =>
+    !allGems_m2.includes(s.name) && !allDiv_m2.includes(s.name) && !allSpc_m2.includes(s.name)
+  ).sort(() => Math.random() - 0.5).slice(0, 3);
+
+  // Usa payout x3 come valore di riferimento
+  const stallRewards = normPool.map(s => {
+    const val = (payoutTable[s.name] && payoutTable[s.name][3]) ? payoutTable[s.name][3] * currentBet : 20;
+    return { icon: s.file, name: s.name, label: NOMI_M[s.name] || s.name, value: val };
+  });
+
+  desc.textContent = "Il mercante nasconde tre merci nei cesti. Scegli quello più prezioso!";
+  result.textContent = "";
+  btns.innerHTML = "";
+  stalls.innerHTML = "";
+  modal.classList.remove("hidden");
+
+  stallRewards.forEach((item, i) => {
+    const stall = document.createElement("div");
+    stall.className = "market-stall";
+    stall.innerHTML = `
+      <img src="assets/img/symbols/basket.png" alt="cesto" id="stall-img-${i}">
+      <span class="market-stall-label">Cesto ${i+1}</span>
+    `;
+    stall.onclick = () => {
+      // Rivela tutti i cesti con simbolo e valore
+      stallRewards.forEach((r, j) => {
+        const img = document.getElementById(`stall-img-${j}`);
+        if (img) img.src = `assets/img/symbols/${r.icon}`;
+        const s = stalls.children[j];
+        // Aggiungi etichetta valore
+        const valLabel = document.createElement("span");
+        valLabel.style.cssText = "font-size:13px;font-weight:bold;color:" + (j===i?"#2a6030":"#8a6030") + ";";
+        valLabel.textContent = "+" + r.value + " Deben";
+        s.appendChild(valLabel);
+        if (j === i) s.classList.add("win-stall");
+        else s.classList.add("revealed");
+      });
+
+      const chosen = stallRewards[i];
+      currentCredits += chosen.value;
+      totalScore += chosen.value;
+      levelXP += chosen.value;
+      playSound("bonus");
+      result.textContent = `${chosen.label}! +${chosen.value} Deben`;
+      updateUI();
+      btns.innerHTML = `<button class="market-btn" onclick="closeMarket()">Continua</button>`;
+    };
+    stalls.appendChild(stall);
+  });
+}
+
+
+// ════════════════════════════════════════════════════
+// VASO ANTICO — Scegli 3 vasi su 5
+// ════════════════════════════════════════════════════
+function playJarGame() {
+  const modal   = document.getElementById("jarModal");
+  const vasesEl = document.getElementById("jarVases");
+  const totalEl = document.getElementById("jarTotal");
+  const contBtn = document.getElementById("jarContinueBtn");
+  const revealEl = document.getElementById("jarReveal");
+
+  spinButton.disabled = true;
+  betPlus.disabled = true;
+  betMinus.disabled = true;
+
+  // Genera 5 premi casuali
+  const allPrizes = [
+    { type:"deben",  value: 50  + Math.floor(Math.random()*200), label:"Deben",          cls:"bonus-vase",   icon:"wheat.png" },
+    { type:"deben",  value: 20  + Math.floor(Math.random()*80),  label:"Deben",          cls:"bonus-vase",   icon:"copper.png" },
+    { type:"spins",  value: 1   + Math.floor(Math.random()*4),   label:"Giri del Destino", cls:"neutral-vase", icon:"ouroboros.png" },
+    { type:"gems",   value: 15  + Math.floor(Math.random()*60),  label:"Pietre Preziose", cls:"bonus-vase",   icon:"onyx.png" },
+    { type:"curse",  value: 50, label:"Maledizione", cls:"curse-vase", icon:"maledizione.png" },
+  ].sort(() => Math.random() - 0.5);
+
+  let chosen = 0;
+  let totalDeben = 0;
+  let totalGems  = 0;
+  let totalSpins = 0;
+  let totalCurse = 0;
+
+  vasesEl.innerHTML = "";
+  totalEl.textContent = "";
+  revealEl.style.display = "none";
+  contBtn.classList.add("hidden");
+  modal.classList.remove("hidden");
+  playSound("jar");
+
+  allPrizes.forEach((prize, i) => {
+    const vase = document.createElement("div");
+    vase.className = "jar-vase";
+    vase.innerHTML = `
+      <img src="assets/img/symbols/jar.png" alt="vaso">
+      <span class="jar-vase-label">Vaso ${i+1}</span>
+    `;
+    vase.onclick = () => {
+      if (chosen >= 3) return;
+      chosen++;
+
+      // Anima apertura
+      vase.classList.add("opened", prize.cls);
+      vase.querySelector("img").src = `assets/img/symbols/${prize.icon}`;
+      const valSpan = document.createElement("span");
+      valSpan.className = "jar-vase-value";
+
+      // Applica effetto
+      if (prize.type === "deben") {
+        currentCredits += prize.value;
+        totalScore += prize.value;
+        levelXP += prize.value;
+        totalDeben += prize.value;
+        valSpan.textContent = `+${prize.value} Deben`;
+        valSpan.style.color = "#2a6030";
+        playSound("win");
+      } else if (prize.type === "spins") {
+        freeSpinsRemaining += prize.value;
+        totalSpins += prize.value;
+        valSpan.textContent = `+${prize.value} Giri`;
+        valSpan.style.color = "#1a3a7a";
+        playSound("bonus");
+      } else if (prize.type === "gems") {
+        gemPoints += prize.value;
+        totalGems += prize.value;
+        valSpan.textContent = `+${prize.value} Pietre`;
+        valSpan.style.color = "#1a7a3a";
+        playSound("bonus");
+      } else if (prize.type === "curse") {
+        currentCredits = Math.max(0, currentCredits - prize.value);
+        totalCurse += prize.value;
+        valSpan.innerHTML = `<span style="font-size:11px;display:block;color:#8b2010;">Maledizione</span>-${prize.value} Deben`;
+        valSpan.style.color = "#8b2010";
+        playSound("audioLose2");
+      }
+
+      vase.appendChild(valSpan);
+      updateUI();
+
+      // Aggiorna totale
+      const JAR_INTROS = [
+        "Il Nilo ha depositato i suoi doni ai tuoi piedi.",
+        "Gli dei hanno ascoltato la tua offerta.",
+        "Il destino ti sorride questa volta, mortale.",
+        "Le acque sacre del Nilo ti rivelano i loro segreti.",
+        "Osiride ha giudicato il tuo cuore degno.",
+      ];
+      const JAR_CURSE = [
+        "Ma un vaso custodiva l'ira degli dei — la maledizione ti ha sfiorato.",
+        "Eppure Seth ha lasciato il suo segno — un vaso era avvelenato.",
+        "Non tutto il Nilo è benedetto — un vaso portava la maledizione di Apep.",
+        "Gli dei danno e gli dei tolgono — un vaso era oscuro.",
+      ];
+      const JAR_ONLY_CURSE = [
+        "La maledizione di Seth ti ha colpito. Impara dalla caduta.",
+        "Apep si nascondeva nei vasi. Il deserto non è sempre generoso.",
+        "Gli dei ti mettono alla prova. Questa volta hai perso.",
+      ];
+
+      if (chosen < 3) {
+        totalEl.textContent = chosen === 2
+          ? "Un ultimo vaso da aprire..."
+          : `Scegli ancora ${3 - chosen} vasi tra i misteri del Nilo...`;
+      } else {
+        let msg = "";
+        let hasPrize = totalDeben > 0 || totalSpins > 0 || totalGems > 0;
+        let prizes = [];
+        if (totalDeben > 0) prizes.push(`${totalDeben} Deben di rame`);
+        if (totalSpins > 0) prizes.push(`${totalSpins} Giri del Destino`);
+        if (totalGems  > 0) prizes.push(`${totalGems} Pietre Preziose del Nilo`);
+
+        if (hasPrize && totalCurse > 0) {
+          msg = JAR_INTROS[Math.floor(Math.random()*JAR_INTROS.length)];
+          msg += ` ${prizes.join(", ")}. `;
+          msg += JAR_CURSE[Math.floor(Math.random()*JAR_CURSE.length)];
+          msg += ` -${totalCurse} Deben.`;
+        } else if (hasPrize) {
+          msg = JAR_INTROS[Math.floor(Math.random()*JAR_INTROS.length)];
+          msg += ` ${prizes.join(", ")}.`;
+        } else {
+          msg = JAR_ONLY_CURSE[Math.floor(Math.random()*JAR_ONLY_CURSE.length)];
+          msg += ` -${totalCurse} Deben.`;
+        }
+        totalEl.textContent = msg;
+      }
+
+      // Dopo 3 scelte mostra pulsante continua
+      if (chosen >= 3) {
+        // Rivela i 2 rimasti
+        document.querySelectorAll(".jar-vase:not(.opened)").forEach(v => {
+          v.classList.add("opened", "neutral-vase");
+          v.style.opacity = "0.4";
+        });
+        contBtn.classList.remove("hidden");
+        checkGemBonus();
+      }
+    };
+    vasesEl.appendChild(vase);
+  });
+
+  totalEl.textContent = "Scegli 3 vasi su 5";
+}
+
+function closeJar() {
+  document.getElementById("jarModal").classList.add("hidden");
+  spinButton.disabled = false;
+  betPlus.disabled = false;
+  betMinus.disabled = false;
+}
+
+function closeMarket() {
+  document.getElementById("marketModal").classList.add("hidden");
+  spinButton.disabled = false;
+  betPlus.disabled = false;
+  betMinus.disabled = false;
+}
+
+// ════════════════════════════════════════════════════
+// GIUDIZIO DI ANUBI — Lv5+
+// Scegli il simbolo con il valore più alto
+// ════════════════════════════════════════════════════
+function playAnubiGame(prize) {
+  const modal = document.getElementById("anubiModal");
+  const cards  = document.getElementById("anubiCards");
+  const result = document.getElementById("anubiResult");
+  const desc   = document.getElementById("anubiDesc");
+  const btns   = document.getElementById("anubiButtons");
+
+  spinButton.disabled = true;
+  betPlus.disabled = true;
+  betMinus.disabled = true;
+
+  // Pool di simboli con valore gerarchico egizio
+  const pool = [
+    { name:"Grano",     file:"wheat.png",     value: 1 },
+    { name:"Corda",     file:"rope.png",       value: 2 },
+    { name:"Pesce",     file:"fish.png",       value: 3 },
+    { name:"Datteri",   file:"dates.png",      value: 4 },
+    { name:"Ankh",      file:"ankh.png",       value: 5 },
+    { name:"Obelisco",  file:"obelisk.png",    value: 6 },
+    { name:"Piramide",  file:"pyramid.png",    value: 7 },
+    { name:"Djed",      file:"djed.png",       value: 8 },
+    { name:"Ouroboros", file:"ouroboros.png",  value: 9 },
+    { name:"Bilancia",  file:"scale.png",      value:10 },
+  ];
+
+  // Pesca 3 simboli casuali distinti
+  const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+  const maxVal = Math.max(...shuffled.map(s => s.value));
+  const winner = shuffled.find(s => s.value === maxVal);
+
+  desc.textContent = "Anubi ti mostra tre simboli. Scegli quello con il valore più alto nella gerarchia degli dei. Il più potente ti darà il premio.";
+  result.textContent = "";
+  btns.innerHTML = "";
+  cards.innerHTML = "";
+  modal.classList.remove("hidden");
+
+  shuffled.forEach((sym, i) => {
+    const card = document.createElement("div");
+    card.className = "anubi-card";
+    card.innerHTML = `
+      <img src="assets/img/symbols/${sym.file}" alt="${sym.name}">
+      <span class="anubi-card-name">${sym.name}</span>
+    `;
+    card.onclick = () => {
+      // Rivela valori
+      shuffled.forEach((s, j) => {
+        const c = cards.children[j];
+        c.classList.add("revealed");
+        c.innerHTML += `<span class="anubi-card-value">${s.value}</span>`;
+        if (s.value === maxVal) c.classList.add("win-card");
+        else c.classList.add("lose-card");
+      });
+
+      const chosen = shuffled[i];
+      const win = chosen.value === maxVal;
+
+      if (win) {
+        currentCredits += prize;
+        totalScore += prize;
+        levelXP += prize;
+        result.textContent = `✅ La bilancia pende dalla tua parte! +${prize} Deben`;
+        playSound("sphinxwin");
+      } else {
+        result.textContent = `❌ Anubi non approva. Nessun premio questa volta.`;
+        playSound("sphinxlose");
+      }
+
+      updateUI();
+      btns.innerHTML = `<button class="anubi-btn" onclick="closeAnubi()">Il destino è compiuto</button>`;
+    };
+    cards.appendChild(card);
+  });
+}
+
+function closeAnubi() {
+  document.getElementById("anubiModal").classList.add("hidden");
+  spinButton.disabled = false;
+  betPlus.disabled = false;
+  betMinus.disabled = false;
+}
+
 function restartGame() {
   // Reset stato
   currentCredits = 500;
@@ -3500,7 +4082,7 @@ function restartGame() {
     amethyst:"Ametista", emerald:"Smeraldo", topaz:"Topazio", diamond:"Diamante",
     gold:"Oro", meteorite:"Meteorite", ouroboros:"Ouroboros", scarab:"Scarabeo",
     jar:"Vaso Antico", hieroglyphs:"Geroglifici", sphinx:"Sfinge",
-    coin:"Moneta d'Oro", papyrus:"Papiro", pschent:"Corona Pschent",
+    coin:"Moneta d'Oro", papyrus:"Papiro", canopic_jar:"Mercato del Nilo", scale:"Bilancia di Ma'at", pschent:"Corona Pschent",
     skull:"Teschio", mummy:"Mummia",
   };
 
@@ -3512,7 +4094,7 @@ function restartGame() {
     ouroboros: "<em>WILD</em> — Sostituisce qualsiasi simbolo. Combo pura 3-6x: <em>50 / 120 / 250 / 500</em> Deben.",
     scarab:    "<em>Moltiplicatore x2</em> — Ogni scarabeo sulla linea raddoppia il premio.",
     skull:     "<em>Penalita</em> — Se presente sulla linea vincente, il premio viene dimezzato.",
-    jar:       "<em>Vaso Antico</em> — Effetto casuale: bonus Deben, giri gratuiti, pietre o maledizione.",
+    jar:       "<em>Vaso Antico</em> — Scegli 3 vasi su 5: Deben, Giri del Destino o Pietre Preziose.",
     hieroglyphs:"<em>Geroglifici</em> — Trasforma simboli casuali e ricalcola le vincite.",
     sphinx:    "<em>Sfinge</em> — Mini-gioco: indovina la carta piu alta per raddoppiare il premio.",
     mummy:     "<em>Maledizione</em> — Penalita percentuale sui tuoi Deben (10-50%).",
