@@ -3048,7 +3048,7 @@ function buildPaytable() {
 
   // Nota introduttiva come si gioca
   const intro = document.createElement("div");
-  intro.style.cssText = "background:#fdfdfd8f;border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:16px;color:#5a3010;line-height:1.8;";
+  intro.style.cssText = `background:${document.body.classList.contains("dark") ? "rgb(33,39,58)" : "#fdfdfd8f"};border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:16px;color:${document.body.classList.contains("dark") ? "#e8e0d0" : "#5a3010"};line-height:1.8;`;
   intro.innerHTML = `
     <div style="font-family:'Cinzel',serif;font-size:20px;color:#3d1a00;font-weight:bold;margin-bottom:20px;">☥ Come si gioca</div>
 

@@ -1346,3 +1346,66 @@ body.dark .sym-new-badge  { color: #ffd11d !important; }
 
 body.dark .sym-story-bar-wrap { background: rgba(255,255,255,0.15) !important; }
 body.dark .sym-story-bar-fill { background: rgba(255,255,255,0.55) !important; }
+
+/* ══ CLASSIFICA MODAL DARK COLORS ══ */
+body.dark #classificaModal {
+  background: rgba(20,27,46,0.97) !important;
+  backdrop-filter: blur(12px);
+}
+body.dark .cl-title  { color: #ffffff !important; }
+body.dark .cl-sub    { color: rgba(255,255,255,0.55) !important; }
+body.dark .cl-card   { background: rgba(255,255,255,0.08) !important; }
+body.dark .cl-row    { border-bottom-color: rgba(255,255,255,0.1) !important; }
+body.dark .cl-name   { color: #e8e0d0 !important; }
+body.dark .cl-score  { color: #fbd06a !important; }
+body.dark .cl-level  { color: rgba(232,224,208,0.6) !important; }
+body.dark .cl-class  { color: rgba(232,224,208,0.7) !important; }
+body.dark .cl-empty  { color: rgba(232,224,208,0.5) !important; }
+body.dark .cl-rank       { color: #c4881a !important; }
+body.dark .cl-rank.gold  { color: #ffd11d !important; }
+body.dark .cl-rank.silver{ color: #c0c8d0 !important; }
+body.dark .cl-rank.bronze{ color: #c4884a !important; }
+
+/* ══ CLASSIFICA CLOSE BTN DARK ══ */
+body.dark #classificaModal button {
+  border-color: rgba(255,255,255,0.5) !important;
+  color: #ffffff !important;
+}
+
+/* ══ PAYTABLE DARK MODE ══ */
+body.dark #paytableModal { background: rgba(20,27,46,0.98) !important; }
+body.dark .pt-container  { background: transparent !important; color: #e8e0d0 !important; }
+body.dark .pt-title      { color: #ffffff !important; }
+body.dark .pt-close      { border-color: rgba(255,255,255,0.4) !important; color: #ffffff !important; }
+body.dark .pt-close:hover { background: rgba(255,255,255,0.1) !important; }
+body.dark .pt-section-title { color: rgba(232,224,208,0.6) !important; border-bottom-color: rgba(255,255,255,0.15) !important; }
+body.dark .pt-header     { border-bottom-color: rgba(255,255,255,0.15) !important; }
+
+body.dark .pt-sym-name   { color: #ffffff !important; }
+body.dark .pt-sym-payout { color: rgba(232,224,208,0.75) !important; }
+body.dark .pt-sym-payout span { color: #fbd06a !important; }
+
+body.dark .pt-special-name { color: #ffffff !important; }
+body.dark .pt-special-desc { color: rgba(232,224,208,0.75) !important; }
+body.dark .pt-special-desc em { color: #c8d8f0 !important; }
+body.dark #paytableInner p,
+body.dark #paytableInner div { color: rgba(232,224,208,0.85); }
+body.dark #paytableInner strong { color: #ffffff !important; }
+body.dark #paytableInner table { border-color: rgba(255,255,255,0.1); }
+body.dark #paytableInner th { color: rgba(232,224,208,0.7) !important; border-bottom-color: rgba(255,255,255,0.15) !important; }
+body.dark #paytableInner td { border-bottom-color: rgba(255,255,255,0.06) !important; color: #e8e0d0; }
+body.dark .pt-row { background: rgb(33,39,58) !important; }
+body.dark .pt-special-row { background: rgb(33,39,58) !important; }
+
+/* ══ PAYTABLE INTRO TITLES DARK ══ */
+body.dark #paytableInner div[style*="color:#8a4510"],
+body.dark #paytableInner div[style*="color: #8a4510"] {
+  color: rgba(255,255,255,0.85) !important;
+}
+body.dark #paytableInner p { color: #e8e0d0 !important; }
+body.dark #paytableInner { color: #e8e0d0 !important; }
+
+/* ══ PAYTABLE MAIN TITLE NIGHT ══ */
+body.dark .pt-title { color: #fbb47f !important; }
+
+body.dark #paytableInner div[style*="font-size:20px"] { color: #fbb47f !important; }
