@@ -1,0 +1,917 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Syne+Mono&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  font-family:"Syne Mono",monospace;
+  background:#f5e6c4;
+  color:#3d1a00;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.contenitore {
+  width:100%;
+  max-width:1280px;
+  padding:12px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* ════ RIGA 1: nome | titolo | paytable ════ */
+#gameHeader {
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+#headerTop {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+#playerInfo {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  gap:1px !important;
+  min-width:160px;
+}
+#socialStatusDisplay {
+  font-family:"Cinzel",serif;
+  font-size:14px;
+  color:#5a2800;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  background:transparent!important;
+  border:none!important;
+  padding:0!important;
+}
+#playerNameDisplay {
+  font-family:"Cinzel",serif;
+  font-size:22px;
+  font-weight:700;
+  color:#5a2800;
+}
+
+#gameTitle {
+  font-family:"Cinzel",serif;
+  font-weight:700;
+  color:#7a3a00;
+  text-align:center;
+  letter-spacing:0.06em;
+}
+
+#headerActions {
+  min-width:160px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* ════ RIGA 2: score ════ */
+#scoreInfo {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+}
+.score-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+.score-label {
+  font-family:"Cinzel",serif;
+  font-size:12px;
+  color:#9a7040;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+.score-value {
+  font-family:"Cinzel",serif;
+  font-size:16px;
+  font-weight:700;
+  line-height:1;
+}
+#totalScore     { color:#c0321a!important }
+#currentCredits { color:#7a3a00!important }
+#gemPoints      { color:#1a7a3a!important }
+#activeLines    { color:#1a3a7a!important }
+.score-sep { display:none }
+
+/* ════ RIGA 3: XP ════ */
+#xpBarWrap {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+}
+#xpBarLabel {
+  font-family:"Cinzel",serif;
+  font-size:13px;
+  color:#9a7040;
+  text-align:center;
+}
+#xpBarLabel::before { content:"Lv " }
+#xpBarTrack {
+  width:100%;
+  height:6px;
+  background:rgba(90,40,0,0.12);
+  border-radius:4px;
+  overflow:hidden;
+}
+#levelProgressFill {
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,#c4881a,#e8c050);
+  border-radius:4px;
+  transition:width 0.5s ease;
+}
+#xpBarPoints {
+  font-size:12px;
+  color:#9a7040;
+  text-align:center;
+}
+
+/* ════ SLOT AREA ════ */
+#gameBody {
+  width:100%;
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  gap:12px;
+}
+
+#slotColumn {
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  border-radius:12px;
+  overflow:hidden;
+  background:#fbf9f1;
+  box-shadow:0 2px 16px rgba(90,40,0,0.36);
+}
+
+#slotWrapper {
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  background:#fbf8f1e8;
+  margin-bottom:10px;
+  padding:20px;
+  padding:4px 4px 0;
+}
+
+/* Numeri linea */
+.line-numbers-left,
+.line-numbers-right {
+  width:26px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  height:420px;
+  pointer-events:none;
+}
+.line-numbers-left  { align-items:flex-end; }
+.line-numbers-right { align-items:flex-start; }
+
+.line-number {
+  font-family:"Syne Mono",monospace;
+  font-size:17px;
+  font-weight:normal;
+  color:#c4a870;
+  text-align:center;
+  line-height:calc(420px/25);
+  height:calc(420px/25);
+  transition:all 0.2s;
+}
+.line-number.active {
+  color:#8b4510;
+  font-weight:bold;
+  opacity:1;
+  animation:lineFade 1.2s ease-in-out infinite;
+}
+@keyframes lineFade {
+  0%,100%{ opacity:1; }
+  50%{ opacity:0.3; }
+}
+
+/* Slot */
+#slotContainer {
+  flex:1;
+  height:420px;
+  background:#e8d090;
+  border-radius:8px;
+  display:flex;
+  overflow:hidden;
+}
+
+.reel {
+  flex:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
+  align-items:center;
+  background:#fbf9f1;
+  border-right:1px solid rgba(196,165,90,0.25);
+}
+.reel:last-child { border-right:none }
+
+.symbol {
+  flex:1;
+  width:75%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-bottom:none;
+  position:relative;
+}
+.symbol:last-child { border-bottom:none }
+.symbol img { max-height:82%; max-width:82%; pointer-events:none }
+
+.symbol.pulse { animation:symPulse 1.5s ease-in-out infinite; z-index:2 }
+@keyframes symPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
+
+.symbol.pulse::before { display:none }
+
+.symbol-multiplier::after {
+  content:attr(data-mult);
+  position:absolute;
+  top:3px;right:4px;
+  background:rgba(90,40,0,0.85);
+  color:#ffd700;
+  font-size:12px;font-weight:bold;
+  padding:1px 6px;
+  border-radius:20px;
+  border:1px solid #ffd700;
+  z-index:3;
+  animation:badgePop 1.6s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes badgePop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+/* ════ CONTROLS ════ */
+#controls {
+  width:150px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  padding:0;
+  background:transparent;
+}
+
+.bet-control { display:flex; flex-direction:column; align-items:center; gap:6px }
+.bet-control label {
+  font-family:"Cinzel",serif;
+  font-size:14px;
+  color:#9a7040;
+  letter-spacing:0.1em;
+}
+#currentBet {
+  font-family:"Cinzel",serif;
+  font-size:18px;
+  font-weight:700;
+  color:#3d1a00;
+  min-width:36px;
+  text-align:center;
+}
+.bet-button {
+  background:none;
+  border:none;
+  color:#9a7040;
+  font-size:22px;
+  font-family:"Cinzel",serif;
+  cursor:pointer;
+  padding:0 4px;
+  transition:color 0.15s;
+  margin:0;
+  line-height:1;
+}
+.bet-button:hover { color:#5a2800 }
+
+#spinButton {
+  background:none;
+  border:1px solid #c4a55a;
+  border-radius:6px;
+  color:#5a2800;
+  font-family:"Cinzel",serif;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:0.2em;
+  padding:7px 28px;
+  cursor:pointer;
+  transition:all 0.15s;
+  margin:0;
+  text-transform:uppercase;
+}
+#spinButton:hover { background:#eedbb0; color:#3d1a00 }
+#spinButton.spinning { border-color:#8b2010; color:#8b2010 }
+#spinButton:disabled { opacity:0.35;cursor:not-allowed }
+
+#xpBarWrap { display:flex;flex-direction:column;align-items:center;gap:6px;width:100% }
+
+/* ════ FOOTER STATS — info di gioco ════ */
+#footerStats {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:wrap;
+  font-family:"Syne Mono",monospace;
+  font-size:14px;
+  color:#7a5030;
+  padding:6px 0;
+  background:transparent;
+  width:100%;
+  padding:4px 0 6px;
+}
+.ft-sep { color:#c4a55a }
+.footer-copy {
+  width:100%;
+  font-size:13px;
+  color:#9a7040;
+  text-align:center;
+  padding:4px 0 6px;
+  font-family:"Cinzel",serif;
+}
+
+/* ════ CONSOLE ════ */
+#consoleColumn {
+  width:100%;
+  background:#fbf2de;
+  border-radius:0 0 12px 12px;
+  min-height:230px;
+  overflow:hidden;
+}
+#consoleHeader { display:none }
+#consoleTitle  { display:none }
+
+#winMessage {
+  height:100%;
+  overflow-y:hidden;
+  padding:12px 18px;
+  font-family:"Syne Mono",monospace;
+  font-size:15px;
+  line-height:1.7;
+  color:#5a2800;
+  transition:opacity 0.35s ease;
+}
+#winMessage.fading { opacity:0 }
+#winMessage::-webkit-scrollbar { width:3px }
+#winMessage::-webkit-scrollbar-thumb { background:#5a3a10;border-radius:2px }
+
+.log-entry {
+  display:flex;align-items:flex-start;
+  gap:10px;padding:4px 0;
+  border-bottom:1px solid rgba(255,200,80,0.07);
+  animation:fadeSlide 0.4s ease;
+  font-size:15px;line-height:1.6;
+}
+.log-entry:last-child { border-bottom:none }
+.log-entry img.message-icon { width:42px;height:auto;flex-shrink:0 }
+#frasiGiocoInizialeSpan img.message-icon { width:42px;height:auto;vertical-align:middle;margin-right:8px }
+.log-entry.win     { color:#f0c040;font-weight:bold }
+.log-entry.bonus   { color:#40c880 }
+.log-entry.curse   { color:#e04030 }
+.log-entry.level   { color:#4090e0 }
+.log-entry.mystic  { color:#5a2800;font-style:italic }
+.log-entry.lose    { color:#e08070 }
+.log-entry.gameover{ color:#e02010;font-weight:bold }
+.log-entry.info    { color:#5a2800 }
+
+@keyframes fadeSlide {
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ════ GLOW VARS ════ */
+:root {
+  --glow-line-1:#ff4d4d;--glow-line-2:#ff9933;--glow-line-3:#ffff33;--glow-line-4:#99ff33;--glow-line-5:#33ff99;
+  --glow-line-6:#33ffff;--glow-line-7:#3399ff;--glow-line-8:#9966ff;--glow-line-9:#cc33ff;--glow-line-10:#ff33cc;
+  --glow-line-11:#ff6666;--glow-line-12:#ff9966;--glow-line-13:#ffcc66;--glow-line-14:#ccff66;--glow-line-15:#66ff99;
+  --glow-line-16:#66ffff;--glow-line-17:#6699ff;--glow-line-18:#9966cc;--glow-line-19:#cc66ff;--glow-line-20:#ff66cc;
+  --glow-line-21:#ff3333;--glow-line-22:#ff7733;--glow-line-23:#ffb733;--glow-line-24:#cfff33;--glow-line-25:#66ff66;
+  --glow-line-26:#66ffcc;--glow-line-27:#66ccff;--glow-line-28:#9966ff;--glow-line-29:#cc66cc;--glow-line-30:#ff66b2;
+  --glow-line-31:#ff3366;--glow-line-32:#ff6600;--glow-line-33:#ff9900;--glow-line-34:#ccff00;--glow-line-35:#66ff00;
+  --glow-line-36:#00ffcc;--glow-line-37:#00ccff;--glow-line-38:#3366ff;--glow-line-39:#9933ff;--glow-line-40:#cc33cc;
+  --glow-line-41:#ff3399;--glow-line-42:#ff0033;--glow-line-43:#ff5500;--glow-line-44:#ffaa00;--glow-line-45:#aaff00;
+  --glow-line-46:#55ff00;--glow-line-47:#00ffaa;--glow-line-48:#00aaff;--glow-line-49:#3333ff;--glow-line-50:#9933cc;
+}
+
+/* ════ PAYTABLE BTN ════ */
+#paytableBtn {
+  background:transparent;
+  border:1px solid #c4a55a;
+  border-radius:6px;
+  color:#5a2800;
+  font-family:"Cinzel",serif;
+  font-size:13px;letter-spacing:0.06em;
+  padding:7px 16px;cursor:pointer;
+  transition:all 0.15s;margin:0;
+}
+#paytableBtn:hover { background:#eedbb0;color:#3d1a00 }
+
+/* ════ INTRO ════ */
+#introScreen {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:10000;padding:20px;
+  opacity:0;transition:opacity 0.7s ease;pointer-events:none;
+}
+#introScreen.visible{opacity:1;pointer-events:all}
+#introScreen.hidden{display:none!important}
+.intro-logo{font-family:"Cinzel",serif;font-size:clamp(36px,6vw,68px);color:#5a2800;text-align:center;letter-spacing:0.08em;text-shadow:2px 2px 0 #c4a55a;margin-bottom:6px}
+.intro-sub{font-size:14px;color:#914c11;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:32px}
+.intro-hieroglyphs{font-size:26px;color:#8b5a20;letter-spacing:0.2em;margin-bottom:32px;opacity:0.6}
+.intro-form{background:transparent;border:none;border-radius:12px;padding:32px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;max-width:440px;width:90%;}
+.intro-form label{font-size:14px;color:#6b4020;letter-spacing:0.2em;text-transform:uppercase}
+.intro-form input{width:100%;background:#fdfdfd8f;border:1px solid #c4a55a;border-radius:8px;color:#3d1a00;font-family:"Syne Mono",monospace;font-size:20px;padding:12px 16px;text-align:center;outline:none;transition:border-color 0.2s}
+.intro-form input:focus{border-color:#8b4510}
+.intro-form input::placeholder{color:#b09060;font-size:14px}
+.intro-btn{background:none;border:1px solid #c4a55a;border-radius:6px;color:#5a2800;font-family:"Cinzel",serif;font-size:16px;font-weight:700;letter-spacing:0.2em;padding:12px 48px;cursor:pointer;text-transform:uppercase;transition:all 0.15s;margin:0}
+.intro-btn:hover{background:#eedbb0;color:#3d1a00}
+.intro-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.intro-warning{font-size:13px;color:#9a7040;text-align:center;line-height:1.7;max-width:380px}
+
+/* ════ GAME OVER ════ */
+#gameOverScreen{position:fixed;inset:0;background:#f5e6c4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;z-index:10000;padding:48px 20px;opacity:0;transition:opacity 0.6s ease;font-size:16px;overflow-y:auto;}
+#gameOverScreen.hidden{display:none!important}
+.go-title{font-family:"Cinzel",serif;font-size:clamp(32px,6vw,60px);color:#7a2010;text-align:center;margin-bottom:8px;}
+.go-subtitle{font-size:15px;color:#883020;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:28px;font-family:"Cinzel",serif}
+.go-card{background:#fffffeb8;border:none;border-radius:10px;padding:16px 28px;max-width:600px;width:100%;margin-bottom:14px}
+.go-stat{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #d4b870;font-size:16px}
+.go-stat:last-child{border-bottom:none}
+.go-stat .go-label{color:#8a6030;font-family:"Cinzel",serif;font-size:16px}
+.go-stat .go-value{color:#5a2800;font-size:22px;font-weight:bold;font-family:"Cinzel",serif}
+.go-quote{font-size:14px;color:#8a7050;font-style:italic;line-height:1.7;margin-top:14px}
+.go-leaderboard{background:#fffffeb8;border:none;border-radius:10px;padding:16px 28px;max-width:600px;width:100%;margin-bottom:14px}
+.go-lb-title{font-size:13px;color:#8a6030;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;text-align:center;font-family:"Cinzel",serif}
+.go-lb-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #d4b870;font-size:14px}
+.go-lb-row:last-child{border-bottom:none}
+.go-lb-rank{color:#9a7040;width:26px}
+.go-lb-rank.gold{color:#c4881a}
+.go-lb-rank.silver{color:#808080}
+.go-lb-rank.bronze{color:#8b4513}
+.go-lb-name{flex:1;color:#5a2800;padding:0 12px}
+.go-lb-score{color:#8b2010}
+.go-lb-level{color:#9a7040;font-size:12px;margin-left:8px}
+.go-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.go-btn{background:none;border:1px solid #c4a55a;border-radius:8px;color:#5a2800;font-family:"Cinzel",serif;font-size:15px;letter-spacing:0.1em;padding:12px 32px;cursor:pointer;text-transform:uppercase;transition:all 0.15s;margin:0}
+.go-btn:hover{background:#eedbb0;color:#3d1a00}
+.go-btn.primary{background:none;border:1px solid #c4a55a;border-radius:6px;color:#5a2800;font-family:"Cinzel",serif;font-size:16px;font-weight:700;letter-spacing:0.2em;padding:10px 40px;}
+.go-btn.primary:hover{background:#eedbb0;color:#3d1a00}
+
+/* ════ PAYTABLE ════ */
+#paytableModal{position:fixed;inset:0;background:#f5e6c4;display:flex;align-items:flex-start;justify-content:center;z-index:10002;padding:0;overflow-y:auto}
+#paytableModal.hidden{display:none!important}
+.go-title{font-family:"Cinzel",serif;font-size:clamp(32px,6vw,60px);color:#7a2010;text-align:center;margin-bottom:8px;}
+.go-subtitle{font-size:15px;color:#883020;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:28px;font-family:"Cinzel",serif}
+.go-card{background:#fffffeb8;border:none;border-radius:10px;padding:16px 28px;max-width:600px;width:100%;margin-bottom:14px}
+.go-stat{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #d4b870;font-size:16px}
+.go-stat:last-child{border-bottom:none}
+.go-stat .go-label{color:#8a6030;font-family:"Cinzel",serif;font-size:16px}
+.go-stat .go-value{color:#5a2800;font-size:22px;font-weight:bold;font-family:"Cinzel",serif}
+.go-quote{font-size:14px;color:#8a7050;font-style:italic;line-height:1.7;margin-top:14px}
+.go-leaderboard{background:#fffffeb8;border:none;border-radius:10px;padding:16px 28px;max-width:600px;width:100%;margin-bottom:14px}
+.go-lb-title{font-size:13px;color:#8a6030;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;text-align:center;font-family:"Cinzel",serif}
+.go-lb-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #d4b870;font-size:14px}
+.go-lb-row:last-child{border-bottom:none}
+.go-lb-rank{color:#9a7040;width:26px}
+.go-lb-rank.gold{color:#c4881a}
+.go-lb-rank.silver{color:#808080}
+.go-lb-rank.bronze{color:#8b4513}
+.go-lb-name{flex:1;color:#5a2800;padding:0 12px}
+.go-lb-score{color:#8b2010}
+.go-lb-level{color:#9a7040;font-size:12px;margin-left:8px}
+.go-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.go-btn{background:none;border:1px solid #c4a55a;border-radius:8px;color:#5a2800;font-family:"Cinzel",serif;font-size:15px;letter-spacing:0.1em;padding:12px 32px;cursor:pointer;text-transform:uppercase;transition:all 0.15s;margin:0}
+.go-btn:hover{background:#eedbb0;color:#3d1a00}
+.go-btn.primary{background:none;border:1px solid #c4a55a;border-radius:6px;color:#5a2800;font-family:"Cinzel",serif;font-size:16px;font-weight:700;letter-spacing:0.2em;padding:10px 40px;}
+.go-btn.primary:hover{background:#eedbb0;color:#3d1a00}
+
+/* ════ PAYTABLE ════ */
+#paytableModal{position:fixed;inset:0;background:#f5e6c4;display:flex;align-items:flex-start;justify-content:center;z-index:10002;padding:0;overflow-y:auto}
+#paytableModal.hidden{display:none!important}
+#papyrusBookModal{position:fixed;inset:0;background:#f5e6c4;display:flex;align-items:flex-start;justify-content:center;z-index:10002;padding:0;overflow-y:auto}
+#papyrusBookModal.hidden{display:none!important}
+.pt-container{background:#f5e6c4;border:none;border-radius:0;padding:40px 60px;width:100%;min-height:100vh;color:#3d1a00;font-size:16px;}
+.pt-container::-webkit-scrollbar{width:4px}
+.pt-container::-webkit-scrollbar-thumb{background:#c4a55a;border-radius:2px}
+.pt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid #c4a55a}
+.pt-title{font-size:30px;color:#5a2800;font-family:"Cinzel",serif;font-weight:700}
+.pt-close{background:none;border:1px solid #c4a55a;border-radius:6px;color:#8a6030;font-family:"Syne Mono",monospace;font-size:18px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;margin:0;padding:0}
+.pt-close:hover{background:#eedbb0;color:#3d1a00}
+.pt-section-title{font-size:12px;color:#8a4510;font-family:"Cinzel",serif;letter-spacing:0.2em;text-transform:uppercase;margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid #c4a55a}
+.pt-grid{display:flex;flex-direction:column;gap:10px;}
+.pt-row{display:flex;align-items:center;gap:10px;background:#fdfdfd8f;border:none;border-radius:8px;padding:10px 14px;transition:all 0.15s}
+
+.pt-sym-img{width:56px;height:56px;object-fit:contain;flex-shrink:0}
+.pt-sym-info{flex:1;min-width:0}
+.pt-sym-name{font-size:20px;color:#3d1a00;font-weight:bold;margin-bottom:6px;font-family:"Cinzel",serif;}
+.pt-sym-payout{font-size:16px;color:#6b4020;line-height:1.6;display:flex;gap:16px;flex-wrap:wrap;}
+.pt-sym-payout span{color:#8b2010;font-size:16px;font-weight:bold}
+.pt-sym-level{font-size:17px;font-weight:bold;padding:3px 8px;border-radius:10px;flex-shrink:0;align-self:flex-start}
+.pt-sym-level.lv1{background:#d4e8c0;color:#2a6030;border:1px solid #8ab870}
+.pt-sym-level.lv-high{background:#e8c888;color:#5a2800;border:1px solid #c4a55a}
+.pt-special-row{display:flex;align-items:flex-start;gap:14px;background:#fdfdfd8f;border:none;border-radius:10px;padding:14px 16px;margin-bottom:8px;transition:all 0.15s}
+
+.pt-special-row img{width:48px;height:48px;object-fit:contain;flex-shrink:0}
+.pt-special-text{flex:1}
+.pt-special-name{font-size:20px;color:#3d1a00;font-weight:bold;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:"Cinzel",serif}
+.pt-special-lv{font-size:10px;padding:2px 7px;border-radius:10px;background:#e8c888;color:#5a2800;border:1px solid #c4a55a;font-family:"Syne Mono",monospace}
+.pt-special-desc{font-size:16px;color:#6b4020;line-height:1.8}
+.pt-special-desc em{color:#8b2010;font-style:normal;font-weight:bold}
+
+/* ════ SFINGE ════ */
+.modal{position:fixed;inset:0;background:#f5e6c4;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;padding:40px 20px;overflow-y:auto;}
+.modal-content{background:transparent;padding:0;border-radius:0;color:#3d1a00;text-align:center;width:100%;max-width:680px;font-size:1em;border:none;font-family:"Cinzel",serif;}
+.card-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap;}
+
+/* Dorso carta con glifi egizi */
+.card-choice{
+  width:110px;height:160px;cursor:pointer;border-radius:10px;
+  border:2px solid #c4a55a;transition:all 0.2s;
+  background: linear-gradient(135deg, #8b4510 0%, #5a2800 50%, #8b4510 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;color:#e8c050;font-size:22px;letter-spacing:0.1em;
+  box-shadow:0 4px 12px rgba(90,40,0,0.3);
+  position:relative;overflow:hidden;
+}
+.card-choice::before {
+  content:"𓂀 𓆣 𓇳";
+  position:absolute;top:8px;font-size:11px;opacity:0.5;letter-spacing:0.05em;color:#e8c050;
+}
+.card-choice::after {
+  content:"𓁢 𓆙 𓅃";
+  position:absolute;bottom:8px;font-size:11px;opacity:0.5;letter-spacing:0.05em;color:#e8c050;
+}
+.card-choice:hover{border-color:#e8c050;transform:translateY(-5px);box-shadow:0 8px 20px rgba(90,40,0,0.4);}
+.card-choice img{width:90px;height:130px;object-fit:contain;border-radius:8px;}
+
+.sphinx-card{width:110px;height:160px;margin:10px auto;display:block;border-radius:10px;border:2px solid #c4a55a;object-fit:contain;}
+.hidden{display:none!important}
+button{margin:6px;padding:8px 18px;font-size:1em;font-family:"Cinzel",monospace;cursor:pointer}
+
+/* Titolo sfinge */
+.sphinx-header-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;font-family:"Cinzel",serif;
+}
+.sphinx-header-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;
+}
+.sphinx-question { font-size:15px;color:#5a2800;margin:16px 0;line-height:1.6;font-family:"Syne Mono",monospace; }
+.sphinx-result-text { font-size:16px;font-weight:bold;color:#5a2800;margin:12px 0;font-family:"Syne Mono",monospace; }
+.sphinx-buttons { display:flex;justify-content:center;gap:12px;margin-top:16px;flex-wrap:wrap; }
+.sphinx-buttons button {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 28px;
+  cursor:pointer;transition:all 0.15s;
+}
+.sphinx-buttons button:hover { background:#eedbb0; }
+
+/* Simboli non vincenti opachi */
+#slotContainer.has-winners .symbol:not(.pulse) {
+  opacity: 0.25;
+  transition: opacity 0.3s ease;
+}
+#slotContainer.has-winners .symbol.pulse {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* ── SYMBOL LIST SINISTRA ── */
+#symbolList {
+  width: 180px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 8px 4px;
+  scrollbar-width: none;
+}
+#symbolList::-webkit-scrollbar { display: none; 
+}
+
+
+.sym-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #eedbb0;
+  font-family: "Syne Mono", monospace;
+  font-size: 15px;
+  color: #3d1a00;
+}
+.sym-list-item.sym-new {
+  background: #eedbb0;
+  color: #5a2800;
+}
+.sym-list-item img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+#symbolListTitle {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: #9a7040;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.sym-new-badge {
+  font-size: 12px;
+  background: none;
+  color: #c4881a;
+  font-weight: bold;
+  margin-left: auto;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+
+/* ── LOADING SCREEN ── */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: #f5e6c4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.5s ease;
+}
+#loadingScreen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.loading-title {
+  font-family: "Cinzel", serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #7a3a00;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.loading-sub {
+  font-family: "Syne Mono", monospace;
+  font-size: 13px;
+  color: #9a7040;
+  letter-spacing: 0.2em;
+  margin-bottom: 40px;
+}
+.loading-glyphs {
+  font-size: 28px;
+  color: #c4881a;
+  letter-spacing: 0.3em;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+
+/* ── CLASSIFICA MODAL ── */
+#classificaModal {
+  position: fixed;
+  inset: 0;
+  background: #f5e6c4;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 48px 20px;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#classificaModal.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.cl-title {
+  font-family: "Cinzel", serif;
+  font-size: 28px;
+  color: #5a2800;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.cl-sub {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: #9a7040;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.cl-card {
+  background: #fffffeb8;
+  border-radius: 10px;
+  padding: 16px 28px;
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.cl-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid #d4b870;
+  font-size: 15px;
+}
+.cl-row:last-child { border-bottom: none; }
+.cl-rank { font-family: "Cinzel", serif; font-weight: 700; color: #c4881a; min-width: 28px; }
+.cl-rank.gold { color: #c4881a; }
+.cl-rank.silver { color: #888; }
+.cl-rank.bronze { color: #a06030; }
+.cl-name { flex: 1; color: #3d1a00; font-weight: 500; }
+.cl-score { color: #c0321a; font-weight: 700; }
+.cl-level { color: #9a7040; font-size: 13px; }
+.cl-class { color: #5a2800; font-size: 12px; font-family: "Cinzel", serif; }
+.cl-empty { color: #9a7040; font-style: italic; text-align: center; padding: 20px; }
+
+/* ════ MERCATO DEL NILO ════ */
+#marketModal {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+.market-box {
+  background:transparent;padding:0;border-radius:0;
+  color:#3d1a00;text-align:center;width:100%;max-width:600px;
+  border:none;font-family:"Cinzel",serif;
+}
+.market-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;
+}
+.market-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:24px;
+}
+.market-stalls {
+  display:flex;justify-content:center;gap:20px;margin:20px 0 28px;
+}
+.market-stall {
+  width:130px;cursor:pointer;
+  border-radius:12px;border:2px solid #c4a55a;
+  background:#fdf5dc;padding:16px 10px;
+  transition:all 0.2s;display:flex;flex-direction:column;
+  align-items:center;gap:10px;
+}
+.market-stall:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.market-stall img { width:70px;height:70px;object-fit:contain; }
+.market-stall-label {
+  font-size:12px;color:#9a7040;letter-spacing:0.1em;text-transform:uppercase;
+}
+.market-stall.revealed { pointer-events:none; }
+.market-stall.win-stall { border-color:#c4881a;background:#fff8d0; }
+.market-stall.lose-stall { border-color:#8b2010;background:#fff0ee;opacity:0.6; }
+.market-result {
+  font-size:18px;color:#5a2800;margin:10px 0 20px;min-height:28px;font-weight:bold;
+}
+.market-btn {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 32px;
+  cursor:pointer;transition:all 0.15s;margin:4px;
+}
+.market-btn:hover { background:#eedbb0; }
+
+/* ════ GIUDIZIO DI ANUBI ════ */
+#anubiModal {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+.anubi-box {
+  background:transparent;padding:0;border-radius:0;
+  color:#3d1a00;text-align:center;width:100%;max-width:640px;
+  border:none;font-family:"Cinzel",serif;
+}
+.anubi-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;
+}
+.anubi-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:24px;
+}
+.anubi-cards {
+  display:flex;justify-content:center;gap:16px;margin:20px 0 28px;flex-wrap:wrap;
+}
+.anubi-card {
+  width:140px;cursor:pointer;border-radius:10px;
+  border:1px solid #c4a55a;background:#fffffeb8;
+  padding:16px 10px;transition:all 0.2s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.anubi-card:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.anubi-card img { width:70px;height:70px;object-fit:contain; }
+.anubi-card-name { font-size:12px;color:#8a6030;letter-spacing:0.08em;text-transform:uppercase; }
+.anubi-card-value { font-size:20px;font-weight:700;color:#c4881a; }
+.anubi-card.revealed { pointer-events:none; }
+.anubi-card.win-card { border-color:#2a6030;background:#e8f5e0; }
+.anubi-card.lose-card { border-color:#8b2010;background:#fef0ee;opacity:0.5; }
+.anubi-result {
+  font-size:18px;color:#5a2800;margin:10px 0 20px;min-height:28px;font-weight:bold;
+}
+.anubi-btn {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 32px;
+  cursor:pointer;transition:all 0.15s;margin:4px;
+}
+.anubi-btn:hover { background:#eedbb0; }
+
+/* ════ VASO ANTICO ════ */
+#jarModal {
+  position:fixed;inset:0;background:#f5e6c4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+.jar-box {
+  text-align:center;width:100%;max-width:900px;font-family:"Cinzel",serif;
+}
+.jar-title {
+  font-size:28px;font-weight:700;color:#5a2800;margin-bottom:6px;
+}
+.jar-sub {
+  font-size:13px;color:#9a7040;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:28px;
+}
+.jar-reveal {
+  background:#fffffeb8;border-radius:12px;padding:28px;
+  margin:20px 0;font-size:20px;color:#5a2800;font-weight:bold;
+  border:1px solid #c4a55a;min-height:80px;display:flex;
+  align-items:center;justify-content:center;
+}
+.jar-reveal.bonus { color:#2a6030; }
+.jar-reveal.curse { color:#8b2010; }
+.jar-btn {
+  background:none;border:1px solid #c4a55a;border-radius:6px;
+  color:#5a2800;font-family:"Cinzel",serif;font-size:15px;
+  font-weight:700;letter-spacing:0.15em;padding:10px 32px;
+  cursor:pointer;transition:all 0.15s;margin-top:16px;
+}
+.jar-btn:hover { background:#eedbb0; }
+
+/* ── JAR ANIMATION ── */
+@keyframes jarPulse {
+  0%   { transform: scale(1) rotate(0deg); }
+  20%  { transform: scale(1.08) rotate(-3deg); }
+  40%  { transform: scale(1.12) rotate(3deg); }
+  60%  { transform: scale(1.08) rotate(-2deg); }
+  80%  { transform: scale(1.04) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes jarGlow {
+  0%, 100% { filter: drop-shadow(0 0 0px #c4881a); }
+  50%       { filter: drop-shadow(0 0 20px #c4881a); }
+}
+.jar-img-anim {
+  animation: jarPulse 0.6s ease-in-out, jarGlow 1.5s ease-in-out infinite;
+}
+@keyframes revealFade {
+  from { opacity:0; transform: scale(0.85); }
+  to   { opacity:1; transform: scale(1); }
+}
+.jar-reveal-anim {
+  animation: revealFade 0.5s ease-out forwards;
+}
+
+/* ── JAR VASES ── */
+.jar-vase {
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;padding:14px 10px;border-radius:10px;
+  border:1px solid #c4a55a;background:#fffffeb8;
+  transition:all 0.2s;width:110px;flex-shrink:0;
+}
+.jar-vase:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.jar-vase img { width:80px;height:80px;object-fit:contain; }
+.jar-vase-label { font-size:12px;color:#9a7040;font-family:"Cinzel",serif; }
+.jar-vase.opened { pointer-events:none;cursor:default; }
+.jar-vase.opened.bonus-vase { border-color:#2a6030;background:#e8f5e0; }
+.jar-vase.opened.curse-vase { border-color:#8b2010;background:#fef0ee; }
+.jar-vase.opened.neutral-vase { border-color:#c4a55a;background:#fdf5dc; }
+.jar-vase-value { font-size:13px;font-weight:bold;color:#5a2800;font-family:"Cinzel",serif; }

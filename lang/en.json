@@ -1,0 +1,744 @@
+{
+  "hints": [
+    {
+      "symbol": "bread",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "bread",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "bread",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "reed",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "reed",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "reed",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "sandal",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "sandal",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "sandal",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "fish",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "fish",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "fish",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "basket",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "basket",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "basket",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "dates",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "dates",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "dates",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "cat",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "cat",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "cat",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "sarcophagus",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "sarcophagus",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "sarcophagus",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "dagger",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "dagger",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "dagger",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "ankh",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "ankh",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "ankh",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "skull",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "skull",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "scarab",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "scarab",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "scarab",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "ouroboros",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "ouroboros",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "copper",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "copper",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "meteorite",
+      "minLevel": 19,
+      "text": ""
+    },
+    {
+      "symbol": "meteorite",
+      "minLevel": 19,
+      "text": ""
+    },
+    {
+      "symbol": "bowl",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "chisel",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "oillamp",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "onion",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "ibis",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "cobra",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "beetle",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "wheat",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "copper",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "copper",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "meteorite",
+      "minLevel": 19,
+      "text": ""
+    },
+    {
+      "symbol": "meteorite",
+      "minLevel": 19,
+      "text": ""
+    },
+    {
+      "symbol": "wheat",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "copper",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "copper",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "meteorite",
+      "minLevel": 19,
+      "text": ""
+    },
+    {
+      "symbol": "meteorite",
+      "minLevel": 19,
+      "text": ""
+    },
+    {
+      "symbol": "wheat",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "rope",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "rope",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "fig",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "fig",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "sickle",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "sickle",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "onyx",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "goose",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "goose",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "goose",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "scorpion",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "scorpion",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "scorpion",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "jar",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "jar",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "ruby",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "ruby",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "brick",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "brick",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "brick",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "obelisk",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "obelisk",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "obelisk",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "mummy",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "mummy",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "sapphire",
+      "minLevel": 7,
+      "text": ""
+    },
+    {
+      "symbol": "sapphire",
+      "minLevel": 7,
+      "text": ""
+    },
+    {
+      "symbol": "pyramid",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "pyramid",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "pyramid",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "ra",
+      "minLevel": 10,
+      "text": ""
+    },
+    {
+      "symbol": "ra",
+      "minLevel": 10,
+      "text": ""
+    },
+    {
+      "symbol": "ra",
+      "minLevel": 10,
+      "text": ""
+    },
+    {
+      "symbol": "amethyst",
+      "minLevel": 9,
+      "text": ""
+    },
+    {
+      "symbol": "scepter",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "scepter",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "scepter",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "hieroglyphs",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "hieroglyphs",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "hieroglyphs",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "emerald",
+      "minLevel": 11,
+      "text": ""
+    },
+    {
+      "symbol": "djed",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "djed",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "djed",
+      "minLevel": 4,
+      "text": ""
+    },
+    {
+      "symbol": "osiris",
+      "minLevel": 12,
+      "text": ""
+    },
+    {
+      "symbol": "osiris",
+      "minLevel": 12,
+      "text": ""
+    },
+    {
+      "symbol": "osiris",
+      "minLevel": 12,
+      "text": ""
+    },
+    {
+      "symbol": "topaz",
+      "minLevel": 13,
+      "text": ""
+    },
+    {
+      "symbol": "udjat",
+      "minLevel": 28,
+      "text": ""
+    },
+    {
+      "symbol": "udjat",
+      "minLevel": 28,
+      "text": ""
+    },
+    {
+      "symbol": "pharaoh",
+      "minLevel": 30,
+      "text": ""
+    },
+    {
+      "symbol": "pharaoh",
+      "minLevel": 30,
+      "text": ""
+    },
+    {
+      "symbol": "pharaoh",
+      "minLevel": 30,
+      "text": ""
+    },
+    {
+      "symbol": "isis",
+      "minLevel": 14,
+      "text": ""
+    },
+    {
+      "symbol": "isis",
+      "minLevel": 14,
+      "text": ""
+    },
+    {
+      "symbol": "diamond",
+      "minLevel": 15,
+      "text": ""
+    },
+    {
+      "symbol": "horus",
+      "minLevel": 16,
+      "text": ""
+    },
+    {
+      "symbol": "horus",
+      "minLevel": 16,
+      "text": ""
+    },
+    {
+      "symbol": "coin",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "gold",
+      "minLevel": 17,
+      "text": ""
+    },
+    {
+      "symbol": "gold",
+      "minLevel": 17,
+      "text": ""
+    },
+    {
+      "symbol": "sphinx",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "sphinx",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "seth",
+      "minLevel": 24,
+      "text": ""
+    },
+    {
+      "symbol": "seth",
+      "minLevel": 24,
+      "text": ""
+    },
+    {
+      "symbol": "thoth",
+      "minLevel": 20,
+      "text": ""
+    },
+    {
+      "symbol": "thoth",
+      "minLevel": 20,
+      "text": ""
+    },
+    {
+      "symbol": "anubis",
+      "minLevel": 18,
+      "text": ""
+    },
+    {
+      "symbol": "anubis",
+      "minLevel": 18,
+      "text": ""
+    },
+    {
+      "symbol": "hathor",
+      "minLevel": 22,
+      "text": ""
+    },
+    {
+      "symbol": "hathor",
+      "minLevel": 22,
+      "text": ""
+    },
+    {
+      "symbol": "bastet",
+      "minLevel": 26,
+      "text": ""
+    },
+    {
+      "symbol": "nefertiti",
+      "minLevel": 32,
+      "text": ""
+    },
+    {
+      "symbol": "nefertiti",
+      "minLevel": 32,
+      "text": ""
+    },
+    {
+      "symbol": "papyrus",
+      "minLevel": 10,
+      "text": ""
+    },
+    {
+      "symbol": "papyrus",
+      "minLevel": 10,
+      "text": ""
+    },
+    {
+      "symbol": "boat",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "boat",
+      "minLevel": 1,
+      "text": ""
+    },
+    {
+      "symbol": "dromedary",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "dromedary",
+      "minLevel": 2,
+      "text": ""
+    },
+    {
+      "symbol": "amulet",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "amulet",
+      "minLevel": 3,
+      "text": ""
+    },
+    {
+      "symbol": "fan",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "fan",
+      "minLevel": 5,
+      "text": ""
+    },
+    {
+      "symbol": "bird",
+      "minLevel": 7,
+      "text": ""
+    },
+    {
+      "symbol": "bird",
+      "minLevel": 7,
+      "text": ""
+    },
+    {
+      "symbol": "necklace",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "necklace",
+      "minLevel": 8,
+      "text": ""
+    },
+    {
+      "symbol": "pschent",
+      "minLevel": 10,
+      "text": ""
+    }
+  ]
+}
