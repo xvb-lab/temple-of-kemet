@@ -1,5 +1,4 @@
 // Temple of Kemet — Cloudflare Worker Leaderboard
-
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
@@ -25,19 +24,24 @@ export default {
 
     // POST /leaderboard — salva score
     if (request.method === "POST" && url.pathname === "/leaderboard") {
-      const { name, score, level, socialClass } = await request.json();
+      const { name, score, level, socialClass, stories, gems } = await request.json();
       const raw = await env.KEMET_SCORES.get("leaderboard");
       let scores = raw ? JSON.parse(raw) : [];
+
       scores.push({
-        name: (name || "Anonimo").substring(0, 20),
-        score: Math.floor(score),
-        level: Math.floor(level) || 1,
+        name:        (name || "Anonimo").substring(0, 20),
+        score:       Math.floor(score),
+        level:       Math.floor(level) || 1,
         socialClass: socialClass || "Schiavo",
-        date: new Date().toISOString().split("T")[0],
+        stories:     Math.floor(stories) || 0,
+        gems:        Math.floor(gems) || 0,
+        date:        new Date().toISOString().split("T")[0],
       });
+
       scores.sort((a, b) => b.score - a.score);
       scores = scores.slice(0, 100);
       await env.KEMET_SCORES.put("leaderboard", JSON.stringify(scores));
+
       return new Response(JSON.stringify({ ok: true }), {
         headers: { ...CORS, "Content-Type": "application/json" },
       });
