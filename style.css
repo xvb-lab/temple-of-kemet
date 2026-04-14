@@ -1474,3 +1474,54 @@ body.dark .intro-disclaimer { color: rgba(255,255,255,0.4) !important; }
 }
 
 .cl-card { max-width: 776px !important; }
+
+/* ════ PAPIRO SACRO MINI-GIOCO ════ */
+#papyrusGameModal {
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:40px 20px;overflow-y:auto;
+}
+#papyrusGameModal.hidden { display:none!important; }
+.papyrus-game-box {
+  background:transparent;padding:0;border-radius:0;
+  color:var(--text);text-align:center;width:100%;max-width:600px;
+  border:none;font-family:"Cinzel",serif;
+}
+.papyrus-game-title {
+  font-size:28px;font-weight:700;color:var(--text2);margin-bottom:6px;
+}
+.papyrus-game-sub {
+  font-size:13px;color:var(--text3);letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.papyrus-choice-btn {
+  width:200px;min-height:80px;cursor:pointer;
+  border-radius:12px;border:2px solid #c4a55a;
+  background:#fdf5dc;padding:14px 12px;
+  transition:all 0.2s;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;
+  font-family:"Syne Mono",monospace;font-size:15px;color:#5a3010;line-height:1.4;
+}
+.papyrus-choice-btn:hover { border-color:#8b4510;transform:translateY(-4px);background:#fff8e8; }
+.papyrus-choice-btn.correct { border-color:#c4881a;background:#fff8d0;pointer-events:none; }
+.papyrus-choice-btn.wrong   { border-color:#8b2010;background:#fff0ee;opacity:0.6;pointer-events:none; }
+.papyrus-choice-btn.disabled { pointer-events:none; }
+body.dark .papyrus-choice-btn { background:rgb(33,39,58);border-color:#4a6888;color:#e8e0d0; }
+body.dark .papyrus-choice-btn:hover { background:rgba(255,255,255,0.1); }
+body.dark #papyrusGameModal { background:rgba(20,27,46,0.98); }
+body.dark .papyrus-game-title { color:#e8e0d0; }
+body.dark .papyrus-game-sub { color:rgba(255,255,255,0.5); }
+body.dark #papyrusQuestion { color:#e8e0d0 !important; }
+body.dark #papyrusResult { color:#fbb47f !important; }
+
+/* ════ PAPIRO GAME — font allineato agli altri mini-giochi ════ */
+#papyrusResult {
+  font-size:18px;color:var(--text2);margin:10px 0 20px;min-height:28px;font-weight:bold;
+  font-family:"Cinzel",serif;
+}
+#papyrusQuestion {
+  font-family:"Syne Mono",monospace !important;
+  font-size:16px;
+}
+.papyrus-game-title { font-family:"Cinzel",serif; }
+.papyrus-choice-btn { font-family:"Syne Mono",monospace; }

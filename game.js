@@ -2160,23 +2160,7 @@ function _applyResultContent(result, spinBet = currentBet, spinLines = activeLin
     }
 
     if (typeof effect === "object" && effect.type === "papyrus_bonus") {
-      const choice = Math.floor(Math.random() * 3);
-      if (choice === 0) {
-        const coins = 50 + Math.floor(Math.random() * 151);
-        currentCredits += coins;
-        logMessage(`Papiro: +${coins} Deben`, "bonus");
-        playSound("bonus");
-      } else if (choice === 1) {
-        const gems = 10 + Math.floor(Math.random() * 291);
-        gemPoints += gems;
-        logMessage(`Papiro: +${gems} Pietre Preziose`, "bonus");
-        playSound("bonus");
-      } else {
-        const consolation = 10 + Math.floor(Math.random() * 30);
-        gemPoints += consolation;
-        logMessage(`Papiro: oscuro. +${consolation} Pietre come conforto`, "bonus");
-        playSound("bonus");
-      }
+      setTimeout(() => playPapyrusGame(), 800);
     }
 
     // ── PENALITÀ ROBUSTE ──
@@ -2616,6 +2600,109 @@ function closeClassifica() {
 // MERCATO DEL NILO — Lv1+ 
 // Scegli tra 3 bancarelle: grano, pesce o vaso vuoto
 // ════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// PAPIRO SACRO — MINI-GIOCO INDOVINELLO
+// ═══════════════════════════════════════════════════════
+const PAPYRUS_RIDDLES = [
+  { q: "Il Nilo esonda ogni anno. Gli egizi lo chiamavano stagione di...", a: "Akhet", b: "Peret", correct: "a", hint: "Akhet era la stagione dell'inondazione, la più sacra." },
+  { q: "Quale dio aveva la testa di falco ed era signore del cielo?", a: "Horus", b: "Thoth", correct: "a", hint: "Horus, il falco celeste, figlio di Osiride e Iside." },
+  { q: "Il Libro dei Morti era scritto su cosa?", a: "Pietra", b: "Papiro", correct: "b", hint: "Il papiro era il supporto sacro per i testi funerari." },
+  { q: "Quante stagioni aveva l'antico calendario egizio?", a: "Tre", b: "Quattro", correct: "a", hint: "Akhet, Peret e Shemu — inondazione, semina e raccolto." },
+  { q: "Chi pesava il cuore dei defunti nella sala del giudizio?", a: "Ra", b: "Anubi", correct: "b", hint: "Anubi guidava le anime e presiedeva alla pesatura del cuore." },
+  { q: "Il deben era un'unità di peso in quale metallo?", a: "Rame", b: "Oro", correct: "a", hint: "Il deben di rame pesava circa 91 grammi." },
+  { q: "Quale faraona si travestiva da uomo per governare?", a: "Nefertiti", b: "Hatshepsut", correct: "b", hint: "Hatshepsut regnò come faraone per vent'anni." },
+  { q: "Il grande tempio di Abu Simbel fu costruito da chi?", a: "Ramses II", b: "Tutankhamon", correct: "a", hint: "Ramses II lo costruì per glorificare sé stesso e Ra." },
+  { q: "Quale simbolo egizio rappresentava la vita?", a: "Ankh", b: "Djed", correct: "a", hint: "L'ankh, la croce con l'anello, simbolo della vita eterna." },
+  { q: "Gli operai delle piramidi venivano pagati principalmente in...", a: "Oro", b: "Grano", correct: "b", hint: "Grano, pane e birra erano la valuta del popolo." },
+  { q: "Il dio Seth era associato a cosa?", a: "Caos e deserto", b: "Sapienza e scrittura", correct: "a", hint: "Seth governava il caos, le tempeste e il deserto." },
+  { q: "Thoth era il dio di cosa?", a: "Guerra e caccia", b: "Scrittura e saggezza", correct: "b", hint: "Thoth inventò la scrittura e registrava il destino degli uomini." },
+  { q: "La Grande Sfinge di Giza ha il corpo di quale animale?", a: "Leone", b: "Toro", correct: "a", hint: "Corpo di leone, testa umana — simbolo di potere e saggezza." },
+  { q: "Quale dea proteggeva i bambini e le nascite?", a: "Sekhmet", b: "Taweret", correct: "b", hint: "Taweret, la dea ippopotamo, proteggeva le donne in gravidanza." },
+  { q: "Il faraone Akhenaton adorava un unico dio. Quale?", a: "Aton", b: "Amon", correct: "a", hint: "Aton era il disco solare, unico dio di Akhenaton." },
+  { q: "Quale materiale usavano gli egizi per imbalsamare i corpi?", a: "Natron", b: "Sale marino", correct: "a", hint: "Il natron, un sale naturale, disidratava e preservava i corpi." },
+  { q: "Quante divinità aveva il pantheon egizio?", a: "Circa 2000", b: "Circa 100", correct: "a", hint: "Gli egizi adoravano oltre 2000 divinità diverse." },
+  { q: "La dea Bastet aveva la testa di cosa?", a: "Gatto", b: "Cobra", correct: "a", hint: "Bastet, dea della protezione e della fertilità, aveva testa di gatto." },
+  { q: "Il papiro cresceva lungo le rive di quale fiume?", a: "Tigri", b: "Nilo", correct: "b", hint: "Il papiro, pianta sacra, cresceva nelle zone umide del Nilo." },
+  { q: "Quale dio aveva la testa di ibis?", a: "Khnum", b: "Thoth", correct: "b", hint: "Thoth portava la testa di ibis, simbolo di saggezza." },
+  { q: "La piramide di Cheope si trova a...", a: "Giza", b: "Luxor", correct: "a", hint: "Giza, vicino all'odierna Cairo, ospita le tre grandi piramidi." },
+  { q: "Quale colore simboleggiava la vita e la rinascita?", a: "Verde", b: "Blu", correct: "a", hint: "Il verde del Nilo e delle piante simboleggiava la rinascita." },
+  { q: "Osiride fu ucciso e smembrato da chi?", a: "Horus", b: "Seth", correct: "b", hint: "Seth, il fratello geloso, uccise Osiride per prendere il trono." },
+  { q: "Il vaso canopo serviva a conservare cosa?", a: "Il vino sacro", b: "Gli organi del defunto", correct: "b", hint: "Gli organi venivano conservati in quattro vasi canopi." },
+  { q: "Quale era la scrittura sacra degli egizi?", a: "Geroglifici", b: "Cuneiforme", correct: "a", hint: "I geroglifici erano la scrittura sacra, usata per oltre 3500 anni." },
+];
+
+function playPapyrusGame() {
+  const modal = document.getElementById("papyrusGameModal");
+  const questionEl = document.getElementById("papyrusQuestion");
+  const choicesEl  = document.getElementById("papyrusChoices");
+  const resultEl   = document.getElementById("papyrusResult");
+  const buttonsEl  = document.getElementById("papyrusButtons");
+
+  spinButton.disabled = true;
+  betPlus.disabled = true;
+  betMinus.disabled = true;
+
+  const riddle = PAPYRUS_RIDDLES[Math.floor(Math.random() * PAPYRUS_RIDDLES.length)];
+  const prize  = Math.floor((50 + Math.random() * 200) * currentBet);
+  const penalty = Math.floor((20 + Math.random() * 80) * currentBet);
+
+  questionEl.textContent = riddle.q;
+  resultEl.textContent = "";
+  buttonsEl.innerHTML = "";
+  choicesEl.innerHTML = "";
+  modal.classList.remove("hidden");
+
+  const makeChoice = (label, key) => {
+    const btn = document.createElement("button");
+    btn.className = "papyrus-choice-btn";
+    btn.textContent = label;
+    btn.onclick = () => {
+      // Disabilita entrambi
+      choicesEl.querySelectorAll(".papyrus-choice-btn").forEach(b => b.classList.add("disabled"));
+
+      if (key === riddle.correct) {
+        btn.classList.add("correct");
+        currentCredits += prize;
+        totalScore += prize;
+        resultEl.style.color = "#2a6030";
+        resultEl.textContent = `✓ Corretto! +${prize} Deben — ${riddle.hint}`;
+        playSound("bonus");
+      } else {
+        btn.classList.add("wrong");
+        // Evidenzia quella corretta
+        choicesEl.querySelectorAll(".papyrus-choice-btn").forEach(b => {
+          if (b.dataset.key === riddle.correct) b.classList.add("correct");
+        });
+        currentCredits = Math.max(0, currentCredits - penalty);
+        resultEl.style.color = "#8b2010";
+        resultEl.textContent = `✗ Sbagliato! -${penalty} Deben — ${riddle.hint}`;
+        playSound("ghost");
+      }
+
+      updateUI();
+
+      // Pulsante chiudi
+      setTimeout(() => {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "market-btn";
+        closeBtn.textContent = "Continua";
+        closeBtn.onclick = () => {
+          modal.classList.add("hidden");
+          spinButton.disabled = false;
+          betPlus.disabled = false;
+          betMinus.disabled = false;
+        };
+        buttonsEl.appendChild(closeBtn);
+      }, 600);
+    };
+    btn.dataset.key = key;
+    choicesEl.appendChild(btn);
+  };
+
+  makeChoice(riddle.a, "a");
+  makeChoice(riddle.b, "b");
+}
+
 function playMarketGame(prize) {
   const modal = document.getElementById("marketModal");
   const stalls = document.getElementById("marketStalls");

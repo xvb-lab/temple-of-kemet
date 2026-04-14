@@ -234,7 +234,7 @@
     <button onclick="playMarketGame(100);" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏺 Mercato</button>
     <button onclick="playAnubiGame(200);" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">⚖ Anubi</button>
     <button onclick="playJarGame();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏺 Vaso</button>
-    <button onclick="(function(){const p=Math.floor(Math.random()*3);if(p===0){const c=50+Math.floor(Math.random()*151);currentCredits+=c;logMessage('📜 Papiro: +'+c+' Deben','bonus');}else if(p===1){const g=10+Math.floor(Math.random()*291);gemPoints+=g;logMessage('📜 Papiro: +'+g+' pietre','bonus');}else{const l=Math.floor(currentCredits*0.25);currentCredits=Math.max(0,currentCredits-l);logMessage('📜 Maledizione papiro: -'+l,'curse');}updateUI();})();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">📜 Papiro</button>
+    <button onclick="playPapyrusGame();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">📜 Papiro</button>
     <button onclick="freeSpinsRemaining+=3;logMessage('🌀 +3 giri gratuiti DEV','bonus');updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🌀 +3 Giri</button>
   </div>
 
@@ -269,6 +269,20 @@
 
 
 <!-- MERCATO DEL NILO -->
+
+<!-- PAPIRO SACRO MINI-GIOCO -->
+<div id="papyrusGameModal" class="hidden">
+  <div class="papyrus-game-box">
+    <img src="assets/img/symbols/papyrus.png" style="width:120px;height:120px;object-fit:contain;margin-bottom:12px;">
+    <div class="papyrus-game-title">📜 Il Papiro Sacro</div>
+    <div class="papyrus-game-sub">Il papiro rivela un antico enigma</div>
+    <p id="papyrusQuestion" style="font-size:16px;color:#5a3010;margin:20px 0 24px;line-height:1.7;font-family:'Syne Mono',monospace;max-width:500px;text-align:center;"></p>
+    <div id="papyrusChoices" style="display:flex;gap:16px;justify-content:center;margin-bottom:24px;"></div>
+    <div id="papyrusResult" style="font-size:18px;font-weight:bold;color:#5a2800;min-height:28px;margin-bottom:16px;"></div>
+    <div id="papyrusButtons"></div>
+  </div>
+</div>
+
 <div id="marketModal" class="hidden">
   <div class="market-box">
     <img src="assets/img/symbols/market.png" style="width:256px;height:256px;object-fit:contain;margin-bottom:16px;">
