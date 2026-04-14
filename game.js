@@ -2429,7 +2429,7 @@ function _buildPapyrusBook() {
 
   // Contatore
   const ctr = document.createElement('div');
-  ctr.style.cssText = 'font-family:"Syne Mono",monospace;font-size:13px;color:#9a7040;margin-bottom:28px;';
+  ctr.style.cssText = `font-family:"Syne Mono",monospace;font-size:13px;color:${document.body.classList.contains('dark') ? 'rgba(255,255,255,0.5)' : '#9a7040'};margin-bottom:28px;`;
   ctr.textContent = totalUnlocked + ' storie sbloccate su ' + totalAll;
   inner.appendChild(ctr);
 
@@ -2441,7 +2441,7 @@ function _buildPapyrusBook() {
   sidebar.style.cssText = 'min-width:190px;max-width:200px;position:sticky;top:20px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;';
 
   const sideTitle = document.createElement('div');
-  sideTitle.style.cssText = "font-family:Cinzel,serif;font-size:11px;color:#9a7040;letter-spacing:0.12em;margin-bottom:8px;text-transform:uppercase;";
+  sideTitle.style.cssText = `font-family:Cinzel,serif;font-size:11px;color:${document.body.classList.contains('dark') ? 'rgba(255,255,255,0.5)' : '#9a7040'};letter-spacing:0.12em;margin-bottom:8px;text-transform:uppercase;`;
   sideTitle.textContent = 'Capitoli';
   sidebar.appendChild(sideTitle);
 
@@ -2450,14 +2450,14 @@ function _buildPapyrusBook() {
     const iconFile = FILE_MAP[sym] || sym;
     const btn = document.createElement('button');
     btn.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;border:1px solid ' + (isActive ? '#c4881a' : '#d4b87055') + ';background:' + (isActive ? '#c4881a' : 'transparent') + ';cursor:pointer;text-align:left;width:100%;transition:all 0.15s;';
-    btn.innerHTML = `<img src="assets/img/symbols/${iconFile}.png" style="width:22px;height:22px;object-fit:contain;flex-shrink:0;"><span style="font-family:Cinzel,serif;font-size:11px;color:${isActive ? '#fff' : '#5a2800'};line-height:1.2;">${symName(sym)}</span>`;
+    btn.innerHTML = `<img src="assets/img/symbols/${iconFile}.png" style="width:22px;height:22px;object-fit:contain;flex-shrink:0;"><span style="font-family:Cinzel,serif;font-size:11px;color:${isActive ? '#fff' : (document.body.classList.contains('dark') ? 'rgba(255,255,255,0.75)' : '#5a2800')};line-height:1.2;">${symName(sym)}</span>`;
     btn.onclick = () => { _papyrusActiveFilter = sym; _buildPapyrusBook(); };
     sidebar.appendChild(btn);
   });
 
   // ── PAGINA BIANCA ──
   const page = document.createElement('div');
-  page.style.cssText = 'flex:1;background:#ffffff;border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,0.12);padding:52px 56px;min-height:600px;';
+  page.style.cssText = `flex:1;background:${document.body.classList.contains('dark') ? 'rgb(33,39,58)' : '#ffffff'};border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,0.2);padding:52px 56px;min-height:600px;`;
 
   if (!_papyrusActiveFilter || !bySymbol[_papyrusActiveFilter]) {
     page.innerHTML = '<p style="color:#9a7040;font-style:italic;">Nessuna storia disponibile.</p>';
@@ -2468,14 +2468,14 @@ function _buildPapyrusBook() {
     // Titolo capitolo
     const titleDiv = document.createElement('div');
     titleDiv.style.cssText = 'display:flex;align-items:center;gap:18px;margin-bottom:36px;padding-bottom:20px;border-bottom:2px solid #c4a55a;';
-    titleDiv.innerHTML = `<img src="assets/img/symbols/${iconFile2}.png" style="width:60px;height:60px;object-fit:contain;"><div><div style="font-family:Cinzel,serif;font-size:26px;color:#3d1a00;font-weight:700;">${symName(_papyrusActiveFilter)}</div><div style="font-family:Syne Mono,monospace;font-size:12px;color:#9a7040;margin-top:4px;">${frasi.length} ${frasi.length === 1 ? 'storia' : 'storie'}</div></div>`;
+    titleDiv.innerHTML = `<img src="assets/img/symbols/${iconFile2}.png" style="width:60px;height:60px;object-fit:contain;"><div><div style="font-family:Cinzel,serif;font-size:26px;color:${document.body.classList.contains('dark') ? '#e8e0d0' : '#3d1a00'};font-weight:700;">${symName(_papyrusActiveFilter)}</div><div style="font-family:Syne Mono,monospace;font-size:12px;color:${document.body.classList.contains('dark') ? 'rgba(255,255,255,0.45)' : '#9a7040'};margin-top:4px;">${frasi.length} ${frasi.length === 1 ? 'storia' : 'storie'}</div></div>`;
     page.appendChild(titleDiv);
 
     // Frasi
     frasi.forEach((h, i) => {
       const p = document.createElement('div');
       p.style.cssText = 'margin-bottom:32px;';
-      p.innerHTML = `<div style="font-family:Syne Mono,monospace;font-size:11px;color:#c4a55a;letter-spacing:0.12em;margin-bottom:8px;">§ ${i+1}</div><div style="font-family:Syne Mono,monospace;font-size:17px;color:#1a0a00;line-height:1.85;">${h.text}</div>`;
+      p.innerHTML = `<div style="font-family:Syne Mono,monospace;font-size:11px;color:${document.body.classList.contains('dark') ? 'rgba(196,165,90,0.7)' : '#c4a55a'};letter-spacing:0.12em;margin-bottom:8px;">§ ${i+1}</div><div style="font-family:Syne Mono,monospace;font-size:17px;color:${document.body.classList.contains('dark') ? '#e8e0d0' : '#1a0a00'};line-height:1.85;">${h.text}</div>`;
       page.appendChild(p);
     });
   }

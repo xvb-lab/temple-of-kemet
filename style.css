@@ -1415,3 +1415,31 @@ body.dark #paytableInner div[style*="font-size:20px"] { color: #fbb47f !importan
 .go-lb-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:0.5px solid rgba(196,165,90,0.15); font-size:14px; }
 .cl-score, .go-lb-score { margin-left:auto; display:flex; align-items:center; gap:4px; font-weight:700; }
 .cl-class, .go-lb-level { display:flex; align-items:center; gap:4px; font-size:12px; opacity:0.8; white-space:nowrap; }
+
+/* ══ PAPIRO BOOK DARK ══ */
+body.dark #papyrusBookModal { background: rgba(20,27,46,0.98) !important; }
+
+/* ══ GAME OVER DARK MODE ══ */
+body.dark #gameOverScreen { background: rgba(20,27,46,0.98) !important; }
+body.dark .go-title       { color: #fbb47f !important; }
+body.dark .go-subtitle    { color: rgba(255,255,255,0.55) !important; }
+body.dark .go-card        { background: rgb(33,39,58) !important; }
+body.dark .go-card *      { color: #e8e0d0 !important; }
+body.dark .go-lb-title    { color: rgba(255,255,255,0.5) !important; }
+body.dark .go-lb-row      { border-bottom-color: rgba(255,255,255,0.08) !important; }
+body.dark .go-lb-name     { color: #e8e0d0 !important; }
+body.dark .go-lb-score    { color: #fbd06a !important; }
+body.dark .go-lb-level    { color: rgba(232,224,208,0.55) !important; }
+body.dark .go-lb-rank     { color: rgba(232,224,208,0.55) !important; }
+body.dark .go-lb-rank.gold   { color: #ffd11d !important; }
+body.dark .go-lb-rank.silver { color: #c0c8d0 !important; }
+body.dark .go-lb-rank.bronze { color: #c4884a !important; }
+body.dark #gameOverScreen button { border-color: rgba(255,255,255,0.5) !important; color: #ffffff !important; }
+
+body.dark .go-leaderboard { background: rgb(33,39,58) !important; }
+body.dark .go-leaderboard * { color: #e8e0d0 !important; }
+body.dark .go-lb-score { color: #fbd06a !important; }
+body.dark .go-lb-rank.gold   { color: #ffd11d !important; }
+body.dark .go-lb-rank.silver { color: #c0c8d0 !important; }
+body.dark .go-lb-rank.bronze { color: #c4884a !important; }
+body.dark .go-lb-row { border-bottom-color: rgba(255,255,255,0.08) !important; }
