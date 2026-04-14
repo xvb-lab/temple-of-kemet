@@ -905,7 +905,7 @@ function adjustBet() {
   if (getBetCost() > currentCredits) {
     const lineOptions = [5, 10, 25, 50];
     for (const lines of lineOptions) {
-      activeLines = lines;
+      setActiveLines(lines);
       currentBet = 1;
       if (getBetCost() <= currentCredits) break;
     }
@@ -1833,8 +1833,8 @@ function toggleMute() {
     setMasterVolume(v);
   } else {
     applyVolume();
-    const icon = document.querySelector("#volumeBtn .material-icons");
-    if (icon) icon.textContent = _isMuted ? "volume_off" : "volume_up";
+    const vicon = document.querySelector("#volumeBtn .material-icons");
+    if (vicon) vicon.textContent = _isMuted ? "volume_off" : "volume_up";
   }
 }
 
@@ -1845,8 +1845,8 @@ let _isDark = false;
 function toggleDark() {
   _isDark = !_isDark;
   document.body.classList.toggle("dark", _isDark);
-  const icon = document.querySelector("#darkBtn .material-icons");
-  if (icon) icon.textContent = _isDark ? "light_mode" : "dark_mode";
+  const dicon = document.querySelector("#darkBtn .material-icons");
+  if (dicon) dicon.textContent = _isDark ? "light_mode" : "dark_mode";
 }
 
 // ── FULLSCREEN ──
@@ -1862,8 +1862,7 @@ function toggleFullscreen() {
 }
 document.addEventListener("fullscreenchange", () => {
   const btn = document.getElementById("fullscreenBtn");
-  if (btn) btn.querySelector(".material-icons").textContent =
-    document.fullscreenElement ? "fullscreen_exit" : "fullscreen";
+  if (btn) btn.querySelector(".material-icons").textContent = document.fullscreenElement ? "fullscreen_exit" : "fullscreen";
 });
 
 // Preload
@@ -2344,6 +2343,7 @@ function animateNumberChange(id, newValue) {
     if (gameInput) gameInput.value = name;
     introScreen.classList.remove("visible");
     setTimeout(() => { introScreen.classList.add("hidden"); }, 700);
+    setActiveLines(50);
     startBgMusic();
 
     // Messaggi di benvenuto — dal JSON, con {name}, {recordName}, {recordScore}
@@ -2520,11 +2520,19 @@ function showGameOver() {
       score: totalScore,
       level: currentLevel,
       socialClass: getSocialStatus(currentLevel),
+      stories: Object.values(symbolStoriesUnlocked).reduce((a, b) => a + b, 0),
+      gems: gemPoints,
     };
 
-    // Developer non va in classifica
+    // Developer non va in classifica ma vede comunque i dati esistenti
     if (playerName.toLowerCase().startsWith("developer")) {
-      renderLeaderboard([]);
+      try {
+        const res = await fetch(LEADERBOARD_API + "/leaderboard");
+        const scores = await res.json();
+        renderLeaderboard(scores.slice(0, 10));
+      } catch(e) {
+        renderLeaderboard([]);
+      }
       return;
     }
 
@@ -2556,10 +2564,10 @@ function showGameOver() {
       row.className = "go-lb-row";
       const rankClass = medals[i] || "";
       row.innerHTML = `
-        <span class="go-lb-rank ${rankClass}">${i === 0 ? '<span class="material-icons" style="font-size:18px;color:#ffd11d">military_tech</span>' : i + 1}</span>
-        <span class="go-lb-name">${entry.name}</span>
-        <span class="go-lb-score"><span class="material-icons" style="font-size:14px;vertical-align:middle;color:#fbd06a">grain</span> ${entry.score.toLocaleString()}</span>
-        <span class="go-lb-level"><span class="material-icons" style="font-size:13px;vertical-align:middle;opacity:0.7">military_tech</span> ${entry.socialClass || ""} Lv${entry.level}</span>
+        <span style="font-size:18px;min-width:32px;">${i === 0 ? '🏆' : i + 1}</span>
+        <span style="font-size:18px;flex:1;font-weight:600;">${entry.name}</span>
+        <span style="font-size:14px;opacity:0.7;white-space:nowrap;">${entry.socialClass||""} Lv${entry.level} / 📜 ${entry.stories||0} 💎 ${entry.gems||0}</span>
+        <span style="font-size:18px;font-weight:700;white-space:nowrap;margin-left:12px;">🌾 ${entry.score.toLocaleString()}</span>
       `;
       list.appendChild(row);
     });
@@ -2586,10 +2594,10 @@ function openClassifica() {
         const row = document.createElement("div");
         row.className = "cl-row";
         row.innerHTML = `
-          <span class="cl-rank ${medals[i]||''}">${i===0?'<span class="material-icons" style="font-size:18px;color:#ffd11d">military_tech</span>':i+1}</span>
-          <span class="cl-name">${e.name}</span>
-          <span class="cl-score"><span class="material-icons" style="font-size:14px;vertical-align:middle;color:#fbd06a">grain</span> ${e.score.toLocaleString()}</span>
-          <span class="cl-class"><span class="material-icons" style="font-size:13px;vertical-align:middle;opacity:0.7">military_tech</span> ${e.socialClass||""} Lv${e.level}</span>
+          <span style="font-size:18px;min-width:32px;">${i===0?'🏆':i+1}</span>
+          <span style="font-size:18px;flex:1;font-weight:600;">${e.name}</span>
+          <span style="font-size:14px;opacity:0.7;white-space:nowrap;">${e.socialClass||""} Lv${e.level} / 📜 ${e.stories||0} 💎 ${e.gems||0}</span>
+          <span style="font-size:18px;font-weight:700;white-space:nowrap;margin-left:12px;">🌾 ${e.score.toLocaleString()}</span>
         `;
         list.appendChild(row);
       });
@@ -2947,6 +2955,11 @@ function restartGame() {
   freeSpinsRemaining = 0;
   isSpinning     = false;
   _recordBeaten  = false;
+  // Reset storie e progressi simboli
+  Object.keys(symbolStoryPoints).forEach(k => delete symbolStoryPoints[k]);
+  Object.keys(symbolStoriesUnlocked).forEach(k => delete symbolStoriesUnlocked[k]);
+  _papyrusActiveFilter = null;
+  setActiveLines(50); // reset linee e bottoni
 
   document.getElementById("gameOverScreen").classList.add("hidden");
   document.getElementById("winMessage").innerHTML = "";

@@ -1456,3 +1456,21 @@ body.dark .intro-form input:focus { border-color: rgba(255,255,255,0.5) !importa
 body.dark .intro-btn   { border-color: rgba(255,255,255,0.4) !important; color: #ffffff !important; }
 body.dark .intro-btn:hover { background: rgb(33,39,58) !important; }
 body.dark .intro-disclaimer { color: rgba(255,255,255,0.4) !important; }
+
+/* ══ CLASSIFICA ROW FONT FORCE ══ */
+.cl-row { font-size: 18px !important; }
+.cl-row span { font-size: 18px !important; }
+.cl-rank { font-size: 18px !important; }
+.cl-name { font-size: 18px !important; }
+.cl-score { font-size: 18px !important; }
+.cl-info { font-size: 18px !important; }
+.cl-info span { font-size: 18px !important; }
+
+/* ══ LEADERBOARD ROW FINAL LAYOUT ══ */
+.cl-row, .go-lb-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.cl-card { max-width: 776px !important; }
