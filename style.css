@@ -1443,3 +1443,16 @@ body.dark .go-lb-rank.gold   { color: #ffd11d !important; }
 body.dark .go-lb-rank.silver { color: #c0c8d0 !important; }
 body.dark .go-lb-rank.bronze { color: #c4884a !important; }
 body.dark .go-lb-row { border-bottom-color: rgba(255,255,255,0.08) !important; }
+
+/* ══ INTRO DARK MODE ══ */
+body.dark #introScreen { background: rgba(20,27,46,0.98) !important; }
+body.dark .intro-logo  { color: #e8e0d0 !important; text-shadow: 2px 2px 0 rgba(74,104,136,0.5) !important; }
+body.dark .intro-sub   { color: #fbb47f !important; }
+body.dark .intro-hieroglyphs { color: #7090b0 !important; }
+body.dark .intro-form label  { color: rgba(255,255,255,0.55) !important; }
+body.dark .intro-form input  { background: rgba(255,255,255,0.08) !important; color: #e8e0d0 !important; border-color: rgba(255,255,255,0.25) !important; }
+body.dark .intro-form input::placeholder { color: rgba(255,255,255,0.3) !important; }
+body.dark .intro-form input:focus { border-color: rgba(255,255,255,0.5) !important; }
+body.dark .intro-btn   { border-color: rgba(255,255,255,0.4) !important; color: #ffffff !important; }
+body.dark .intro-btn:hover { background: rgb(33,39,58) !important; }
+body.dark .intro-disclaimer { color: rgba(255,255,255,0.4) !important; }
