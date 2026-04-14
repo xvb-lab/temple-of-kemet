@@ -1971,6 +1971,7 @@ function _applyResultContent(result, spinBet = currentBet, spinLines = activeLin
   currentCredits += totalCoinsThisSpin;
   totalScore += totalCoinsThisSpin;
   levelXP += totalCoinsThisSpin;
+  if (totalCoinsThisSpin > 0) checkWheelBonus(totalCoinsThisSpin);
 
   const hasCoinWin = totalCoinsThisSpin > 0;
   const hasGemWin = totalGemPointsThisSpin > 0;
@@ -2666,6 +2667,9 @@ function playPapyrusGame() {
         totalScore += prize;
         resultEl.style.color = "#2a6030";
         resultEl.textContent = `✓ Corretto! +${prize} Deben — ${riddle.hint}`;
+        const pa = document.getElementById("winMessage");
+        if (pa) pa.innerHTML = "";
+        logMessage(`📜 <strong>Papiro Sacro</strong> — Risposta corretta: <span class="log-payout">+${prize} Deben</span> — ${riddle.hint}`, "bonus");
         playSound("bonus");
       } else {
         btn.classList.add("wrong");
@@ -2676,6 +2680,9 @@ function playPapyrusGame() {
         currentCredits = Math.max(0, currentCredits - penalty);
         resultEl.style.color = "#8b2010";
         resultEl.textContent = `✗ Sbagliato! -${penalty} Deben — ${riddle.hint}`;
+          const pb = document.getElementById("winMessage");
+          if (pb) pb.innerHTML = "";
+          logMessage(`📜 <strong>Papiro Sacro</strong> — Risposta errata: <span class="log-penalty">-${penalty} Deben</span> — ${riddle.hint}`, "curse");
         playSound("ghost");
       }
 
@@ -2701,6 +2708,207 @@ function playPapyrusGame() {
 
   makeChoice(riddle.a, "a");
   makeChoice(riddle.b, "b");
+}
+
+// ═══════════════════════════════════════════════════════
+// RUOTA DELLA FORTUNA
+// ═══════════════════════════════════════════════════════
+let wheelBonusSpins = 0;
+let _xpForWheel = 0;
+const WHEEL_XP_THRESHOLD = 500;
+
+// Segmento casuale del livello — calcolato ogni volta che si apre la ruota
+function getRandomLevelSegment() {
+  const GEM_SYMS  = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
+  const DIV_SYMS  = ["ra","osiris","isis","horus","anubis","thoth","hathor","seth","bastet","udjat","pharaoh","nefertiti","bes","taweret","khnum","sobek","neith","sekhmet","ptah","nut","amon","khonsu","cleopatra"];
+  const SPEC_SYMS = ["skull","scarab","ouroboros","jar","hieroglyphs","mummy","coin","sphinx","papyrus","pschent","market","scale","curse","spirit","wheat"];
+  const pool = getSymbolsForCurrentLevel().filter(s =>
+    !GEM_SYMS.includes(s.name) && !DIV_SYMS.includes(s.name) && !SPEC_SYMS.includes(s.name)
+  );
+  if (!pool.length) return { label:"Grano", icon:"wheat.png", type:"deben", action:() => { const v=(150+Math.floor(Math.random()*150))*currentBet; currentCredits+=v; totalScore+=v; playSound("win2"); return `+${v} Deben — Il Nilo abbonda`; } };
+  const sym = pool[Math.floor(Math.random() * pool.length)];
+  const FILE_MAP = { oillamp:"oil-lamp", canopic_jar:"canopic-jar", cloth_fine:"cloth_fine", cloth_linen:"cloth_linen", cloth_rough:"cloth-rough", cloth_royal:"cloth-royal", sandal_fine:"sandal_fine", sandal_gold:"sandal_gold", sandal_leather:"sandal_leather", sandal_papyrus:"sandal_papyrus", bowl_wood:"bowl-wood", bowl_ceramic:"bowl-ceramic", bowl_alabaster:"bowl-alabaster", bowl_gold:"bowl-gold", drink_water:"drink-water", drink_beer:"drink-beer", drink_wine:"drink-wine", drink_nectar:"drink-nectar", bread_ritual:"bread-ritual", tool_scribe:"tool-scribe", jewelry_gold:"jewelry-gold" };
+  const iconFile = (FILE_MAP[sym.name] || sym.name) + ".png";
+  const baseVal = (payoutTable[sym.name] && payoutTable[sym.name][3]) ? payoutTable[sym.name][3] : 20;
+  const prize = Math.floor((baseVal + Math.floor(Math.random() * baseVal)) * currentBet);
+  return {
+    label: symName(sym.name) || sym.name,
+    icon: iconFile,
+    type: "deben",
+    action: () => { currentCredits += prize; totalScore += prize; playSound("win2"); return `+${prize} Deben — ${symName(sym.name)} ti porta fortuna`; }
+  };
+}
+
+// Gemma del livello corrente
+function getCurrentGemSegment() {
+  const GEM_SYMS = ["copper","onyx","ruby","sapphire","amethyst","emerald","topaz","diamond","gold","meteorite"];
+  const activeGem = getSymbolsForCurrentLevel().find(s => GEM_SYMS.includes(s.name));
+  const gemName = activeGem ? activeGem.name : "copper";
+  const FILE_MAP2 = {};
+  const gemPoints_val = 20 + Math.floor(Math.random() * 80);
+  return {
+    label: symName(gemName) || gemName,
+    icon: gemName + ".png",
+    type: "gems",
+    action: () => { gemPoints += gemPoints_val; totalScore += gemPoints_val; playSound("bonus"); return `+${gemPoints_val} Pietre Preziose — Le gemme del tempio sono tue`; }
+  };
+}
+
+function buildWheelSegments() {
+  const randSym = getRandomLevelSegment();
+  const gemSeg  = getCurrentGemSegment();
+  return [
+    { label: "Grano",     icon: "wheat.png",     type:"deben",   action: () => { const v=(200+Math.floor(Math.random()*300))*currentBet; currentCredits+=v; totalScore+=v; playSound("win2"); return `+${v} Deben — I granai del Nilo si aprono per te`; } },
+    { label: "Scarabeo",  icon: "scarab.png",    type:"spins",   action: () => { const v=1+Math.floor(Math.random()*3); freeSpinsRemaining+=v; playSound("bonus"); return `+${v} Giri Gratuiti — Lo scarabeo spinge la ruota del sole`; } },
+    gemSeg,
+    { label: "Pschent",   icon: "pschent.png",   type:"jackpot", action: () => { const v=(500+Math.floor(Math.random()*500))*currentBet; currentCredits+=v; totalScore+=v; playSound("win3"); return `+${v} Deben ★ — La Doppia Corona del Faraone ti benedice!`; } },
+    { label: "Mummia",    icon: "mummy.png",     type:"penalty", action: () => { const p=Math.floor(currentCredits*(0.05+Math.random()*0.1)); currentCredits=Math.max(0,currentCredits-p); playSound("ghost"); return `-${p} Deben — La mummia risvegliata pretende la sua offerta`; } },
+    randSym,
+    { label: "Ouroboros", icon: "ouroboros.png", type:"spins",   action: () => { const v=1+Math.floor(Math.random()*2); freeSpinsRemaining+=v; playSound("bonus"); return `+${v} Giro Gratuito — Il serpente eterno ti dona un nuovo ciclo`; } },
+    { label: "Moneta",    icon: "coin.png",      type:"deben",   action: () => { const v=(100+Math.floor(Math.random()*200))*currentBet; currentCredits+=v; totalScore+=v; playSound("win2"); return `+${v} Deben — La moneta del faraone brilla nel tuo tesoro`; } },
+  ];
+}
+
+const WHEEL_SEGMENTS = [];
+
+function checkWheelBonus(xpGained) {
+  _xpForWheel += xpGained;
+  if (_xpForWheel >= WHEEL_XP_THRESHOLD) {
+    _xpForWheel -= WHEEL_XP_THRESHOLD;
+    wheelBonusSpins++;
+    updateWheelUI();
+    logMessage(`🎡 La Ruota di Bastet ti chiama! (${wheelBonusSpins} ${wheelBonusSpins===1?"giro disponibile":"giri disponibili"})`, "level");
+  }
+}
+
+function updateWheelUI() {
+  const area = document.getElementById("wheelBonusArea");
+  const label = document.getElementById("wheelSpinsLeft");
+  if (!area) return;
+  if (wheelBonusSpins > 0) {
+    area.style.display = "flex";
+    if (label) label.textContent = `(${wheelBonusSpins})`;
+  } else {
+    area.style.display = "none";
+  }
+}
+
+function openFortuneWheel() {
+  if (wheelBonusSpins <= 0) return;
+  const modal = document.getElementById("fortuneWheelModal");
+  const wheelEl = document.getElementById("fortuneWheel");
+  const resultEl = document.getElementById("wheelResult");
+  const buttonsEl = document.getElementById("wheelButtons");
+
+  resultEl.textContent = "";
+  buttonsEl.innerHTML = "";
+  modal.classList.remove("hidden");
+
+  // Costruisci segmenti dinamici per il livello corrente
+  const segments = buildWheelSegments();
+
+  // Ruota con simboli e divisori — tutto gira insieme
+  wheelEl.innerHTML = "";
+  const labels = document.createElement("div");
+  labels.className = "wheel-labels";
+
+  const R = 250; // raggio ruota px (500/2)
+  segments.forEach((seg, i) => {
+    const angleDeg = i * 45 + 22.5;
+    const angleRad = (angleDeg - 90) * Math.PI / 180;
+    const dist = R * 0.72;
+    const cx = 50 + (dist / R) * 50 * Math.cos(angleRad);
+    const cy = 50 + (dist / R) * 50 * Math.sin(angleRad);
+
+    const lbl = document.createElement("div");
+    // Ruota label in direzione radiale verso bordo
+    lbl.style.cssText = `position:absolute;left:${cx}%;top:${cy}%;transform:translate(-50%,-50%) rotate(${angleDeg + 90}deg);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;`;
+    const icon = seg.icon
+      ? `<img src="assets/img/symbols/${seg.icon}" style="width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.8)) brightness(1.15);transform:rotate(-90deg);" onerror="this.style.display='none'">`
+      : "";
+    lbl.querySelector && lbl.querySelector("img") && (lbl.querySelector("img").style.transform = "rotate(-90deg)");
+    lbl.innerHTML = icon;
+    labels.appendChild(lbl);
+
+    // Linea divisoria
+    const div = document.createElement("div");
+    div.className = "wheel-divider";
+    div.style.transform = `rotate(${i * 45}deg)`;
+    labels.appendChild(div);
+  });
+  wheelEl.appendChild(labels);
+
+  spinButton.disabled = true;
+
+  // Pulsante gira
+  const spinBtn = document.createElement("button");
+  spinBtn.className = "market-btn";
+  spinBtn.textContent = "🎡 Gira!";
+  spinBtn.onclick = () => {
+    spinBtn.remove(); // Rimuovi subito il pulsante
+    wheelBonusSpins--;
+    updateWheelUI();
+
+    const winIndex = Math.floor(Math.random() * segments.length);
+    const segAngle = 360 / segments.length;
+    const extraSpins = 8 + Math.floor(Math.random() * 4);
+    const landAngle = 360 - (winIndex * segAngle + segAngle / 2);
+    const totalDeg = extraSpins * 360 + landAngle;
+
+    // Resetta senza transizione, poi applica rotazione
+    wheelEl.style.transition = "none";
+    wheelEl.style.transform = "rotate(0deg)";
+    wheelEl.getBoundingClientRect();
+    playSound("spinSound");
+    wheelEl.style.transition = "transform 8s cubic-bezier(0.04, 0.6, 0.15, 1.0)";
+    wheelEl.style.transform = `rotate(${totalDeg}deg)`;
+
+    setTimeout(() => {
+      const seg = segments[winIndex];
+      const resultMsg = seg.action();
+      resultEl.textContent = resultMsg;
+      resultEl.style.color = seg.type === "penalty" ? "#8b2010" : "#2a6030";
+      const wm = document.getElementById("winMessage");
+      if (wm) wm.innerHTML = "";
+      logMessage(`🎡 <strong>Ruota di Bastet</strong> — ${seg.label} — <span class="${seg.type === "penalty" ? "log-penalty" : "log-payout"}">${resultMsg}</span>`, seg.type === "penalty" ? "curse" : "bonus");
+      updateUI();
+
+      buttonsEl.innerHTML = "";
+
+      // Se ha ancora giri disponibili
+      if (wheelBonusSpins > 0) {
+        const again = document.createElement("button");
+        again.className = "market-btn";
+        again.textContent = `🎡 Ancora (${wheelBonusSpins})`;
+        again.onclick = () => {
+          wheelEl.style.transition = "none";
+          wheelEl.style.transform = "rotate(0deg)";
+          resultEl.textContent = "";
+          buttonsEl.innerHTML = "";
+          const newSpinBtn = document.createElement("button");
+          newSpinBtn.className = "market-btn";
+          newSpinBtn.textContent = "🎡 Gira!";
+          newSpinBtn.onclick = spinBtn.onclick;
+          buttonsEl.appendChild(newSpinBtn);
+        };
+        buttonsEl.appendChild(again);
+      }
+
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "market-btn";
+      closeBtn.textContent = "Continua";
+      closeBtn.onclick = () => {
+        modal.classList.add("hidden");
+        spinButton.disabled = false;
+        wheelEl.style.transition = "none";
+        wheelEl.style.transform = "";
+      };
+      buttonsEl.appendChild(closeBtn);
+    }, 8300);
+  };
+
+  const spinBtnClose = document.createElement("span"); // placeholder
+  buttonsEl.appendChild(spinBtn);
 }
 
 function playMarketGame(prize) {
@@ -2769,6 +2977,9 @@ function playMarketGame(prize) {
       levelXP += chosen.value;
       playSound("bonus");
       result.textContent = `${chosen.label}! +${chosen.value} Deben`;
+      const msgArea = document.getElementById("winMessage");
+      if (msgArea) msgArea.innerHTML = "";
+      logMessage(`🏺 <strong>Mercato del Nilo</strong> — ${chosen.label}: <span class="log-payout">+${chosen.value} Deben</span>`, "bonus");
       updateUI();
       btns.innerHTML = `<button class="market-btn" onclick="closeMarket()">Continua</button>`;
     };
@@ -3042,6 +3253,8 @@ function restartGame() {
   freeSpinsRemaining = 0;
   isSpinning     = false;
   _recordBeaten  = false;
+  wheelBonusSpins = 0;
+  _xpForWheel = 0;
   // Reset storie e progressi simboli
   Object.keys(symbolStoryPoints).forEach(k => delete symbolStoryPoints[k]);
   Object.keys(symbolStoriesUnlocked).forEach(k => delete symbolStoriesUnlocked[k]);
@@ -3197,14 +3410,16 @@ function buildPaytable() {
     <p style="margin-bottom:16px;"><strong>Mummia</strong> — Combo 3×-6×: sottrae una percentuale (10%-50%) dei crediti attuali. Una sola penalità per spin.</p>
 
     <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Mini-giochi</div>
-    <p style="margin-bottom:6px;"><strong>Mercato del Nilo</strong> — Scegli 1 cesto su 3, ognuno con un simbolo e un premio nascosto.</p>
+    <p style="margin-bottom:6px;"><strong>Mercato del Nilo</strong> — Scegli 1 cesto su 3, ognuno con un simbolo e un premio nascosto in Deben.</p>
     <p style="margin-bottom:6px;"><strong>Bilancia di Ma'at</strong> — Scegli la divinità più potente tra tre per vincere il premio.</p>
     <p style="margin-bottom:6px;"><strong>Sfinge</strong> — Sfida la Sfinge a chi ha la carta più alta. Puoi raddoppiare fino a 3 volte.</p>
     <p style="margin-bottom:6px;"><strong>Vaso Antico</strong> — Scegli 3 vasi su 5: Deben, Giri Gratuiti, Pietre Preziose o Maledizione.</p>
-    <p style="margin-bottom:16px;"><strong>Papiro Sacro</strong> — Rivela un tesoro casuale: Deben o Pietre Preziose.</p>
+    <p style="margin-bottom:6px;"><strong>Papiro Sacro</strong> — Il papiro rivela un antico enigma egizio. Rispondi correttamente per guadagnare Deben, sbaglia e perdi una piccola somma.</p>
+    <p style="margin-bottom:16px;"><strong>🎡 La Ruota di Bastet</strong> — Si sblocca ogni 500 XP guadagnati. Gira la ruota per vincere Deben, Pietre Preziose o Giri Gratuiti. Gli spicchi cambiano ad ogni livello con simboli e gemme nuovi. Attenzione alla Mummia!</p>
 
     <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Progressione e XP</div>
     <p style="margin-bottom:8px;">Ogni Deben vinto aggiunge <strong>XP</strong>. Ogni 2.000 XP sali di livello e di rango sociale — da Schiavo fino a Dio. Ad ogni livello nuovi simboli entrano nel pool.</p>
+    <p style="margin-bottom:8px;">Ogni <strong>500 XP</strong> guadagnati sblocchi un giro della <strong>Ruota di Bastet</strong>. I giri si accumulano — non perderli.</p>
     <p style="margin-bottom:16px;">Il <strong>Grano</strong> è il tuo punteggio totale — non si spende mai. Viene usato per la classifica globale.</p>
 
     <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Pietre Preziose e Gemme</div>
@@ -3212,7 +3427,7 @@ function buildPaytable() {
 
     <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Storie dei Simboli</div>
     <p style="margin-bottom:8px;">Ogni simbolo nasconde fino a <strong>10 storie</strong> tratte da testi egiziani antichi. Si sbloccano accumulando punti vincendo con quel simbolo — la barra di avanzamento è visibile nella colonna sinistra.</p>
-    <p style="margin-bottom:16px;">Le storie sbloccate si leggono nel <strong>Papiro</strong>. Il tempio custodisce 1.030 frasi in totale.</p>
+    <p style="margin-bottom:16px;">Le storie sbloccate si leggono nel <strong>Papiro</strong>. Il tempio custodisce 1.030 frasi in totale. Le storie si azzerano ad ogni nuova partita.</p>
 
     <div style="font-family:'Cinzel',serif;font-size:13px;color:#8a4510;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">L'economia dell'antico Egitto</div>
     <p style="margin-bottom:8px;"><strong>Deben</strong> — Un peso in rame di 91 grammi, prima unità di valore dell'Egitto. Non era una moneta ma una misura: tutto si pesava in Deben.</p>

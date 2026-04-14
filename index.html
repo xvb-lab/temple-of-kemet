@@ -164,6 +164,13 @@
       </div>
       <button id="spinButton">SPIN</button>
 
+      <!-- Ruota della Fortuna bonus -->
+      <div id="wheelBonusArea" style="display:none;flex-direction:column;align-items:center;gap:4px;margin-top:8px;">
+        <button id="wheelBonusBtn" onclick="openFortuneWheel()" style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;border:1px solid #ffd11d;border-radius:6px;background:rgba(255,209,29,0.15);color:#ffd11d;padding:6px 14px;cursor:pointer;transition:all 0.2s;animation:wheelPulse 1.5s infinite;">
+          🎡 BASTET <span id="wheelSpinsLeft" style="font-size:11px;opacity:0.8;"></span>
+        </button>
+      </div>
+
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px;">
         <span style="font-family:'Cinzel',serif;font-size:14px;color:#e4dcc2;letter-spacing:0.1em;">LINEE</span>
         <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;">
@@ -235,6 +242,7 @@
     <button onclick="playAnubiGame(200);" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">⚖ Anubi</button>
     <button onclick="playJarGame();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🏺 Vaso</button>
     <button onclick="playPapyrusGame();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">📜 Papiro</button>
+    <button onclick="wheelBonusSpins++;updateWheelUI();openFortuneWheel();" style="padding:4px 10px;font-size:12px;border:1px solid #ffd11d;border-radius:4px;background:none;cursor:pointer;color:#c4881a;">🎡 Ruota</button>
     <button onclick="freeSpinsRemaining+=3;logMessage('🌀 +3 giri gratuiti DEV','bonus');updateUI();" style="padding:4px 10px;font-size:12px;border:1px solid #c4a55a;border-radius:4px;background:none;cursor:pointer;color:#5a2800;">🌀 +3 Giri</button>
   </div>
 
@@ -269,6 +277,22 @@
 
 
 <!-- MERCATO DEL NILO -->
+
+<!-- RUOTA DELLA FORTUNA -->
+<div id="fortuneWheelModal" class="hidden">
+  <div class="wheel-box">
+    <div class="wheel-title">🎡 La Ruota di Bastet</div>
+    <div class="wheel-sub">La dea gatta gira il destino — chi fermerà la ruota?</div>
+    <div class="wheel-container">
+      <div class="wheel-pointer">▼</div>
+      <div class="wheel-wrap">
+        <div id="fortuneWheel" class="wheel"></div>
+      </div>
+    </div>
+    <div id="wheelResult" class="wheel-result"></div>
+    <div id="wheelButtons" style="margin-top:16px;"></div>
+  </div>
+</div>
 
 <!-- PAPIRO SACRO MINI-GIOCO -->
 <div id="papyrusGameModal" class="hidden">

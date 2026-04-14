@@ -1525,3 +1525,106 @@ body.dark #papyrusResult { color:#fbb47f !important; }
 }
 .papyrus-game-title { font-family:"Cinzel",serif; }
 .papyrus-choice-btn { font-family:"Syne Mono",monospace; }
+
+/* ════ RUOTA DELLA FORTUNA ════ */
+@keyframes wheelPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,209,29,0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(255,209,29,0); }
+}
+@keyframes wheelSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(var(--wheel-end-deg)); }
+}
+
+#fortuneWheelModal {
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;padding:20px;
+}
+#fortuneWheelModal.hidden { display:none!important; }
+
+.wheel-box {
+  text-align:center;font-family:"Cinzel",serif;
+  max-width:480px;width:100%;
+}
+.wheel-title {
+  font-size:26px;font-weight:700;color:var(--text2);margin-bottom:4px;
+}
+.wheel-sub {
+  font-size:12px;color:var(--text3);letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:24px;
+}
+.wheel-container {
+  position:relative;display:inline-block;
+}
+.wheel-pointer {
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:28px;color:#ffd11d;z-index:10;
+  text-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+.wheel-wrap {
+  width:500px;height:500px;border-radius:50%;
+  border:8px solid #c4a55a;
+  box-shadow:0 4px 48px rgba(0,0,0,0.3);
+  overflow:hidden;position:relative;
+}
+.wheel {
+  width:100%;height:100%;border-radius:50%;
+  background: conic-gradient(
+    #b8864a    0deg   45deg,
+    #9a6e38   45deg   90deg,
+    #b8864a   90deg  135deg,
+    #9a6e38  135deg  180deg,
+    #b8864a  180deg  225deg,
+    #9a6e38  225deg  270deg,
+    #b8864a  270deg  315deg,
+    #9a6e38  315deg  360deg
+  );
+  transition:none;
+  position:relative;
+}
+.wheel.spinning {
+  animation: wheelSpin var(--spin-duration,3s) cubic-bezier(0.17,0.67,0.12,0.99) forwards;
+}
+.wheel-labels {
+  position:absolute;inset:0;border-radius:50%;pointer-events:none;
+}
+.wheel-label {
+  position:absolute;top:0;left:0;
+  width:50%;height:50%;
+  transform-origin:100% 100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding-top:10px;
+  box-sizing:border-box;
+}
+.wheel-label img {
+  width:30px;height:30px;object-fit:contain;
+  transform:rotate(22.5deg) translateX(-8px);
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+  margin-bottom:3px;
+  flex-shrink:0;
+}
+.wheel-label span {
+  font-family:"Syne Mono",monospace;
+  font-size:9px;font-weight:700;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,0.9);
+  white-space:nowrap;
+  transform:rotate(22.5deg) translateX(-8px);
+  line-height:1.1;
+}
+/* linee divisorie spicchi */
+.wheel-divider {
+  position:absolute;top:50%;left:50%;
+  width:50%;height:2px;
+  background:rgba(255,255,255,0.3);
+  transform-origin:0 50%;
+}
+.wheel-result {
+  font-size:20px;font-weight:700;color:var(--text2);
+  margin:20px 0 8px;min-height:32px;font-family:"Cinzel",serif;
+}
+body.dark #fortuneWheelModal { background:rgba(20,27,46,0.98); }
+body.dark .wheel-title { color:#e8e0d0; }
+body.dark .wheel-sub   { color:rgba(255,255,255,0.45); }
+body.dark .wheel-result { color:#fbb47f; }
+body.dark .wheel-wrap  { border-color:#4a6888; }
